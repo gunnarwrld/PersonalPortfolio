@@ -1,0 +1,322 @@
+/* Base Reset */
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Poppins, sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  background: #080808;
+  color: #fff;
+  line-height: 1.6;
+  scroll-behavior: smooth;
+}
+
+/* Header */
+/* Header with animated gradient overlay */
+/* Header with parallax effect */
+#header {
+  width: 100%;
+  height: 100vh;
+  background-image: url('assets/images/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* <-- Parallax effect */
+  color: #fff;
+  padding: 10px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+
+/* Gradient Overlay */
+#header::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(120deg, rgba(255,115,0,0.25), rgba(255,115,0,0.05), rgba(8,8,8,0.3));
+  background-size: 300% 300%;
+  animation: gradientMove 10s ease-in-out infinite;
+  z-index: 1;
+}
+
+/* Keep text and nav above overlay */
+#header .container {
+  position: relative;
+  z-index: 2;
+}
+
+/* Gradient Animation */
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+.container {
+  width: 80%;
+  margin: auto;
+  overflow: hidden;
+  padding: 40px 0;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  width: 100px;
+  filter: drop-shadow(0 0 6px #ff7300);
+  transition: transform 0.3s ease;
+}
+.logo:hover {
+  transform: rotate(-5deg) scale(1.1);
+}
+
+
+nav ul li {
+  list-style: none;
+  display: inline-block;
+  margin: 10px 20px;
+}
+nav ul li a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 18px;
+  position: relative;
+}
+nav ul li a::after {
+  content: '';
+  width: 0%;
+  height: 3px;
+  background: #ff7300;
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  transition: width 0.3s;
+}
+nav ul li a:hover::after {
+  width: 100%;
+}
+
+/* Hero Text */
+.header-text {
+  margin-top: 20%;
+  font-size: 30px;
+  text-align: right;
+}
+.header-text h1 {
+  font-size: 60px;
+  text-align: right;
+}
+.header-text span {
+  color: #ff7300;
+  text-shadow: 0 0 10px #ff7300;
+}
+
+/* Typing effect */
+.typing {
+  border-right: 2px solid #ff7300;
+  white-space: nowrap;
+  overflow: hidden;
+  display: inline-block;
+  animation: typing 3s steps(20) 1, blink 0.8s infinite;
+}
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+@keyframes blink {
+  50% { border-color: transparent }
+}
+
+/* Sections - Responsive spacing */
+.section {
+  padding: 60px 0; /* default for desktops/laptops */
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section h2 {
+  font-size: 32px;
+  margin-bottom: 15px;
+  color: #ff7300;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.section p {
+  margin: 0 auto 20px auto;
+  max-width: 800px;
+  line-height: 1.7;
+}
+
+/* About Section */
+.about .row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 40px;
+}
+
+.about-col-1,
+.about-col-2 {
+  flex: 1 1 45%;
+}
+
+.about-col-2 {
+  padding: 10px 0;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+  .section {
+    padding: 50px 0; /* slightly tighter on tablets */
+  }
+  .section h2 {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 40px 0; /* tighter spacing on mobile */
+  }
+  .section h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  .about .row {
+    flex-direction: column; /* stack image above text */
+    gap: 20px;
+  }
+  .about-col-1,
+  .about-col-2 {
+    flex: 1 1 100%;
+    text-align: center; /* keeps it centered */
+  }
+  .about-col-1 img {
+    max-width: 300px; /* avoid huge images on phones */
+    margin: 0 auto;
+  }
+}
+
+/* Button */
+.btn {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 12px 30px;
+  background: #ff7300;
+  color: #fff;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 12px rgba(255,115,0,0.5);
+}
+
+.btn:hover {
+  transform: scale(1.05);
+  background: #e56700;
+  box-shadow: 0 0 25px rgba(255,115,0,0.8);
+}
+
+/* Projects */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+.project-card {
+  background: #111;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(255,115,0,0.3);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.project-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 0 25px rgba(255,115,0,0.6);
+}
+
+/* Hover scale effect */
+.hover-scale {
+  transition: transform 0.3s ease;
+}
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+
+/* Scroll to Top Button */
+#scrollTopBtn {
+  display: none;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 99;
+  font-size: 20px;
+  border: none;
+  outline: none;
+  background: #ff7300;
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(255,115,0,0.5);
+  transition: all 0.3s ease;
+  animation: pulseGlow 2s infinite;
+}
+
+#scrollTopBtn:hover {
+  background: #e56700;
+  box-shadow: 0 0 25px rgba(255,115,0,0.8);
+  transform: scale(1.1);
+}
+
+/* Pulse Glow Animation */
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(255,115,0,0.4), 0 0 20px rgba(255,115,0,0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255,115,0,0.8), 0 0 40px rgba(255,115,0,0.6);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255,115,0,0.4), 0 0 20px rgba(255,115,0,0.2);
+  }
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 2s ease-in-out forwards;
+}
+.fade-up {
+  opacity: 0;
+  transform: translateY(40px);
+  animation: fadeUp 1.5s ease forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 15px 0;
+  background: #111;
+  color: #ff7300;
+  text-shadow: 0 0 8px #ff7300;
+}

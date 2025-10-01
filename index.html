@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gunnar Arias Personal Portfolio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+<div id="header">
+  <div class="container header-content glow-box">
+    <nav id="navbar">
+      <img src="assets/images/estrella.png" alt="Gunnar Arias Logo" class="logo">
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About Me</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="header-text fade-in">
+      <p class="typing">Software Developer</p>
+      <h1>Hi, I'm <span>Gunnar</span></h1>
+    </div>
+  </div>
+</div>
+
+
+<!-- About Section -->
+<div id="about" class="about section fade-up">
+  <div class="container">
+    <div class="row">
+      <div class="about-col-1">
+        <img src="assets/images/about.jpg" alt="About Me Image" class="hover-scale">
+      </div>
+      <div class="about-col-2">
+        <h2>About Me</h2>
+        <p>I’m passionate about building software that solves real problems and looks great while doing it.</p>
+
+        <!-- Download CV Button -->
+        <a href="assets/files/Gunnar_Arias_CV.pdf" class="btn" download>Download CV</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Scroll to Top Button -->
+<button id="scrollTopBtn" title="Go to top">↑</button>
+
+<footer>
+  <p>&copy; 2025 Gunnar Arias. All rights reserved.</p>
+</footer>
+
+<script>
+  // Show button when scrolling down
+  const scrollBtn = document.getElementById("scrollTopBtn");
+  window.onscroll = function() {
+    if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+      scrollBtn.style.display = "block";
+    } else {
+      scrollBtn.style.display = "none";
+    }
+  };
+
+  // Scroll to top smoothly
+  scrollBtn.onclick = function() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+</script>
+</body>
+
