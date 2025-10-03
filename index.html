@@ -1,74 +1,446 @@
 <!DOCTYPE html>
 <html lang="en">
-    
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gunnar Arias Personal Portfolio</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Gunnar Arias - Software Developer Portfolio</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-<div id="header">
-  <div class="container header-content glow-box">
-    <nav id="navbar">
-      <img src="assets/images/estrella.png" alt="Gunnar Arias Logo" class="logo">
-      <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#about">About Me</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
-    <div class="header-text fade-in">
-      <p class="typing">Software Developer</p>
-      <h1>Hi, I'm <span>Gunnar</span></h1>
-    </div>
-  </div>
-</div>
+  <!-- Particle Container -->
+  <div id="particles-container"></div>
+  
+  <!-- Matrix Rain Container (Easter Egg) -->
+  <canvas id="matrix-canvas"></canvas>
+  
+  <!-- Hidden click areas for easter eggs -->
+  <div class="easter-egg-corner top-left" data-corner="top-left"></div>
+  <div class="easter-egg-corner top-right" data-corner="top-right"></div>
+  <div class="easter-egg-corner bottom-left" data-corner="bottom-left"></div>
+  <div class="easter-egg-corner bottom-right" data-corner="bottom-right"></div>
 
-
-<!-- About Section -->
-<div id="about" class="about section fade-up">
-  <div class="container">
-    <div class="row">
-      <div class="about-col-1">
-        <img src="assets/images/about.jpg" alt="About Me Image" class="hover-scale">
-      </div>
-      <div class="about-col-2">
-        <h2>About Me</h2>
-        <p>I’m passionate about building software that solves real problems and looks great while doing it.</p>
-
-        <!-- Download CV Button -->
-        <a href="assets/files/Gunnar_Arias_CV.pdf" class="btn" download>Download CV</a>
+  <!-- Header Section -->
+  <header id="home">
+    <div class="container header-content">
+      <nav id="navbar">
+        <img src="assets/images/estrella.png" alt="Gunnar Arias Logo" class="logo" id="logo">
+        <ul>
+          <li><a href="#home" class="nav-link">Home</a></li>
+          <li><a href="#about" class="nav-link">About Me</a></li>
+          <li><a href="#skills" class="nav-link">Skills</a></li>
+          <li><a href="#projects" class="nav-link">Projects</a></li>
+          <li><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="header-text fade-in">
+        <p class="typing" id="typing-text">Software Developer</p>
+        <h1>Hi, I'm <span class="name-highlight">Gunnar</span></h1>
+        <p class="subtitle">Passionate about creating innovative solutions that make a difference</p>
       </div>
     </div>
+  </header>
+
+  <!-- About Section -->
+  <section id="about" class="about section">
+    <div class="container">
+      <h2>About Me</h2>
+      <div class="row">
+        <div class="about-col-1">
+          <img src="assets/images/background.jpg" alt="About Me Image" class="floating-photo">
+        </div>
+        <div class="about-col-2">
+          <p>I'm passionate about building software that solves real problems and looks great while doing it. With expertise across the full stack, I love turning complex challenges into elegant, user-friendly solutions.</p>
+          <p>When I'm not coding, you can find me exploring new technologies, contributing to open source projects, or sharing knowledge with the developer community.</p>
+          
+          <!-- Download CV Button with ripple effect -->
+           <div class="btn-container">
+          <a href="assets/files/Gunnar_Arias_CV.pdf" class="btn btn-primary ripple-btn" id="download-cv" download>
+              <span>Download CV</span>
+          </a>
+            <div class="ripple"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section id="skills" class="skills section">
+    <div class="container">
+      <h2>Technical Skills</h2>
+      <div class="skills-container">
+        <div class="skill-category" data-category="Frontend">
+          <h3>Frontend</h3>
+          <div class="skill-bars">
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">HTML5</span>
+                <span class="skill-percentage">95%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-percentage="95"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">CSS3</span>
+                <span class="skill-percentage">90%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-percentage="90"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">JavaScript</span>
+                <span class="skill-percentage">88%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-percentage="88"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">React</span>
+                <span class="skill-percentage">88%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-percentage="88"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">Vue.js</span>
+                <span class="skill-percentage">85%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-percentage="85"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="skill-category" data-category="Backend">
+          <h3>Backend</h3>
+          <div class="skill-bars">
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">Node.js</span>
+                <span class="skill-percentage">87%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-percentage="87"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">Python</span>
+                <span class="skill-percentage">82%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-percentage="82"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">Express.js</span>
+                <span class="skill-percentage">89%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-percentage="89"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">Java</span>
+                <span class="skill-percentage">75%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-percentage="75"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="skill-category" data-category="Database">
+          <h3>Database</h3>
+          <div class="skill-bars">
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">MongoDB</span>
+                <span class="skill-percentage">85%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-percentage="85"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">PostgreSQL</span>
+                <span class="skill-percentage">80%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-percentage="80"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">MySQL</span>
+                <span class="skill-percentage">78%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-percentage="78"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">Redis</span>
+                <span class="skill-percentage">70%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-percentage="70"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="skill-category" data-category="DevOps">
+          <h3>DevOps</h3>
+          <div class="skill-bars">
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">Git</span>
+                <span class="skill-percentage">90%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-percentage="90"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">Docker</span>
+                <span class="skill-percentage">75%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-percentage="75"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">AWS</span>
+                <span class="skill-percentage">70%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-percentage="70"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">CI/CD</span>
+                <span class="skill-percentage">72%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-percentage="72"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section id="projects" class="projects section">
+    <div class="container">
+      <h2>Featured Projects</h2>
+      <div class="projects-grid">
+        <div class="project-card" data-project="ecommerce">
+          <div class="project-image">
+            <img src="https://via.placeholder.com/400x250/ff7300/ffffff?text=E-Commerce+Platform" alt="E-Commerce Platform">
+            <div class="project-overlay">
+              <button class="view-project-btn">View Details</button>
+            </div>
+          </div>
+          <div class="project-content">
+            <h3>E-Commerce Platform</h3>
+            <p>A full-stack e-commerce solution with advanced features like real-time inventory, secure payments, and responsive design.</p>
+            <div class="tech-icons">
+              <span class="tech-icon" data-tech="React" title="React">⚛️</span>
+              <span class="tech-icon" data-tech="Node.js" title="Node.js">🟢</span>
+              <span class="tech-icon" data-tech="MongoDB" title="MongoDB">🍃</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card" data-project="taskmanager">
+          <div class="project-image">
+            <img src="https://via.placeholder.com/400x250/ff7300/ffffff?text=Task+Manager" alt="Task Management App">
+            <div class="project-overlay">
+              <button class="view-project-btn">View Details</button>
+            </div>
+          </div>
+          <div class="project-content">
+            <h3>Task Management App</h3>
+            <p>Collaborative task management with real-time updates, drag-and-drop functionality, and advanced filtering.</p>
+            <div class="tech-icons">
+              <span class="tech-icon" data-tech="Vue.js" title="Vue.js">💚</span>
+              <span class="tech-icon" data-tech="Express.js" title="Express.js">🚀</span>
+              <span class="tech-icon" data-tech="PostgreSQL" title="PostgreSQL">🐘</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card" data-project="weather">
+          <div class="project-image">
+            <img src="https://via.placeholder.com/400x250/ff7300/ffffff?text=Weather+Dashboard" alt="Weather Dashboard">
+            <div class="project-overlay">
+              <button class="view-project-btn">View Details</button>
+            </div>
+          </div>
+          <div class="project-content">
+            <h3>Weather Dashboard</h3>
+            <p>Interactive weather dashboard with beautiful visualizations, location-based forecasts, and historical data analysis.</p>
+            <div class="tech-icons">
+              <span class="tech-icon" data-tech="JavaScript" title="JavaScript">⚡</span>
+              <span class="tech-icon" data-tech="D3.js" title="D3.js">📊</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card" data-project="crypto">
+          <div class="project-image">
+            <img src="https://via.placeholder.com/400x250/ff7300/ffffff?text=Crypto+Tracker" alt="Cryptocurrency Tracker">
+            <div class="project-overlay">
+              <button class="view-project-btn">View Details</button>
+            </div>
+          </div>
+          <div class="project-content">
+            <h3>Cryptocurrency Tracker</h3>
+            <p>Real-time crypto tracking with advanced charts, portfolio management, and market analysis tools.</p>
+            <div class="tech-icons">
+              <span class="tech-icon" data-tech="React" title="React">⚛️</span>
+              <span class="tech-icon" data-tech="TypeScript" title="TypeScript">🔷</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card" data-project="social">
+          <div class="project-image">
+            <img src="https://via.placeholder.com/400x250/ff7300/ffffff?text=Social+Dashboard" alt="Social Media Dashboard">
+            <div class="project-overlay">
+              <button class="view-project-btn">View Details</button>
+            </div>
+          </div>
+          <div class="project-content">
+            <h3>Social Media Dashboard</h3>
+            <p>Unified social media management platform with analytics, scheduling, and engagement tools.</p>
+            <div class="tech-icons">
+              <span class="tech-icon" data-tech="Next.js" title="Next.js">▲</span>
+              <span class="tech-icon" data-tech="GraphQL" title="GraphQL">◉</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card" data-project="ai-chat">
+          <div class="project-image">
+            <img src="https://via.placeholder.com/400x250/ff7300/ffffff?text=AI+Chat+App" alt="AI Chat Application">
+            <div class="project-overlay">
+              <button class="view-project-btn">View Details</button>
+            </div>
+          </div>
+          <div class="project-content">
+            <h3>AI Chat Application</h3>
+            <p>Advanced AI-powered chat application with real-time communication and intelligent responses.</p>
+            <div class="tech-icons">
+              <span class="tech-icon" data-tech="Python" title="Python">🐍</span>
+              <span class="tech-icon" data-tech="FastAPI" title="FastAPI">🚀</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="contact section">
+    <div class="container">
+      <h2>Get In Touch</h2>
+      <p>Ready to bring your next project to life? Let's collaborate and create something amazing together.</p>
+      <div class="contact-info">
+        <a href="mailto:ariasgunnar@gmail.com" class="btn btn-primary ripple-btn">
+          <span>Contact Me</span>
+          <div class="ripple"></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Project Modal -->
+  <div id="project-modal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <button class="modal-close" aria-label="Close modal">×</button>
+      <div class="modal-body">
+        <div class="modal-image">
+          <img id="modal-project-image" src="" alt="">
+        </div>
+        <div class="modal-info">
+          <h3 id="modal-project-title"></h3>
+          <p id="modal-project-description"></p>
+          <div class="project-details">
+            <div class="detail-item">
+              <strong>Timeline:</strong>
+              <span id="modal-project-timeline"></span>
+            </div>
+            <div class="detail-item">
+              <strong>Role:</strong>
+              <span id="modal-project-role"></span>
+            </div>
+          </div>
+          <div class="modal-tech-stack">
+            <h4>Technology Stack</h4>
+            <div id="modal-tech-icons"></div>
+          </div>
+          <div class="modal-features">
+            <h4>Key Features</h4>
+            <ul id="modal-features-list"></ul>
+          </div>
+          <div class="modal-actions">
+            <a id="modal-github-link" href="#" target="_blank" class="btn btn-outline">GitHub</a>
+            <a id="modal-live-link" href="#" target="_blank" class="btn btn-primary">Live Demo</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 
+  <!-- Developer Mode Panel (Easter Egg) -->
+  <div id="developer-panel" class="developer-panel hidden">
+    <h3>🎯 Developer Mode Activated!</h3>
+    <p>Secret features unlocked:</p>
+    <ul>
+      <li>Particle effects: <span id="particle-count">0</span></li>
+      <li>Animations: <span id="animation-count">0</span></li>
+      <li>Easter eggs found: <span id="easter-egg-count">0</span></li>
+    </ul>
+    <button id="close-dev-panel">Close</button>
+  </div>
 
-<!-- Scroll to Top Button -->
-<button id="scrollTopBtn" title="Go to top">↑</button>
+  <!-- Scroll to Top Button -->
+  <button id="scrollTopBtn" title="Go to top" aria-label="Scroll to top">↑</button>
 
-<footer>
-  <p>&copy; 2025 Gunnar Arias. All rights reserved.</p>
-</footer>
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Gunnar Arias. All rights reserved.</p>
+    <p class="easter-egg-hint">💡 Try the Konami code or type "DEVELOPER" for surprises!</p>
+  </footer>
 
-<script>
-  // Show button when scrolling down
-  const scrollBtn = document.getElementById("scrollTopBtn");
-  window.onscroll = function() {
-    if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-      scrollBtn.style.display = "block";
-    } else {
-      scrollBtn.style.display = "none";
-    }
-  };
+  <!-- Tooltip -->
+  <div id="tooltip" class="tooltip hidden">
+    <span id="tooltip-text"></span>
+  </div>
 
-  // Scroll to top smoothly
-  scrollBtn.onclick = function() {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-</script>
+  <script src="app.js"></script>
 </body>
-
+</html>
