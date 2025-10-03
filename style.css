@@ -744,14 +744,25 @@ select.form-control {
 /* Removed universal selector reset to avoid box-sizing conflict */
 
 body {
-  font-family: var(--font-family-base);
-  background: var(--color-background);
-  color: var(--color-text);
-  line-height: var(--line-height-normal);
-  scroll-behavior: smooth;
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--color-slate-900) 0, var(--color-charcoal-800) 100%);
   overflow-x: hidden;
 }
-
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: linear-gradient(45deg, rgba(255, 115, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 25%, transparent 50%, rgba(255, 115, 0, 0.05) 75%, rgba(255, 115, 0, 0.1) 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 8s ease-in-out infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+.header, .about, .skills, .projects, .section, .container, section {
+  background: none !important;
+  position: relative;
+}
 /* Particle Container */
 #particles-container {
   position: fixed;
@@ -1027,6 +1038,8 @@ nav ul li a.active {
 .section {
   padding: var(--space-32) 0;
   position: relative;
+  background: linear-gradient(135deg, var(--color-slate-900) 0%, var(--color-orange-500) 60%, var(--color-black) 100%);
+  transition: background 0.6s ease;
 }
 
 .section h2 {
@@ -1057,9 +1070,7 @@ nav ul li a.active {
 }
 
 /* About Section */
-.about {
-  background: var(--color-bg-1);
-}
+
 
 .row {
   display: grid;
@@ -1180,9 +1191,6 @@ nav ul li a.active {
 }
 
 /* Skills Section */
-.skills {
-  background: var(--color-bg-2);
-}
 
 .skills-container {
   display: grid;
@@ -1268,9 +1276,6 @@ nav ul li a.active {
 }
 
 /* Projects Section */
-.projects {
-  background: var(--color-bg-3);
-}
 
 .projects-grid {
   display: grid;
@@ -1411,8 +1416,9 @@ nav ul li a.active {
 
 /* Contact Section */
 .contact {
-  background: var(--color-bg-4);
+  background: linear-gradient(120deg, var(--color-background) 0%, var(--color-charcoal-800) 100%);
   text-align: center;
+  position: relative;
 }
 
 .contact p {
@@ -1423,6 +1429,44 @@ nav ul li a.active {
   margin-left: auto;
   margin-right: auto;
 }
+.contact-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+.contact-icon {
+  width: 32px;
+  height: 32px;
+  vertical-align: middle;
+}
+.btn-contact {
+  background: linear-gradient(135deg, var(--color-orange-500), var(--color-orange-400));
+  color: white;
+}
+.btn-linkedin {
+  background: linear-gradient(135deg, #0077b5, #004182);
+  color: white;
+}
+.btn-github {
+  background: var(--color-black);
+  color: white;
+}
+.btn {
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+.btn:hover {
+  transform: scale(1.07);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+}
+
 
 /* Modal Styles */
 .modal {
@@ -1712,13 +1756,7 @@ footer {
 
 footer p {
   color: var(--color-text-secondary);
-  margin-bottom: var(--space-8);
-}
-
-.easter-egg-hint {
-  font-size: var(--font-size-sm);
-  color: rgba(255, 115, 0, 0.7);
-  font-style: italic;
+  margin-bottom: var(--space-1);
 }
 
 /* Scroll Animations */

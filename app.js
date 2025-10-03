@@ -22,7 +22,6 @@ class PortfolioApp {
         technologies: ['React', 'Node.js', 'MongoDB', 'Stripe API', 'Redux'],
         features: ['Real-time inventory', 'Secure payments', 'Admin dashboard', 'Product recommendations'],
         github: 'https://github.com/gunnar/ecommerce-platform',
-        live: 'https://ecommerce-demo.com',
         image: 'https://via.placeholder.com/600x400/ff7300/ffffff?text=E-Commerce+Platform',
         timeline: '3 months',
         role: 'Full Stack Developer'
@@ -33,7 +32,6 @@ class PortfolioApp {
         technologies: ['Vue.js', 'Express.js', 'Socket.io', 'PostgreSQL'],
         features: ['Real-time collaboration', 'Drag & drop', 'Team management', 'Time tracking'],
         github: 'https://github.com/gunnar/task-manager',
-        live: 'https://taskmanager-demo.com',
         image: 'https://via.placeholder.com/600x400/ff7300/ffffff?text=Task+Manager',
         timeline: '4 months',
         role: 'Lead Developer'
@@ -44,7 +42,6 @@ class PortfolioApp {
         technologies: ['JavaScript', 'D3.js', 'Weather API', 'Chart.js'],
         features: ['Interactive maps', 'Data visualization', 'Weather alerts', 'Offline support'],
         github: 'https://github.com/gunnar/weather-dashboard',
-        live: 'https://weather-demo.com',
         image: 'https://via.placeholder.com/600x400/ff7300/ffffff?text=Weather+Dashboard',
         timeline: '2 months',
         role: 'Frontend Developer'
@@ -55,7 +52,6 @@ class PortfolioApp {
         technologies: ['React', 'TypeScript', 'WebSocket', 'TradingView Charts'],
         features: ['Real-time tracking', 'Portfolio management', 'Price alerts', 'Market analysis'],
         github: 'https://github.com/gunnar/crypto-tracker',
-        live: 'https://crypto-demo.com',
         image: 'https://via.placeholder.com/600x400/ff7300/ffffff?text=Crypto+Tracker',
         timeline: '3 months',
         role: 'Frontend Developer'
@@ -66,7 +62,6 @@ class PortfolioApp {
         technologies: ['Next.js', 'GraphQL', 'Prisma', 'Tailwind CSS'],
         features: ['Multi-platform posting', 'Analytics', 'Team collaboration', 'Content calendar'],
         github: 'https://github.com/gunnar/social-dashboard',
-        live: 'https://social-demo.com',
         image: 'https://via.placeholder.com/600x400/ff7300/ffffff?text=Social+Dashboard',
         timeline: '5 months',
         role: 'Full Stack Developer'
@@ -77,7 +72,6 @@ class PortfolioApp {
         technologies: ['Python', 'FastAPI', 'OpenAI API', 'WebRTC'],
         features: ['AI responses', 'Voice chat', 'File sharing', 'End-to-end encryption'],
         github: 'https://github.com/gunnar/ai-chat',
-        live: 'https://ai-chat-demo.com',
         image: 'https://via.placeholder.com/600x400/ff7300/ffffff?text=AI+Chat+App',
         timeline: '4 months',
         role: 'AI Developer'
@@ -322,7 +316,7 @@ class PortfolioApp {
   // Typing Animation
   initTypingAnimation() {
     const typingElement = document.getElementById('typing-text');
-    const texts = ['Software Developer', 'Full Stack Engineer', 'Problem Solver', 'Tech Enthusiast'];
+    const texts = ['Software Developer', 'Full Stack Engineer', 'Problem Solver', 'Junior Data Scientist'];
     let currentTextIndex = 0;
     let currentCharIndex = 0;
     let isDeleting = false;
@@ -416,7 +410,6 @@ class PortfolioApp {
     document.getElementById('modal-project-timeline').textContent = project.timeline;
     document.getElementById('modal-project-role').textContent = project.role;
     document.getElementById('modal-github-link').href = project.github;
-    document.getElementById('modal-live-link').href = project.live;
 
     // Tech icons
     const techIconsContainer = document.getElementById('modal-tech-icons');
@@ -829,7 +822,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Dynamic background gradient
   let gradientAngle = 0;
-  const header = document.querySelector('header');
+  const header = document.querySelector('body');
   if (header) {
     setInterval(() => {
       gradientAngle += 1;

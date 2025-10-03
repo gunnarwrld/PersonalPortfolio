@@ -8,6 +8,7 @@
 </head>
 
 <body>
+  
   <!-- Particle Container -->
   <div id="particles-container"></div>
   
@@ -51,11 +52,11 @@
         </div>
         <div class="about-col-2">
           <p>I'm passionate about building software that solves real problems and looks great while doing it. With expertise across the full stack, I love turning complex challenges into elegant, user-friendly solutions.</p>
-          <p>When I'm not coding, you can find me exploring new technologies, contributing to open source projects, or sharing knowledge with the developer community.</p>
+          <p>When I'm not coding, you can find me exploring new technologies, contributing to open source projects, or probably at the gym 💪.</p>
           
           <!-- Download CV Button with ripple effect -->
            <div class="btn-container">
-          <a href="assets/files/Gunnar_Arias_CV.pdf" class="btn btn-primary ripple-btn" id="download-cv" download>
+          <a href="assets/files/Gunnar_Arias_CV.pdf" class="btn btn-primary ripple-btn btn--sm" id="download-cv" download>
               <span>Download CV</span>
           </a>
             <div class="ripple"></div>
@@ -367,10 +368,15 @@
     <div class="container">
       <h2>Get In Touch</h2>
       <p>Ready to bring your next project to life? Let's collaborate and create something amazing together.</p>
-      <div class="contact-info">
-        <a href="mailto:ariasgunnar@gmail.com" class="btn btn-primary ripple-btn">
-          <span>Contact Me</span>
-          <div class="ripple"></div>
+      <div class="contact-buttons">
+        <a href="mailto:ariasgunnar@gmail.com" class="btn btn-contact ripple-btn" title="Email">
+          <img src="assets/images/icon-mail.svg" alt="Mail Icon" class="contact-icon">
+        </a>
+        <a href="https://www.linkedin.com/in/gunnararias/" target="_blank" class="btn btn-linkedin ripple-btn" title="LinkedIn">
+          <img src="assets/images/icon-linkedin.svg" alt="LinkedIn Icon" class="contact-icon">
+        </a>
+        <a href="https://github.com/gunnarwrld" target="_blank" class="btn btn-github ripple-btn" title="GitHub">
+          <img src="assets/images/icon-github.svg" alt="GitHub Icon" class="contact-icon">
         </a>
       </div>
     </div>
@@ -407,8 +413,10 @@
             <ul id="modal-features-list"></ul>
           </div>
           <div class="modal-actions">
-            <a id="modal-github-link" href="#" target="_blank" class="btn btn-outline">GitHub</a>
-            <a id="modal-live-link" href="#" target="_blank" class="btn btn-primary">Live Demo</a>
+            <a id="modal-github-link" href="#" target="_blank" class="btn btn-outline">
+              <img src="assets/images/icon-github.svg" alt="GitHub Icon" class="contact-icon">
+            </a>
+              
           </div>
         </div>
       </div>
@@ -433,7 +441,6 @@
   <!-- Footer -->
   <footer>
     <p>&copy; 2025 Gunnar Arias. All rights reserved.</p>
-    <p class="easter-egg-hint">💡 Try the Konami code or type "DEVELOPER" for surprises!</p>
   </footer>
 
   <!-- Tooltip -->
