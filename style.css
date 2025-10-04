@@ -666,22 +666,23 @@ body::before {
 /* Particle Container */
 #particles-container {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
   pointer-events: none;
   z-index: 1;
 }
 
 .particle {
   position: absolute;
-  width: 4px;
-  height: 4px;
-  background: #ff7300;
   border-radius: 50%;
   pointer-events: none;
-  will-change: transform;
+  background: #ff7300; /* or your chosen accent color */
+  opacity: 0.6;
+  will-change: transform, opacity;
+  z-index: 2; /* Or >0 but less than nav/modal */
+  /* Optional: Add a subtle box-shadow for glow */
+  box-shadow: 0 2px 10px rgba(255,115,0,0.15);
 }
 
 /* Matrix Rain Effect (Easter Egg) */
@@ -1669,7 +1670,6 @@ footer p {
     background: #ff7300;
   }
 }
-
 /* Print styles */
 @media print {
   #particles-container,
