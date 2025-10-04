@@ -248,6 +248,8 @@ html {
 body {
   margin: 0;
   padding: 0;
+  color: #fff ;
+  background: linear-gradient(135deg, var(--color-slate-900) 0, var(--color-charcoal-800) 100%);
 }
 
 *,
@@ -1474,6 +1476,9 @@ nav ul li a.active {
 
 .modal-actions {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: var(--space-16);
 }
 

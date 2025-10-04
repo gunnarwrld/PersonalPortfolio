@@ -10,25 +10,36 @@ class PortfolioApp {
     
     // Project data
     this.projects = {
-      'ecommerce': {
-        title: 'E-Commerce Platform',
-        description: 'Built a comprehensive e-commerce platform from ground up with React and Node.js. Features include real-time inventory management, secure payment processing with Stripe, user authentication, admin dashboard, product search and filtering, shopping cart with persistent state, order tracking, and fully responsive design. Implemented advanced features like wishlist, product recommendations, and multi-vendor support.',
-        technologies: ['React', 'Node.js', 'MongoDB', 'Stripe API', 'Redux'],
-        features: ['Real-time inventory', 'Secure payments', 'Admin dashboard', 'Product recommendations'],
-        github: 'https://github.com/gunnar/ecommerce-platform',
-        image: 'https://via.placeholder.com/600x400/ff7300/ffffff?text=E-Commerce+Platform',
-        timeline: '3 months',
-        role: 'Full Stack Developer'
+      'portfolio': {
+        title: 'Personal Portfolio Website',
+        description: 'Built a responsive and visually engaging personal portfolio to showcase my work and skills. Features custom animated background particles, smooth section transitions, interactive project modals, and adaptive navigation for mobile and desktop. Focused on clean design, accessibility, and performance.',
+        technologies: ['JavaScript', 'HTML5', 'CSS3'],
+        features: [
+          'Animated background particles',
+          'Mobile-first responsive design',
+          'Smooth transitions and section navigation',
+          'Project modals with GitHub integration'
+        ],
+        github: 'https://github.com/gunnarwrld/PersonalPortfolio',
+        image: 'assets/images/portfolioVertical.jpg',
+        timeline: '2 months',
+        role: 'Frontend Developer & Designer'
       },
-      'taskmanager': {
-        title: 'Task Management App',
-        description: 'Developed a collaborative task management application using Vue.js and Express.js. Features real-time collaboration with Socket.io, drag-and-drop kanban boards, advanced task filtering and search, team management, file attachments, time tracking, reporting dashboard, and mobile-responsive design. Integrated with popular tools like Slack and Google Calendar.',
-        technologies: ['Vue.js', 'Express.js', 'Socket.io', 'PostgreSQL'],
-        features: ['Real-time collaboration', 'Drag & drop', 'Team management', 'Time tracking'],
-        github: 'https://github.com/gunnar/task-manager',
-        image: 'https://via.placeholder.com/600x400/ff7300/ffffff?text=Task+Manager',
+      'financetracke': {
+        title: 'FinanceTracke Web App',
+        description: 'Developed a cross-platform personal finance management PWA using Vanilla JS, HTML, and CSS. Secured with Google OAuth authentication and integrated with a cloud Supabase/PostgreSQL database. Features real-time account balance updates, live currency conversion, visual analytics dashboard, multi-currency support, complete transaction and account CRUD, mobile-first design, and offline-first capabilities.',
+        technologies: ['JavaScript', 'HTML5','CSS', 'Supabase', 'Google OAuth', 'PWA', 'PostgreSQL'],
+        features: [
+          'Multi-account & multi-currency',
+          'Google-auth sign-in',
+          'Live currency rates',
+          'Real-time sync & offline support',
+          'Comprehensive analytics dashboard'
+        ],        
+        github: 'https://github.com/gunnarwrld/personal-finance-web-app',
+        image: 'assets/images/financeTrackeVertical.jpg',
         timeline: '4 months',
-        role: 'Lead Developer'
+        role: 'Full Stack Developer'
       },
       'weather': {
         title: 'Weather Dashboard',
@@ -40,7 +51,7 @@ class PortfolioApp {
         timeline: '2 months',
         role: 'Frontend Developer'
       },
-      'crypto': {
+       'crypto': {
         title: 'Cryptocurrency Tracker',
         description: 'Built a comprehensive cryptocurrency tracking application with React and TypeScript. Features include real-time price tracking, advanced charting with TradingView integration, portfolio management, price alerts, market analysis tools, news aggregation, and social sentiment analysis. Implemented WebSocket connections for live data updates.',
         technologies: ['React', 'TypeScript', 'WebSocket', 'TradingView Charts'],
@@ -49,7 +60,7 @@ class PortfolioApp {
         image: 'https://via.placeholder.com/600x400/ff7300/ffffff?text=Crypto+Tracker',
         timeline: '3 months',
         role: 'Frontend Developer'
-      },
+      }, 
       'social': {
         title: 'Social Media Dashboard',
         description: 'Developed a comprehensive social media management platform using Next.js and GraphQL. Features include multi-platform posting, content scheduling, analytics dashboard, engagement tracking, team collaboration, content calendar, automated responses, and performance reporting. Integrated with major social platforms like Twitter, Instagram, and LinkedIn.',
@@ -69,6 +80,16 @@ class PortfolioApp {
         image: 'https://via.placeholder.com/600x400/ff7300/ffffff?text=AI+Chat+App',
         timeline: '4 months',
         role: 'AI Developer'
+      }, 
+      'comingsoon': {
+        title: 'Coming Soon...',
+        description: 'An exciting new project is under development! Stay tuned for updates and new features.',
+        technologies: ['Coming Soon'],
+        features: ['More info coming soon'],
+        github: '',
+        image: 'https://via.placeholder.com/600x400/555555/ffffff?text=Coming+Soon...',
+        timeline: 'In Progress',
+        role: '—'
       }
     };
 
@@ -439,35 +460,50 @@ class PortfolioApp {
     }, 300);
   }
 
-  getTechIcon(tech) {
-    const icons = {
-      'React': '⚛️',
-      'Vue.js': '💚',
-      'Node.js': '🟢',
-      'JavaScript': '⚡',
-      'TypeScript': '🔷',
-      'Python': '🐍',
-      'MongoDB': '🍃',
-      'PostgreSQL': '🐘',
-      'Express.js': '🚀',
-      'FastAPI': '🚀',
-      'Next.js': '▲',
-      'GraphQL': '◉',
-      'D3.js': '📊',
-      'Chart.js': '📊',
-      'Socket.io': '🔌',
-      'WebSocket': '🔗',
-      'Stripe API': '💳',
-      'Redux': '🔄',
-      'Prisma': '🔷',
-      'Tailwind CSS': '🎨',
-      'Weather API': '🌤️',
-      'OpenAI API': '🤖',
-      'WebRTC': '📞',
-      'TradingView Charts': '📈'
-    };
-    return icons[tech] || '⚙️';
-  }
+getTechIcon(tech) {
+  const icons = {
+    'HTML5': '🌐',
+    'CSS': '🎨',
+    'Tailwind CSS': '🖌️',
+    'React': '⚛️',
+    'Vue.js': '💚',
+    'Node.js': '🟢',
+    'JavaScript': '⚡',
+    'TypeScript': '🔷',
+    'Python': '🐍',
+    'MongoDB': '🍃',
+    'PostgreSQL': '🐘',
+    'Supabase': '🟩',
+    'Express.js': '🚀',
+    'FastAPI': '🚀',
+    'Next.js': '▲',
+    'GraphQL': '◉',
+    'D3.js': '📉',
+    'Chart.js': '📊',
+    'Socket.io': '🔌',
+    'WebSocket': '🔗',
+    'Stripe API': '💳',
+    'Redux': '🔄',
+    'Prisma': '⟁',
+    'Weather API': '🌤️',
+    'OpenAI API': '🤖',
+    'WebRTC': '📞',
+    'TradingView Charts': '📈',
+    'PWA': '📱',
+    'Google OAuth': '🔐',
+    'OAuth': '🔑',
+    'Service Worker': '🛠️',
+    'Manifest': '🗃️',
+    'Vercel': '▲',
+    'Netlify': '🦙',
+    'Day.js': '🕒',
+    'REST API': '🌐',
+    'exchangerate.host': '💱',
+    'Coming Soon': '🚧'
+  };
+  return icons[tech] || '❔';
+}
+
 
   // Easter Eggs
   initEasterEggs() {
