@@ -5,12 +5,6 @@ class PortfolioApp {
     this.particleCount = 0;
     this.animationCount = 0;
     this.easterEggCount = 0;
-    this.konamiSequence = [];
-    this.konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
-    this.secretWord = '';
-    this.secretTarget = 'DEVELOPER';
-    this.cornerSequence = [];
-    this.cornerTarget = ['top-left', 'top-right', 'bottom-right', 'bottom-left'];
     this.particleAnimationId = null;
     this.lastParticleTime = Date.now();
     
@@ -477,38 +471,8 @@ class PortfolioApp {
 
   // Easter Eggs
   initEasterEggs() {
-    // Konami Code
     document.addEventListener('keydown', (e) => {
-      this.konamiSequence.push(e.code);
-      if (this.konamiSequence.length > this.konamiCode.length) {
-        this.konamiSequence.shift();
-      }
-      
-      if (this.konamiSequence.join(',') === this.konamiCode.join(',')) {
-        this.triggerParticleExplosion();
-        this.easterEggCount++;
-        this.updateCounters();
-      }
-
-      // Secret word detection
-      if (e.code.startsWith('Key')) {
-        this.secretWord += e.code.replace('Key', '');
-        if (this.secretWord.length > this.secretTarget.length) {
-          this.secretWord = this.secretWord.slice(-this.secretTarget.length);
-        }
-        
-        if (this.secretWord === this.secretTarget) {
-          this.showDeveloperPanel();
-          this.easterEggCount++;
-          this.updateCounters();
-        }
-      }
-
       // Special key shortcuts
-      if (e.code === 'KeyD' && e.ctrlKey) {
-        e.preventDefault();
-        this.showDeveloperPanel();
-      }
       if (e.code === 'KeyP' && e.ctrlKey) {
         e.preventDefault();
         this.togglePartyMode();
@@ -526,64 +490,6 @@ class PortfolioApp {
       this.easterEggCount++;
       this.updateCounters();
     });
-
-    // Corner click sequence
-    const corners = document.querySelectorAll('.easter-egg-corner');
-    corners.forEach(corner => {
-      corner.addEventListener('click', () => {
-        const cornerType = corner.getAttribute('data-corner');
-        this.cornerSequence.push(cornerType);
-        corner.classList.add('clicked');
-        
-        setTimeout(() => {
-          corner.classList.remove('clicked');
-        }, 1000);
-        
-        if (this.cornerSequence.length > this.cornerTarget.length) {
-          this.cornerSequence.shift();
-        }
-        
-        if (this.cornerSequence.join(',') === this.cornerTarget.join(',')) {
-          this.triggerSecretTheme();
-          this.easterEggCount++;
-          this.updateCounters();
-        }
-      });
-    });
-  }
-
-  triggerParticleExplosion() {
-    const explosionCenter = {
-      x: window.innerWidth / 2,
-      y: window.innerHeight / 2
-    };
-    
-    for (let i = 0; i < 50; i++) {
-      setTimeout(() => {
-        const angle = (i / 50) * Math.PI * 2;
-        const distance = Math.random() * 200 + 100;
-        const x = explosionCenter.x + Math.cos(angle) * distance;
-        const y = explosionCenter.y + Math.sin(angle) * distance;
-        this.createExplosionParticle(explosionCenter.x, explosionCenter.y, x, y);
-      }, i * 20);
-    }
-  }
-
-  createExplosionParticle(startX, startY, endX, endY) {
-    const particle = document.createElement('div');
-    particle.className = 'explosion-particle';
-    particle.style.left = startX + 'px';
-    particle.style.top = startY + 'px';
-    particle.style.setProperty('--dx', (endX - startX) + 'px');
-    particle.style.setProperty('--dy', (endY - startY) + 'px');
-    
-    document.body.appendChild(particle);
-    
-    setTimeout(() => {
-      if (particle.parentNode) {
-        particle.parentNode.removeChild(particle);
-      }
-    }, 1000);
   }
 
   triggerMatrixEffect() {
@@ -629,64 +535,12 @@ class PortfolioApp {
     }, 5000);
   }
 
-  showDeveloperPanel() {
-    const panel = document.getElementById('developer-panel');
-    panel.classList.remove('hidden');
-    panel.classList.add('show');
-    
-    const closeBtn = document.getElementById('close-dev-panel');
-    closeBtn.addEventListener('click', () => {
-      panel.classList.remove('show');
-      setTimeout(() => {
-        panel.classList.add('hidden');
-      }, 300);
-    });
-  }
-
   togglePartyMode() {
     document.body.classList.toggle('party-mode');
   }
 
   toggleRainbowMode() {
     document.body.classList.toggle('rainbow-mode');
-  }
-
-  triggerSecretTheme() {
-    document.body.style.filter = 'invert(1) hue-rotate(180deg)';
-    setTimeout(() => {
-      document.body.style.filter = '';
-    }, 3000);
-  }
-
-  // Tooltips
-  initTooltips() {
-    const techIcons = document.querySelectorAll('.tech-icon[title]');
-    const tooltip = document.getElementById('tooltip');
-    const tooltipText = document.getElementById('tooltip-text');
-
-    techIcons.forEach(icon => {
-      icon.addEventListener('mouseenter', (e) => {
-        tooltipText.textContent = icon.getAttribute('title');
-        tooltip.classList.remove('hidden');
-        tooltip.classList.add('show');
-        this.updateTooltipPosition(e);
-      });
-
-      icon.addEventListener('mouseleave', () => {
-        tooltip.classList.remove('show');
-        setTimeout(() => {
-          tooltip.classList.add('hidden');
-        }, 300);
-      });
-
-      icon.addEventListener('mousemove', this.updateTooltipPosition.bind(this));
-    });
-  }
-
-  updateTooltipPosition(e) {
-    const tooltip = document.getElementById('tooltip');
-    tooltip.style.left = e.clientX + 10 + 'px';
-    tooltip.style.top = e.clientY - 40 + 'px';
   }
 
   // Ripple Effects
@@ -834,11 +688,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add keyboard shortcuts info
   console.log(`
     🎯 Easter Eggs & Shortcuts:
-    - Konami Code: ↑↑↓↓←→←→BA
-    - Type "DEVELOPER" anywhere
     - Double-click the logo
-    - Click corners: top-left → top-right → bottom-right → bottom-left
-    - Ctrl+D: Developer panel
     - Ctrl+P: Party mode
     - Ctrl+R: Rainbow mode
   `);

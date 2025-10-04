@@ -33,37 +33,6 @@
   --color-orange-500-rgb: 168, 75, 47;
   --color-orange-400-rgb: 230, 129, 97;
 
-  /* Background color tokens (Light Mode) */
-  --color-bg-1: rgba(59, 130, 246, 0.08); /* Light blue */
-  --color-bg-2: rgba(245, 158, 11, 0.08); /* Light yellow */
-  --color-bg-3: rgba(34, 197, 94, 0.08); /* Light green */
-  --color-bg-4: rgba(239, 68, 68, 0.08); /* Light red */
-  --color-bg-5: rgba(147, 51, 234, 0.08); /* Light purple */
-  --color-bg-6: rgba(249, 115, 22, 0.08); /* Light orange */
-  --color-bg-7: rgba(236, 72, 153, 0.08); /* Light pink */
-  --color-bg-8: rgba(6, 182, 212, 0.08); /* Light cyan */
-
-  /* Semantic Color Tokens (Light Mode) */
-  --color-background: var(--color-cream-50);
-  --color-surface: var(--color-cream-100);
-  --color-text: var(--color-slate-900);
-  --color-text-secondary: var(--color-slate-500);
-  --color-primary: var(--color-teal-500);
-  --color-primary-hover: var(--color-teal-600);
-  --color-primary-active: var(--color-teal-700);
-  --color-secondary: rgba(var(--color-brown-600-rgb), 0.12);
-  --color-secondary-hover: rgba(var(--color-brown-600-rgb), 0.2);
-  --color-secondary-active: rgba(var(--color-brown-600-rgb), 0.25);
-  --color-border: rgba(var(--color-brown-600-rgb), 0.2);
-  --color-btn-primary-text: var(--color-cream-50);
-  --color-card-border: rgba(var(--color-brown-600-rgb), 0.12);
-  --color-card-border-inner: rgba(var(--color-brown-600-rgb), 0.12);
-  --color-error: var(--color-red-500);
-  --color-success: var(--color-teal-500);
-  --color-warning: var(--color-orange-500);
-  --color-info: var(--color-slate-500);
-  --color-focus-ring: rgba(var(--color-teal-500-rgb), 0.4);
-  --color-select-caret: rgba(var(--color-slate-900-rgb), 0.8);
 
   /* Common style patterns */
   --focus-ring: 0 0 0 3px var(--color-focus-ring);
@@ -265,40 +234,6 @@
   --color-info-rgb: var(--color-gray-300-rgb);
 }
 
-[data-color-scheme="light"] {
-  /* RGB versions for opacity control (light mode) */
-  --color-brown-600-rgb: 94, 82, 64;
-  --color-teal-500-rgb: 33, 128, 141;
-  --color-slate-900-rgb: 19, 52, 59;
-
-  /* Semantic Color Tokens (Light Mode) */
-  --color-background: var(--color-cream-50);
-  --color-surface: var(--color-cream-100);
-  --color-text: var(--color-slate-900);
-  --color-text-secondary: var(--color-slate-500);
-  --color-primary: var(--color-teal-500);
-  --color-primary-hover: var(--color-teal-600);
-  --color-primary-active: var(--color-teal-700);
-  --color-secondary: rgba(var(--color-brown-600-rgb), 0.12);
-  --color-secondary-hover: rgba(var(--color-brown-600-rgb), 0.2);
-  --color-secondary-active: rgba(var(--color-brown-600-rgb), 0.25);
-  --color-border: rgba(var(--color-brown-600-rgb), 0.2);
-  --color-btn-primary-text: var(--color-cream-50);
-  --color-card-border: rgba(var(--color-brown-600-rgb), 0.12);
-  --color-card-border-inner: rgba(var(--color-brown-600-rgb), 0.12);
-  --color-error: var(--color-red-500);
-  --color-success: var(--color-teal-500);
-  --color-warning: var(--color-orange-500);
-  --color-info: var(--color-slate-500);
-  --color-focus-ring: rgba(var(--color-teal-500-rgb), 0.4);
-
-  /* RGB versions for light mode */
-  --color-success-rgb: var(--color-teal-500-rgb);
-  --color-error-rgb: var(--color-red-500-rgb);
-  --color-warning-rgb: var(--color-orange-500-rgb);
-  --color-info-rgb: var(--color-slate-500-rgb);
-}
-
 /* Base styles */
 html {
   font-size: var(--font-size-base);
@@ -471,38 +406,6 @@ pre code {
   cursor: not-allowed;
 }
 
-/* Form elements */
-.form-control {
-  display: block;
-  width: 100%;
-  padding: var(--space-8) var(--space-12);
-  font-size: var(--font-size-md);
-  line-height: 1.5;
-  color: var(--color-text);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-base);
-  transition: border-color var(--duration-fast) var(--ease-standard),
-    box-shadow var(--duration-fast) var(--ease-standard);
-}
-
-textarea.form-control {
-  font-family: var(--font-family-base);
-  font-size: var(--font-size-base);
-}
-
-select.form-control {
-  padding: var(--space-8) var(--space-12);
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background-image: var(--select-caret-light);
-  background-repeat: no-repeat;
-  background-position: right var(--space-12) center;
-  background-size: 16px;
-  padding-right: var(--space-32);
-}
-
 /* Add a dark mode specific caret */
 @media (prefers-color-scheme: dark) {
   select.form-control {
@@ -515,9 +418,6 @@ select.form-control {
   background-image: var(--select-caret-dark);
 }
 
-[data-color-scheme="light"] select.form-control {
-  background-image: var(--select-caret-light);
-}
 
 .form-control:focus {
   border-color: var(--color-primary);
@@ -799,48 +699,6 @@ body::before {
 
 #matrix-canvas.active {
   opacity: 0.8;
-}
-
-/* Easter Egg Corner Elements */
-.easter-egg-corner {
-  position: fixed;
-  width: 30px;
-  height: 30px;
-  z-index: 1000;
-  cursor: pointer;
-  opacity: 0;
-  transition: all 0.3s ease;
-}
-
-.easter-egg-corner:hover {
-  opacity: 0.3;
-  background: radial-gradient(circle, rgba(255, 115, 0, 0.3), transparent);
-}
-
-.easter-egg-corner.top-left {
-  top: 10px;
-  left: 10px;
-}
-
-.easter-egg-corner.top-right {
-  top: 10px;
-  right: 10px;
-}
-
-.easter-egg-corner.bottom-left {
-  bottom: 10px;
-  left: 10px;
-}
-
-.easter-egg-corner.bottom-right {
-  bottom: 10px;
-  right: 10px;
-}
-
-.easter-egg-corner.clicked {
-  background: radial-gradient(circle, rgba(255, 115, 0, 0.8), transparent);
-  opacity: 1;
-  transform: scale(1.5);
 }
 
 /* Header Styles */
@@ -1618,66 +1476,6 @@ nav ul li a.active {
   gap: var(--space-16);
 }
 
-/* Developer Panel (Easter Egg) */
-.developer-panel {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: var(--color-surface);
-  padding: var(--space-24);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-  z-index: 3000;
-  min-width: 300px;
-  text-align: center;
-  border: 2px solid #ff7300;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
-}
-
-.developer-panel.show {
-  opacity: 1;
-  visibility: visible;
-}
-
-.developer-panel h3 {
-  color: #ff7300;
-  margin-bottom: var(--space-16);
-}
-
-.developer-panel ul {
-  list-style: none;
-  margin-bottom: var(--space-20);
-  text-align: left;
-}
-
-.developer-panel li {
-  padding: var(--space-4) 0;
-  display: flex;
-  justify-content: space-between;
-}
-
-.developer-panel span {
-  color: #ff7300;
-  font-weight: bold;
-}
-
-#close-dev-panel {
-  background: #ff7300;
-  color: white;
-  border: none;
-  padding: var(--space-8) var(--space-16);
-  border-radius: var(--radius-base);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-#close-dev-panel:hover {
-  background: #ff9500;
-}
-
 /* Scroll to Top Button */
 #scrollTopBtn {
   position: fixed;
@@ -1708,35 +1506,6 @@ nav ul li a.active {
 #scrollTopBtn:hover {
   transform: scale(1.1);
   box-shadow: 0 6px 30px rgba(255, 115, 0, 0.6);
-}
-
-/* Tooltip */
-.tooltip {
-  position: absolute;
-  background: var(--color-charcoal-800);
-  color: white;
-  padding: var(--space-6) var(--space-12);
-  border-radius: var(--radius-base);
-  font-size: var(--font-size-sm);
-  z-index: 1001;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  box-shadow: var(--shadow-lg);
-}
-
-.tooltip.show {
-  opacity: 1;
-}
-
-.tooltip::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 5px solid transparent;
-  border-top-color: var(--color-charcoal-800);
 }
 
 /* Footer */
@@ -1771,33 +1540,6 @@ footer p {
 
 .fade-in.animate {
   opacity: 1;
-}
-
-/* Particle Explosion Effect */
-.particle-explosion {
-  position: fixed;
-  pointer-events: none;
-  z-index: 1001;
-}
-
-.explosion-particle {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  background: #ff7300;
-  border-radius: 50%;
-  animation: explode 1s ease-out forwards;
-}
-
-@keyframes explode {
-  0% {
-    transform: scale(0);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1) translate(var(--dx), var(--dy));
-    opacity: 0;
-  }
 }
 
 /* Rainbow Mode (Easter Egg) */
