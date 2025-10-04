@@ -1670,23 +1670,6 @@ footer p {
   }
 }
 
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-  
-  .particle {
-    display: none;
-  }
-  
-  #matrix-canvas {
-    display: none;
-  }
-}
-
 /* Print styles */
 @media print {
   #particles-container,
