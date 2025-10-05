@@ -117,22 +117,31 @@ class PortfolioApp {
   // Particle System
   initParticleSystem() {
     this.particlesContainer = document.getElementById('particles-container');
-    
-    // Mouse trail particles
-    let lastMouseParticleTime = 0;
-    // Attach mousemove only to the particles container for better performance
-    this.particlesContainer.addEventListener('mousemove', (e) => {
-      const now = Date.now();
-      if (now - lastMouseParticleTime > 50) { // Throttle to every 50ms
-        if (Math.random() < 0.05) {
-          this.createParticle(e.clientX, e.clientY);
-        }
-        lastMouseParticleTime = now;
-      }
-    });
+    if (!this.particlesContainer) {
+      console.error('Particles container not found!');
+      return;
+    }
 
-    // Start the main animation loop
+    // Initialize particle array
+    this.particles = [];
+    
+    // Create initial particles
+    this.createInitialParticles();
+    
+    // Start animation loop
     this.animateParticles();
+    
+    // Add mouse trail effect
+    this.addMouseTrail();
+  }
+  createInitialParticles() {
+    const particleCount = Math.min(30, window.innerWidth / 50);
+    for (let i = 0; i < particleCount; i++) {
+      this.createParticle(
+        Math.random() * window.innerWidth,
+        Math.random() * window.innerHeight
+      );
+    }
   }
 
   startContinuousParticleGeneration() {
@@ -175,42 +184,39 @@ class PortfolioApp {
   createParticle(x, y) {
     const particle = document.createElement('div');
     particle.className = 'particle';
-    particle.style.left = x + 'px';
-    particle.style.top = y + 'px';
     
+    // Random size between 2-6px
     const size = Math.random() * 4 + 2;
-    particle.style.width = size + 'px';
-    particle.style.height = size + 'px';
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+    particle.style.left = `${x}px`;
+    particle.style.top = `${y}px`;
+    particle.style.opacity = Math.random() * 0.8 + 0.2;
     
-    const opacity = Math.random() * 0.8 + 0.2;
-    particle.style.opacity = opacity;
-
     this.particlesContainer.appendChild(particle);
-
+    
+    // Store particle data
     const particleData = {
       element: particle,
       x: x,
       y: y,
-      vx: (Math.random() - 0.5) * 1.5,
-      vy: (Math.random() - 0.5) * 1.5,
-      life: Date.now() + Math.random() * 5000 + 3000, // Live for 3-8 seconds
-      opacity: opacity,
-      fadeSpeed: Math.random() * 0.01 + 0.005
+      vx: (Math.random() - 0.5) * 2, // velocity x
+      vy: (Math.random() - 0.5) * 2, // velocity y
+      life: Date.now() + Math.random() * 8000 + 5000, // 5-13 seconds
+      opacity: parseFloat(particle.style.opacity),
+      size: size
     };
-
+    
     this.particles.push(particleData);
-    this.particleCount++;
-    this.updateCounters();
+    return particleData;
   }
 
-  removeParticle(particleData) {
-    const index = this.particles.indexOf(particleData);
-    if (index > -1) {
-      this.particles.splice(index, 1);
-      if (particleData.element && particleData.element.parentNode) {
-        particleData.element.parentNode.removeChild(particleData.element);
-      }
+  removeParticle(index) {
+    const particle = this.particles[index];
+    if (particle && particle.element && particle.element.parentNode) {
+      particle.element.parentNode.removeChild(particle.element);
     }
+    this.particles.splice(index, 1);
   }
 
   animateParticles() {
@@ -220,9 +226,9 @@ class PortfolioApp {
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const particle = this.particles[i];
       
-      // Check if particle should be removed
+      // Remove expired particles
       if (currentTime > particle.life) {
-        this.removeParticle(particle);
+        this.removeParticle(i);
         continue;
       }
       
@@ -232,30 +238,47 @@ class PortfolioApp {
       
       // Bounce off edges
       if (particle.x <= 0 || particle.x >= window.innerWidth) {
-        particle.vx *= -0.8; // Add some damping
+        particle.vx *= -0.8;
         particle.x = Math.max(0, Math.min(window.innerWidth, particle.x));
       }
+      
       if (particle.y <= 0 || particle.y >= window.innerHeight) {
         particle.vy *= -0.8;
         particle.y = Math.max(0, Math.min(window.innerHeight, particle.y));
       }
       
-      // Fade out over time
+      // Fade out near end of life
       const timeLeft = particle.life - currentTime;
-      if (timeLeft < 1000) { // Start fading in last second
-        particle.opacity = Math.max(0, particle.opacity - particle.fadeSpeed);
+      if (timeLeft < 2000) {
+        particle.opacity = (timeLeft / 2000) * particle.opacity;
       }
       
-      // Apply changes to DOM element
-      if (particle.element) {
-        particle.element.style.left = particle.x + 'px';
-        particle.element.style.top = particle.y + 'px';
-        particle.element.style.opacity = particle.opacity;
-      }
+      // Apply changes to DOM
+      particle.element.style.left = `${particle.x}px`;
+      particle.element.style.top = `${particle.y}px`;
+      particle.element.style.opacity = particle.opacity;
     }
-
+    
+    // Maintain particle count
+    if (this.particles.length < 20) {
+      this.createParticle(
+        Math.random() * window.innerWidth,
+        Math.random() * window.innerHeight
+      );
+    }
+    
     // Continue animation
-    this.particleAnimationId = requestAnimationFrame(() => this.animateParticles());
+    requestAnimationFrame(() => this.animateParticles());
+  }
+    addMouseTrail() {
+    let lastTime = 0;
+    document.addEventListener('mousemove', (e) => {
+      const now = Date.now();
+      if (now - lastTime > 100 && Math.random() < 0.1) {
+        this.createParticle(e.clientX, e.clientY);
+        lastTime = now;
+      }
+    });
   }
 
   // Scroll Animations
