@@ -21,12 +21,13 @@ class PortfolioApp {
           'Project modals with GitHub integration'
         ],
         github: 'https://github.com/gunnarwrld/PersonalPortfolio',
+        liveDemo: 'https://gunnarwrld.com/', 
         image: 'assets/images/portfolioVertical.jpg',
         timeline: '2 months',
         role: 'Frontend Developer & Designer'
       },
       'financetracker': {
-        title: 'FinanceTracke Web App',
+        title: 'FinanceTracker Web App',
         description: 'Developed a cross-platform personal finance management PWA using Vanilla JS, HTML, and CSS. Secured with Google OAuth authentication and integrated with a cloud Supabase/PostgreSQL database. Features real-time account balance updates, live currency conversion, visual analytics dashboard, multi-currency support, complete transaction and account CRUD, mobile-first design, and offline-first capabilities.',
         technologies: ['JavaScript', 'HTML5','CSS', 'Supabase', 'Google OAuth', 'PWA', 'PostgreSQL'],
         features: [
@@ -37,38 +38,9 @@ class PortfolioApp {
           'Comprehensive analytics dashboard'
         ],        
         github: 'https://github.com/gunnarwrld/personal-finance-web-app',
+        liveDemo: 'https://personal-finance-web-app-psi.vercel.app/',
         image: 'assets/images/financeTrackeVertical.jpg',
         timeline: '4 months',
-        role: 'Full Stack Developer'
-      },
-      'weather': {
-        title: 'Weather Dashboard',
-        description: 'Created an interactive weather dashboard using vanilla JavaScript and D3.js. Features include current weather conditions, 7-day forecasts, historical weather data analysis, interactive maps, weather alerts, location-based services, data visualization with charts and graphs, and offline functionality with service workers.',
-        technologies: ['JavaScript', 'D3.js', 'Weather API', 'Chart.js'],
-        features: ['Interactive maps', 'Data visualization', 'Weather alerts', 'Offline support'],
-        github: 'https://github.com/gunnar/weather-dashboard',
-        image: 'https://via.placeholder.com/600x400/ff7300/ffffff?text=Weather+Dashboard',
-        timeline: '2 months',
-        role: 'Frontend Developer'
-      },
-       'crypto': {
-        title: 'Cryptocurrency Tracker',
-        description: 'Built a comprehensive cryptocurrency tracking application with React and TypeScript. Features include real-time price tracking, advanced charting with TradingView integration, portfolio management, price alerts, market analysis tools, news aggregation, and social sentiment analysis. Implemented WebSocket connections for live data updates.',
-        technologies: ['React', 'TypeScript', 'WebSocket', 'TradingView Charts'],
-        features: ['Real-time tracking', 'Portfolio management', 'Price alerts', 'Market analysis'],
-        github: 'https://github.com/gunnar/crypto-tracker',
-        image: 'https://via.placeholder.com/600x400/ff7300/ffffff?text=Crypto+Tracker',
-        timeline: '3 months',
-        role: 'Frontend Developer'
-      }, 
-      'social': {
-        title: 'Social Media Dashboard',
-        description: 'Developed a comprehensive social media management platform using Next.js and GraphQL. Features include multi-platform posting, content scheduling, analytics dashboard, engagement tracking, team collaboration, content calendar, automated responses, and performance reporting. Integrated with major social platforms like Twitter, Instagram, and LinkedIn.',
-        technologies: ['Next.js', 'GraphQL', 'Prisma', 'Tailwind CSS'],
-        features: ['Multi-platform posting', 'Analytics', 'Team collaboration', 'Content calendar'],
-        github: 'https://github.com/gunnar/social-dashboard',
-        image: 'https://via.placeholder.com/600x400/ff7300/ffffff?text=Social+Dashboard',
-        timeline: '5 months',
         role: 'Full Stack Developer'
       },
       'posthub': {
@@ -77,6 +49,7 @@ class PortfolioApp {
         technologies: ['HTML5', 'CSS', 'REST API', 'JavaScript'],
         features: ['Dynamic Content Loading', 'Smart Catching System', 'Interactive Modal System','DOM Manipulation', 'Lazy Loading', 'Responsive Design', 'Error Handling', 'Hash-Based Navigation'],
         github: 'https://github.com/gunnarwrld/DynamicWebsite',
+        liveDemo: 'https://posthub-dynamic-website.vercel.app/',
         image: 'assets/images/posthub_y.png',
         timeline: '4 weeks',
         role: 'Frontend Developer'
@@ -87,20 +60,84 @@ class PortfolioApp {
         technologies: ['Coming Soon'],
         features: ['More info coming soon'],
         github: '',
-        image: 'https://via.placeholder.com/600x400/555555/ffffff?text=Coming+Soon...',
+        liveDemo: '',
+        image: 'assets/images/comingSoonVertical.png',
         timeline: 'In Progress',
         role: '—'
-      }
+      },
+      'comingsoon': {
+        title: 'Coming Soon...',
+        description: 'An exciting new project is under development! Stay tuned for updates and new features.',
+        technologies: ['Coming Soon'],
+        features: ['More info coming soon'],
+        github: '',
+        liveDemo: '',
+        image: 'assets/images/comingSoonVertical.png',
+        timeline: 'In Progress',
+        role: '—'
+      },
+      'comingsoon': {
+        title: 'Coming Soon...',
+        description: 'An exciting new project is under development! Stay tuned for updates and new features.',
+        technologies: ['Coming Soon'],
+        features: ['More info coming soon'],
+        github: '',
+        image: 'assets/images/comingSoonVertical.png',
+        timeline: 'In Progress',
+        role: '—'
+      },
+      'comingsoon': {
+        title: 'Coming Soon...',
+        description: 'An exciting new project is under development! Stay tuned for updates and new features.',
+        technologies: ['Coming Soon'],
+        features: ['More info coming soon'],
+        github: '',
+        image: 'assets/images/comingSoonVertical.png',
+        timeline: 'In Progress',
+        role: '—'
+      },
+      // 'weather': {
+      //   title: 'Weather Dashboard',
+      //   description: 'Created an interactive weather dashboard using vanilla JavaScript and D3.js. Features include current weather conditions, 7-day forecasts, historical weather data analysis, interactive maps, weather alerts, location-based services, data visualization with charts and graphs, and offline functionality with service workers.',
+      //   technologies: ['JavaScript', 'D3.js', 'Weather API', 'Chart.js'],
+      //   features: ['Interactive maps', 'Data visualization', 'Weather alerts', 'Offline support'],
+      //   github: 'https://github.com/gunnar/weather-dashboard',
+      //   image: 'https://via.placeholder.com/600x400/ff7300/ffffff?text=Weather+Dashboard',
+      //   timeline: '2 months',
+      //   role: 'Frontend Developer'
+      // },
+      //  'crypto': {
+      //   title: 'Cryptocurrency Tracker',
+      //   description: 'Built a comprehensive cryptocurrency tracking application with React and TypeScript. Features include real-time price tracking, advanced charting with TradingView integration, portfolio management, price alerts, market analysis tools, news aggregation, and social sentiment analysis. Implemented WebSocket connections for live data updates.',
+      //   technologies: ['React', 'TypeScript', 'WebSocket', 'TradingView Charts'],
+      //   features: ['Real-time tracking', 'Portfolio management', 'Price alerts', 'Market analysis'],
+      //   github: 'https://github.com/gunnar/crypto-tracker',
+      //   image: 'https://via.placeholder.com/600x400/ff7300/ffffff?text=Crypto+Tracker',
+      //   timeline: '3 months',
+      //   role: 'Frontend Developer'
+      // }, 
+      // 'social': {
+      //   title: 'Social Media Dashboard',
+      //   description: 'Developed a comprehensive social media management platform using Next.js and GraphQL. Features include multi-platform posting, content scheduling, analytics dashboard, engagement tracking, team collaboration, content calendar, automated responses, and performance reporting. Integrated with major social platforms like Twitter, Instagram, and LinkedIn.',
+      //   technologies: ['Next.js', 'GraphQL', 'Prisma', 'Tailwind CSS'],
+      //   features: ['Multi-platform posting', 'Analytics', 'Team collaboration', 'Content calendar'],
+      //   github: 'https://github.com/gunnar/social-dashboard',
+      //   image: 'https://via.placeholder.com/600x400/ff7300/ffffff?text=Social+Dashboard',
+      //   timeline: '5 months',
+      //   role: 'Full Stack Developer'
+      // }
     };
 
     this.init();
   }
 
   init() {
+    this.initLoadingScreen();
     this.initParticleSystem();
     this.initScrollAnimations();
     this.initNavigation();
     this.initTypingAnimation();
+    this.initStatsCounter();
     this.initSkillBars();
     this.initProjectModals();
     this.initEasterEggs();
@@ -112,6 +149,32 @@ class PortfolioApp {
     // Add some initial particles and start continuous generation
     this.createParticles(30);
     this.startContinuousParticleGeneration();
+  }
+
+  // Loading Screen
+  initLoadingScreen() {
+    const loadingScreen = document.getElementById('loading-screen');
+    const loadingBar = document.getElementById('loading-bar');
+    const loadingText = document.getElementById('loading-text');
+    
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 15;
+      if (progress > 100) progress = 100;
+      
+      loadingBar.style.width = progress + '%';
+      loadingText.textContent = Math.floor(progress) + '%';
+      
+      if (progress >= 100) {
+        clearInterval(interval);
+        setTimeout(() => {
+          loadingScreen.classList.add('fade-out');
+          setTimeout(() => {
+            loadingScreen.style.display = 'none';
+          }, 500);
+        }, 500);
+      }
+    }, 100);
   }
 
   // Particle System
@@ -392,6 +455,41 @@ class PortfolioApp {
     }, 2000);
   }
 
+  // Stats Counter Animation
+  initStatsCounter() {
+    const statNumbers = document.querySelectorAll('.stat-number[data-target]');
+    
+    const animateCounter = (element) => {
+      const target = parseInt(element.getAttribute('data-target'));
+      const duration = 2000; // 2 seconds
+      const increment = target / (duration / 16); // 60fps
+      let current = 0;
+      
+      const updateCounter = () => {
+        current += increment;
+        if (current < target) {
+          element.textContent = Math.floor(current).toLocaleString();
+          requestAnimationFrame(updateCounter);
+        } else {
+          element.textContent = target.toLocaleString();
+        }
+      };
+      
+      updateCounter();
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !entry.target.classList.contains('animated')) {
+          entry.target.classList.add('animated');
+          animateCounter(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    
+    statNumbers.forEach(stat => observer.observe(stat));
+  }
+
   // Skill Bars Animation
   initSkillBars() {
     const skillBars = document.querySelectorAll('.skill-progress');
@@ -448,6 +546,26 @@ class PortfolioApp {
     document.getElementById('modal-project-timeline').textContent = project.timeline;
     document.getElementById('modal-project-role').textContent = project.role;
     document.getElementById('modal-github-link').href = project.github;
+
+    // Handle Live Demo button
+    const liveDemoLink = document.getElementById('modal-live-demo-link');
+    const demoStatusContainer = document.getElementById('demo-status-container');
+    
+    if (project.liveDemo && project.liveDemo.trim() !== '') {
+      // Live demo is available
+      liveDemoLink.href = project.liveDemo;
+      liveDemoLink.disabled = false;
+      liveDemoLink.style.pointerEvents = 'auto';
+      liveDemoLink.style.opacity = '1';
+      demoStatusContainer.innerHTML = '';
+    } else {
+      // Live demo not available
+      liveDemoLink.href = '#';
+      liveDemoLink.disabled = true;
+      liveDemoLink.style.pointerEvents = 'none';
+      liveDemoLink.style.opacity = '0.6';
+      demoStatusContainer.innerHTML = '<p class="demo-status-message">🚧 Live demo coming soon...</p>';
+    }
 
     // Tech icons
     const techIconsContainer = document.getElementById('modal-tech-icons');

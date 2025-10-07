@@ -10,6 +10,18 @@
 
 <body>
   
+  <!-- Loading Screen -->
+  <div id="loading-screen" class="loading-screen">
+    <div class="loading-content">
+      <img src="assets/images/estrella.png" alt="Loading" class="loading-logo">
+      <div class="loading-bar-container">
+        <div class="loading-bar" id="loading-bar"></div>
+      </div>
+      <p class="loading-text" id="loading-text">0%</p>
+      <p class="loading-tagline">Loading the best portfolio ever...</p>
+    </div>
+  </div>
+
   <!-- Particle Container -->
   <div id="particles-container"></div>
   
@@ -56,6 +68,36 @@
           </a>
             <div class="ripple"></div>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Counter Section -->
+  <section id="stats" class="stats section">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">💼</div>
+          <div class="stat-number" data-target="3">0</div>
+          <div class="stat-label">Projects Completed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">💻</div>
+          <div class="stat-number" data-target="50000">0</div>
+          <div class="stat-suffix">+</div>
+          <div class="stat-label">Lines of Code</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">☕</div>
+          <div class="stat-number">∞</div>
+          <div class="stat-label">Coffee Consumed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🎯</div>
+          <div class="stat-number" data-target="100">0</div>
+          <div class="stat-suffix">%</div>
+          <div class="stat-label">Dedication</div>
         </div>
       </div>
     </div>
@@ -251,6 +293,7 @@
     <div class="container">
       <h2>Featured Projects</h2>
       <div class="projects-grid">
+
         <div class="project-card" data-project="portfolio">
           <div class="project-image">
             <img src="assets/images/portfolioHorizontal.jpg" alt="Personal Portfolio">
@@ -289,7 +332,72 @@
           </div>
         </div>
 
-        <div class="project-card" data-project="weather">
+          <div class="project-card" data-project="posthub">
+            <div class="project-image">
+              <img src="assets/images/posthub_x.png" alt="PostHub - Dynamic Blog Application">
+              <div class="project-overlay">
+                <button class="view-project-btn">View Details</button>
+              </div>
+            </div>
+            <div class="project-content">
+              <h3>PostHub - Dynamic Blog Application</h3>
+              <p>A modern Single Page Application built with vanilla JavaScript that delivers a seamless blog experience with real-time data fetching, user profiles, and interactive comments. Features smart caching, lazy loading, and responsive design (all without using frameworks).</p>
+              <div class="tech-icons">
+                <span class="tech-icon" data-tech="JavaScript" title="JavaScript">⚡</span>
+                <span class="tech-icon" data-tech="HTML5" title="HTML5">🌐</span>
+                <span class="tech-icon" data-tech="Python" title="CSS">🎨</span>
+                <span class="tech-icon" data-tech="REST API" title="REST API">🚀</span>
+              </div>
+            </div>
+          </div>
+
+        <div class="project-card" data-project="comingsoon">
+          <div class="project-image">
+            <img src="assets/images/comingSoon.png" alt="Coming Soon...">
+            <div class="project-overlay">
+              <button class="view-project-btn">View Details</button>
+            </div>
+          </div>
+          <div class="project-content">
+            <h3>Coming Soon...</h3>
+            <p>Stay tuned for an exciting new project in development!</p>
+            <div class="tech-icons">
+              <span class="tech-icon" title="Work in Progress">🚧</span>
+            </div>
+          </div>
+        </div>
+        <div class="project-card" data-project="comingsoon">
+          <div class="project-image">
+            <img src="assets/images/comingSoon.png" alt="Coming Soon...">
+            <div class="project-overlay">
+              <button class="view-project-btn">View Details</button>
+            </div>
+          </div>
+          <div class="project-content">
+            <h3>Coming Soon...</h3>
+            <p>Stay tuned for an exciting new project in development!</p>
+            <div class="tech-icons">
+              <span class="tech-icon" title="Work in Progress">🚧</span>
+            </div>
+          </div>
+        </div>
+        <div class="project-card" data-project="comingsoon">
+          <div class="project-image">
+            <img src="assets/images/comingSoon.png" alt="Coming Soon...">
+            <div class="project-overlay">
+              <button class="view-project-btn">View Details</button>
+            </div>
+          </div>
+          <div class="project-content">
+            <h3>Coming Soon...</h3>
+            <p>Stay tuned for an exciting new project in development!</p>
+            <div class="tech-icons">
+              <span class="tech-icon" title="Work in Progress">🚧</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="project-card" data-project="weather">
           <div class="project-image">
             <img src="https://via.placeholder.com/400x250/ff7300/ffffff?text=Weather+Dashboard" alt="Weather Dashboard">
             <div class="project-overlay">
@@ -306,21 +414,6 @@
           </div>
         </div>
 
-        <div class="project-card" data-project="comingsoon">
-          <div class="project-image">
-            <img src="https://via.placeholder.com/400x250/ff7300/ffffff?text=Crypto+Tracker" alt="Coming Soon...">
-            <div class="project-overlay">
-              <button class="view-project-btn">View Details</button>
-            </div>
-          </div>
-          <div class="project-content">
-            <h3>Coming Soon...</h3>
-            <p>Stay tuned for an exciting new project in development!</p>
-            <div class="tech-icons">
-              <span class="tech-icon" title="Work in Progress">🚧</span>
-            </div>
-          </div>
-        </div>
 
         <div class="project-card" data-project="social">
           <div class="project-image">
@@ -337,26 +430,8 @@
               <span class="tech-icon" data-tech="GraphQL" title="GraphQL">◉</span>
             </div>
           </div>
-        </div>
+        </div> -->
 
-        <div class="project-card" data-project="posthub">
-          <div class="project-image">
-            <img src="assets/images/posthub_x.png" alt="PostHub - Dynamic Blog Application">
-            <div class="project-overlay">
-              <button class="view-project-btn">View Details</button>
-            </div>
-          </div>
-          <div class="project-content">
-            <h3>PostHub - Dynamic Blog Application</h3>
-            <p>A modern Single Page Application built with vanilla JavaScript that delivers a seamless blog experience with real-time data fetching, user profiles, and interactive comments. Features smart caching, lazy loading, and responsive design (all without using frameworks).</p>
-            <div class="tech-icons">
-              <span class="tech-icon" data-tech="JavaScript" title="JavaScript">⚡</span>
-              <span class="tech-icon" data-tech="HTML5" title="HTML5">🌐</span>
-              <span class="tech-icon" data-tech="Python" title="CSS">🎨</span>
-              <span class="tech-icon" data-tech="REST API" title="REST API">🚀</span>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </section>
@@ -411,16 +486,19 @@
             <ul id="modal-features-list"></ul>
           </div>
           <div class="modal-actions">
-            <a id="modal-github-link" href="#" target="_blank" class="btn btn--sm btn-github">
-              <img src="assets/images/icon-github.svg" alt="GitHub Icon" class="contact-icon">
+            <a id="modal-live-demo-link" href="#" target="_blank" class="btn btn--sm btn-live-demo">
+              🚀 Live Demo
             </a>
-              
+            <a id="modal-github-link" href="#" target="_blank" class="btn btn--sm btn-github">
+              <img src="assets/images/icon-github.svg" alt="GitHub Icon" class="modal-github-icon">
+              GitHub
+            </a>
           </div>
+          <div id="demo-status-container"></div>
         </div>
       </div>
     </div>
   </div>
-
 
   <!-- Scroll to Top Button -->
   <button id="scrollTopBtn" title="Go to top" aria-label="Scroll to top">↑</button>
