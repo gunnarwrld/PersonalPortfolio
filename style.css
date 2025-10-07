@@ -1088,9 +1088,9 @@ nav ul li a.active {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
-  max-width: 1000px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.5rem;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
@@ -1613,6 +1613,17 @@ nav ul li a.active {
   background: linear-gradient(135deg, #3d444d, #4a5259);
   border-color: rgba(255, 255, 255, 0.2);
 }
+.btn-github:disabled {
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.btn-github:disabled:hover {
+  transform: none;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+  border-color: rgba(255, 255, 255, 0.1);
+}
 .btn-live-demo {
   background: linear-gradient(135deg, #10b981, #059669);
   color: white;
@@ -1915,7 +1926,184 @@ footer p {
   100% { transform: rotate(2deg) scale(1.02); }
 }
 
+/* Skeleton Loading Screens */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonLoading 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+@keyframes skeletonLoading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Skeleton for project cards */
+.project-card.skeleton {
+  pointer-events: none;
+}
+
+.project-card.skeleton .project-image {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonLoading 1.5s ease-in-out infinite;
+  height: 200px;
+}
+
+.project-card.skeleton .project-image img {
+  display: none;
+}
+
+.project-card.skeleton .project-content h3,
+.project-card.skeleton .project-content p,
+.project-card.skeleton .tech-icons {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonLoading 1.5s ease-in-out infinite;
+  color: transparent;
+  border-radius: 4px;
+}
+
+.project-card.skeleton .project-content h3 {
+  height: 24px;
+  margin-bottom: 12px;
+}
+
+.project-card.skeleton .project-content p {
+  height: 60px;
+  margin-bottom: 16px;
+}
+
+.project-card.skeleton .tech-icons {
+  height: 44px;
+}
+
+/* Skeleton for modal content */
+.modal-body.skeleton .modal-image,
+.modal-body.skeleton .modal-info h3,
+.modal-body.skeleton .modal-info p,
+.modal-body.skeleton .project-details,
+.modal-body.skeleton .modal-tech-stack,
+.modal-body.skeleton .modal-features {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonLoading 1.5s ease-in-out infinite;
+  border-radius: 8px;
+  color: transparent;
+}
+
+.modal-body.skeleton .modal-image {
+  height: 300px;
+}
+
+.modal-body.skeleton .modal-info h3 {
+  height: 32px;
+  margin-bottom: 16px;
+}
+
+.modal-body.skeleton .modal-info p {
+  height: 80px;
+  margin-bottom: 16px;
+}
+
+.modal-body.skeleton .project-details {
+  height: 60px;
+  margin-bottom: 16px;
+}
+
+.modal-body.skeleton .modal-tech-stack {
+  height: 80px;
+  margin-bottom: 16px;
+}
+
+.modal-body.skeleton .modal-features {
+  height: 120px;
+}
+
+/* Skeleton for skill bars */
+.skill-item.skeleton .skill-info,
+.skill-item.skeleton .skill-bar {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonLoading 1.5s ease-in-out infinite;
+  border-radius: 4px;
+}
+
+.skill-item.skeleton .skill-info {
+  height: 20px;
+  margin-bottom: 8px;
+}
+
+.skill-item.skeleton .skill-bar {
+  height: 8px;
+}
+
+/* Skeleton text variations */
+.skeleton-text {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonLoading 1.5s ease-in-out infinite;
+  border-radius: 4px;
+  height: 1em;
+  margin-bottom: 0.5em;
+}
+
+.skeleton-text.skeleton-title {
+  height: 2em;
+  width: 60%;
+}
+
+.skeleton-text.skeleton-paragraph {
+  height: 1em;
+}
+
+.skeleton-text.skeleton-paragraph:last-child {
+  width: 80%;
+}
+
 /* Responsive Design */
+@media (max-width: 1200px) {
+  .skills-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
 @media (max-width: 768px) {
   .header-text h1 {
     font-size: clamp(2rem, 6vw, 4rem);
@@ -1954,6 +2142,11 @@ footer p {
     right: 0;
     top: 0;
     bottom: 0;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
   }
   
   .skills-container {

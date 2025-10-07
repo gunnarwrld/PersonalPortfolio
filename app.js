@@ -545,11 +545,27 @@ class PortfolioApp {
     document.getElementById('modal-project-description').textContent = project.description;
     document.getElementById('modal-project-timeline').textContent = project.timeline;
     document.getElementById('modal-project-role').textContent = project.role;
-    document.getElementById('modal-github-link').href = project.github;
+
+    // Handle GitHub button
+    const githubLink = document.getElementById('modal-github-link');
+    const statusContainer = document.getElementById('demo-status-container');
+    
+    if (project.github && project.github.trim() !== '') {
+      // GitHub repo is available
+      githubLink.href = project.github;
+      githubLink.disabled = false;
+      githubLink.style.pointerEvents = 'auto';
+      githubLink.style.opacity = '1';
+    } else {
+      // GitHub repo not available
+      githubLink.href = '#';
+      githubLink.disabled = true;
+      githubLink.style.pointerEvents = 'none';
+      githubLink.style.opacity = '0.6';
+    }
 
     // Handle Live Demo button
     const liveDemoLink = document.getElementById('modal-live-demo-link');
-    const demoStatusContainer = document.getElementById('demo-status-container');
     
     if (project.liveDemo && project.liveDemo.trim() !== '') {
       // Live demo is available
@@ -557,14 +573,22 @@ class PortfolioApp {
       liveDemoLink.disabled = false;
       liveDemoLink.style.pointerEvents = 'auto';
       liveDemoLink.style.opacity = '1';
-      demoStatusContainer.innerHTML = '';
     } else {
       // Live demo not available
       liveDemoLink.href = '#';
       liveDemoLink.disabled = true;
       liveDemoLink.style.pointerEvents = 'none';
       liveDemoLink.style.opacity = '0.6';
-      demoStatusContainer.innerHTML = '<p class="demo-status-message">🚧 Live demo coming soon...</p>';
+    }
+
+    // Show status message if either is not available
+    if ((!project.liveDemo || project.liveDemo.trim() === '') || (!project.github || project.github.trim() === '')) {
+      let messages = [];
+      if (!project.liveDemo || project.liveDemo.trim() === '') messages.push('Live demo');
+      if (!project.github || project.github.trim() === '') messages.push('GitHub repo');
+      statusContainer.innerHTML = `<p class="demo-status-message">🚧 ${messages.join(' and ')} coming soon...</p>`;
+    } else {
+      statusContainer.innerHTML = '';
     }
 
     // Tech icons
@@ -774,6 +798,27 @@ getTechIcon(tech) {
     if (particleCountEl) particleCountEl.textContent = this.particles.length;
     if (animationCountEl) animationCountEl.textContent = this.animationCount;
     if (easterEggCountEl) easterEggCountEl.textContent = this.easterEggCount;
+  }
+
+  // Skeleton Screen Utilities
+  showSkeleton(element) {
+    element.classList.add('skeleton');
+  }
+
+  hideSkeleton(element) {
+    element.classList.remove('skeleton');
+  }
+
+  // Example: Show skeleton for modal when opening
+  showModalSkeleton() {
+    const modalBody = document.querySelector('.modal-body');
+    if (modalBody) {
+      this.showSkeleton(modalBody);
+      // Simulate loading delay (remove in production or use actual async data)
+      setTimeout(() => {
+        this.hideSkeleton(modalBody);
+      }, 500);
+    }
   }
 }
 
