@@ -25,7 +25,7 @@ class PortfolioApp {
         timeline: '2 months',
         role: 'Frontend Developer & Designer'
       },
-      'financetracke': {
+      'financetracker': {
         title: 'FinanceTracke Web App',
         description: 'Developed a cross-platform personal finance management PWA using Vanilla JS, HTML, and CSS. Secured with Google OAuth authentication and integrated with a cloud Supabase/PostgreSQL database. Features real-time account balance updates, live currency conversion, visual analytics dashboard, multi-currency support, complete transaction and account CRUD, mobile-first design, and offline-first capabilities.',
         technologies: ['JavaScript', 'HTML5','CSS', 'Supabase', 'Google OAuth', 'PWA', 'PostgreSQL'],
@@ -71,15 +71,15 @@ class PortfolioApp {
         timeline: '5 months',
         role: 'Full Stack Developer'
       },
-      'ai-chat': {
-        title: 'AI Chat Application',
-        description: 'Created an AI-powered chat application using Python and FastAPI. Features include real-time messaging with WebRTC, AI-powered responses using OpenAI API, voice chat capabilities, message history and search, file sharing, group chats, custom AI personalities, and end-to-end encryption. Implemented advanced NLP for context understanding.',
-        technologies: ['Python', 'FastAPI', 'OpenAI API', 'WebRTC'],
-        features: ['AI responses', 'Voice chat', 'File sharing', 'End-to-end encryption'],
-        github: 'https://github.com/gunnar/ai-chat',
-        image: 'https://via.placeholder.com/600x400/ff7300/ffffff?text=AI+Chat+App',
-        timeline: '4 months',
-        role: 'AI Developer'
+      'posthub': {
+        title: 'PostHub - Dynamic Blog Application',
+        description: 'PostHub is a fully functional web application that demonstrates modern web development practices using pure HTML5, CSS3, and vanilla JavaScript. The application integrates with the DummyJSON API to provide a dynamic content experience, allowing users to browse posts, explore detailed user profiles through an elegant modal system, read comments, and submit contact forms. Built with performance in mind, it implements data caching to minimize API calls, lazy loading for optimal page speed, and comprehensive error handling for a robust user experience. The project showcases clean code architecture, semantic HTML structure, and mobile-first responsive design principles.',
+        technologies: ['HTML5', 'CSS', 'REST API', 'JavaScript'],
+        features: ['Dynamic Content Loading', 'Smart Catching System', 'Interactive Modal System','DOM Manipulation', 'Lazy Loading', 'Responsive Design', 'Error Handling', 'Hash-Based Navigation'],
+        github: 'https://github.com/gunnarwrld/DynamicWebsite',
+        image: 'assets/images/posthub_y.png',
+        timeline: '4 weeks',
+        role: 'Frontend Developer'
       }, 
       'comingsoon': {
         title: 'Coming Soon...',

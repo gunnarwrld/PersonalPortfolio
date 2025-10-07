@@ -883,14 +883,8 @@ nav ul li a.active {
   color: #ff7300;
   border-right: 3px solid #ff7300;
   white-space: nowrap;
-  overflow: hidden;
   display: inline-block;
-  animation: typewriter 3s steps(20) 1s both, blink 1s infinite;
-}
-
-@keyframes typewriter {
-  from { width: 0; }
-  to { width: 100%; }
+  padding-right: 4px;
 }
 
 @keyframes blink {
