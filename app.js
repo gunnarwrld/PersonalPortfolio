@@ -54,16 +54,16 @@ class PortfolioApp {
         timeline: '4 weeks',
         role: 'Frontend Developer'
       }, 
-      'comingsoon': {
-        title: 'Coming Soon...',
-        description: 'An exciting new project is under development! Stay tuned for updates and new features.',
-        technologies: ['Coming Soon'],
-        features: ['More info coming soon'],
-        github: '',
-        liveDemo: '',
-        image: 'assets/images/comingSoonVertical.png',
-        timeline: 'In Progress',
-        role: '—'
+      'aistudentassistant': {
+        title: '🎓 AI-Powered Study Assistant',
+        description: 'Built entirely on Cloudflare edge infrastructure, this application provides real-time, context-aware responses to student questions while maintaining conversation history across sessions. Students can ask questions about any subject, receive clear explanations, search through past conversations, and build upon previous learning, all through an intuitive chat interface accessible from anywhere in the world with ultra-low latency.',
+        technologies: ['WebSocket', 'WorkersAI API', 'REST API', 'Node.js', 'JavaScript', 'HTML5', 'CSS'],
+        features: ['Intelligent AI Conversations', 'Real-time Communication', 'Persistent Memory', 'Advanced Search', 'Responsive UI', 'Global Edge Deployment'],
+        github: 'https://github.com/gunnarwrld/cf_ai_study_assistant',
+        liveDemo: 'https://cf-ai-study-assistant.pages.dev/',
+        image: 'assets/images/aistudy_v.png',
+        timeline: '5 weeks',
+        role: 'Full-Stack Developer & Solutions Architect'
       },
       'comingsoon': {
         title: 'Coming Soon...',
@@ -652,6 +652,7 @@ getTechIcon(tech) {
     'Prisma': '⟁',
     'Weather API': '🌤️',
     'OpenAI API': '🤖',
+    'WorkersAI API': '🤖',
     'WebRTC': '📞',
     'TradingView Charts': '📈',
     'PWA': '📱',
