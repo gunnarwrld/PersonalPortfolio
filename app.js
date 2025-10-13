@@ -56,12 +56,12 @@ class PortfolioApp {
       }, 
       'aistudentassistant': {
         title: '🎓 AI-Powered Study Assistant',
-        description: 'Built entirely on Cloudflare edge infrastructure, this application provides real-time, context-aware responses to student questions while maintaining conversation history across sessions. Students can ask questions about any subject, receive clear explanations, search through past conversations, and build upon previous learning, all through an intuitive chat interface accessible from anywhere in the world with ultra-low latency.',
+        description: 'Built entirely on Cloudflare edge infrastructure, this application provides real-time, context-aware responses to student questions while maintaining conversation history across sessions. Students can ask questions about any subject, receive clear explanations, search through past conversations, and build upon previous learning—all through an intuitive chat interface accessible from anywhere in the world with ultra-low latency.',
         technologies: ['WebSocket', 'WorkersAI API', 'REST API', 'Node.js', 'JavaScript', 'HTML5', 'CSS'],
         features: ['Intelligent AI Conversations', 'Real-time Communication', 'Persistent Memory', 'Advanced Search', 'Responsive UI', 'Global Edge Deployment'],
         github: 'https://github.com/gunnarwrld/cf_ai_study_assistant',
-        liveDemo: 'https://cf-ai-study-assistant.pages.dev/',
-        image: 'assets/images/aistudy_v.png',
+        liveDemo: '',
+        image: '',
         timeline: '5 weeks',
         role: 'Full-Stack Developer & Solutions Architect'
       },
@@ -139,6 +139,7 @@ class PortfolioApp {
     this.initTypingAnimation();
     this.initStatsCounter();
     this.initSkillBars();
+    this.autoPopulateSkills(); // Auto-add skills from projects
     this.initProjectModals();
     this.initEasterEggs();
     this.initTooltips();
@@ -490,21 +491,163 @@ class PortfolioApp {
     statNumbers.forEach(stat => observer.observe(stat));
   }
 
-  // Skill Bars Animation
+  // Skill Tags Animation
   initSkillBars() {
-    const skillBars = document.querySelectorAll('.skill-progress');
+    const skillGroups = document.querySelectorAll('.skill-group');
     
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          const percentage = entry.target.getAttribute('data-percentage');
-          entry.target.style.transform = `scaleX(${percentage / 100})`;
-          entry.target.classList.add('animate');
+          entry.target.style.opacity = '0';
+          entry.target.style.transform = 'translateY(20px)';
+          
+          setTimeout(() => {
+            entry.target.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }, 100);
+          
+          observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.5 });
+    }, { threshold: 0.1 });
 
-    skillBars.forEach(bar => observer.observe(bar));
+    skillGroups.forEach(group => observer.observe(group));
+  }
+
+  // Skill Tag Tooltips
+  initTooltips() {
+    const skillTags = document.querySelectorAll('.skill-tag');
+    
+    skillTags.forEach(tag => {
+      const skillName = tag.textContent.trim();
+      const projectsUsing = this.findProjectsUsingSkill(skillName);
+      
+      if (projectsUsing.length > 0) {
+        // Create tooltip element
+        const tooltip = document.createElement('span');
+        tooltip.className = 'skill-tooltip';
+        
+        if (projectsUsing.length === 1) {
+          tooltip.textContent = `Used in ${projectsUsing[0]}!`;
+        } else if (projectsUsing.length === 2) {
+          tooltip.textContent = `Used in ${projectsUsing[0]} and ${projectsUsing[1]}!`;
+        } else if (projectsUsing.length === 3) {
+          tooltip.textContent = `Used in ${projectsUsing[0]}, ${projectsUsing[1]}, and ${projectsUsing[2]}!`;
+        } else {
+          tooltip.textContent = `Used in a bunch of projects!`;
+        }
+        
+        tag.appendChild(tooltip);
+        tag.classList.add('has-tooltip');
+      }
+    });
+  }
+
+  // Find projects that use a specific skill
+  findProjectsUsingSkill(skillName) {
+    const projects = [];
+    const skillLower = skillName.toLowerCase();
+    
+    // Skill mapping for variations
+    const skillMap = {
+      'javascript (es6)': ['javascript', 'js'],
+      'html5 & css3': ['html5', 'html', 'css3', 'css'],
+      'pwa': ['pwa', 'progressive web apps'],
+      'mysql': ['mysql', 'sql'],
+      'google oauth 2.0': ['google oauth', 'oauth'],
+      'vercel ci/cd': ['vercel'],
+      'cloudflare workers': ['cloudflare'],
+      'durable objects': ['cloudflare'],
+      'llm (llama 3.3)': ['llm', 'workersai api'],
+      'websocket programming': ['websocket'],
+      'currency apis': ['currency', 'exchange']
+    };
+    
+    Object.values(this.projects).forEach(project => {
+      if (project.technologies) {
+        const techLower = project.technologies.map(t => t.toLowerCase());
+        
+        // Check direct match
+        let matched = techLower.some(tech => 
+          tech.includes(skillLower) || skillLower.includes(tech)
+        );
+        
+        // Check mapping variations
+        if (!matched && skillMap[skillLower]) {
+          matched = skillMap[skillLower].some(variant => 
+            techLower.some(tech => tech.includes(variant) || variant.includes(tech))
+          );
+        }
+        
+        if (matched && !projects.includes(project.title)) {
+          projects.push(project.title);
+        }
+      }
+    });
+    
+    return projects;
+  }
+
+  // Auto-populate skill tags from projects
+  autoPopulateSkills() {
+    // Category mapping for auto-categorization
+    const categoryMap = {
+      'Frontend': ['react', 'next.js', 'typescript', 'javascript', 'html5', 'html', 'css3', 'css', 'pwa', 'responsive design', 'ui/ux'],
+      'Backend': ['node.js', 'serverless', 'restful api', 'rest api', 'websocket', 'express', 'python', 'java'],
+      'Databases & APIs': ['supabase', 'mysql', 'sql', 'postgresql', 'mongodb', 'redis', 'currency', 'api'],
+      'Cloud & DevOps': ['cloudflare', 'workers', 'durable objects', 'vercel', 'google oauth', 'oauth', 'azure', 'aws', 'git', 'github', 'ci/cd', 'bash', 'docker'],
+      'AI & Machine Learning': ['llm', 'llama', 'workersai', 'ai', 'neural', 'prompt', 'machine learning'],
+      'Specialized': ['distributed', 'edge', 'documentation', 'system design', 'sync', 'cross-device']
+    };
+
+    // Collect all unique technologies from projects
+    const allTechs = new Set();
+    Object.values(this.projects).forEach(project => {
+      if (project.technologies && Array.isArray(project.technologies)) {
+        project.technologies.forEach(tech => {
+          if (tech && tech !== 'Coming Soon') {
+            allTechs.add(tech);
+          }
+        });
+      }
+    });
+
+    // Add new technologies to appropriate skill groups
+    const skillGroups = document.querySelectorAll('.skill-group');
+    
+    allTechs.forEach(tech => {
+      const techLower = tech.toLowerCase();
+      let categoryFound = false;
+
+      // Find which category this tech belongs to
+      for (const [category, keywords] of Object.entries(categoryMap)) {
+        if (keywords.some(keyword => techLower.includes(keyword) || keyword.includes(techLower))) {
+          // Find the skill group with this category
+          skillGroups.forEach(group => {
+            const groupTitle = group.querySelector('.skill-group-title');
+            if (groupTitle && groupTitle.textContent.trim() === category) {
+              const tagsContainer = group.querySelector('.skill-tags');
+              
+              // Check if this skill already exists
+              const existingTags = Array.from(tagsContainer.querySelectorAll('.skill-tag'))
+                .map(tag => tag.textContent.trim().toLowerCase());
+              
+              if (!existingTags.includes(techLower)) {
+                // Create new skill tag
+                const newTag = document.createElement('span');
+                newTag.className = 'skill-tag';
+                newTag.textContent = tech;
+                tagsContainer.appendChild(newTag);
+              }
+              
+              categoryFound = true;
+            }
+          });
+          break;
+        }
+      }
+    });
   }
 
   // Project Modals
