@@ -29,7 +29,7 @@ class PortfolioApp {
       'financetracker': {
         title: 'FinanceTracker Web App',
         description: 'Developed a cross-platform personal finance management PWA using Vanilla JS, HTML, and CSS. Secured with Google OAuth authentication and integrated with a cloud Supabase/PostgreSQL database. Features real-time account balance updates, live currency conversion, visual analytics dashboard, multi-currency support, complete transaction and account CRUD, mobile-first design, and offline-first capabilities.',
-        technologies: ['JavaScript', 'HTML5','CSS', 'Supabase', 'Google OAuth', 'PWA', 'PostgreSQL'],
+        technologies: ['TypeScript', 'React', 'HTML5','CSS', 'Supabase', 'Google OAuth', 'PWA', 'PostgreSQL'],
         features: [
           'Multi-account & multi-currency',
           'Google-auth sign-in',
