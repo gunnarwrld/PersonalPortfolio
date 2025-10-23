@@ -13,7 +13,7 @@ class PortfolioApp {
       'portfolio': {
         title: 'Personal Portfolio Website',
         description: 'Built a responsive and visually engaging personal portfolio to showcase my work and skills. Features custom animated background particles, smooth section transitions, interactive project modals, and adaptive navigation for mobile and desktop. Focused on clean design, accessibility, and performance.',
-        technologies: ['JavaScript', 'HTML5', 'CSS3'],
+        technologies: ['JavaScript', 'HTML5', 'CSS'],
         features: [
           'Animated background particles',
           'Mobile-first responsive design',
@@ -48,8 +48,8 @@ class PortfolioApp {
         description: 'PostHub is a fully functional web application that demonstrates modern web development practices using pure HTML5, CSS3, and vanilla JavaScript. The application integrates with the DummyJSON API to provide a dynamic content experience, allowing users to browse posts, explore detailed user profiles through an elegant modal system, read comments, and submit contact forms. Built with performance in mind, it implements data caching to minimize API calls, lazy loading for optimal page speed, and comprehensive error handling for a robust user experience. The project showcases clean code architecture, semantic HTML structure, and mobile-first responsive design principles.',
         technologies: ['HTML5', 'CSS', 'REST API', 'JavaScript'],
         features: ['Dynamic Content Loading', 'Smart Catching System', 'Interactive Modal System','DOM Manipulation', 'Lazy Loading', 'Responsive Design', 'Error Handling', 'Hash-Based Navigation'],
-        github: 'https://github.com/gunnarwrld/DynamicWebsite',
-        liveDemo: 'https://posthub-dynamic-website.vercel.app/',
+        github: 'https://github.com/gunnarwrld/PostHub-DynamicWebsite',
+        liveDemo: 'https://post-hub-dynamic-website.vercel.app/',
         image: 'assets/images/posthub_y.png',
         timeline: '4 weeks',
         role: 'Frontend Developer'
@@ -60,8 +60,8 @@ class PortfolioApp {
         technologies: ['WebSocket', 'WorkersAI API', 'REST API', 'Node.js', 'JavaScript', 'HTML5', 'CSS'],
         features: ['Intelligent AI Conversations', 'Real-time Communication', 'Persistent Memory', 'Advanced Search', 'Responsive UI', 'Global Edge Deployment'],
         github: 'https://github.com/gunnarwrld/cf_ai_study_assistant',
-        liveDemo: '',
-        image: '',
+        liveDemo: 'https://cf-ai-study-assistant.pages.dev/',
+        image: 'assets/images/aistudy_v.png',
         timeline: '5 weeks',
         role: 'Full-Stack Developer & Solutions Architect'
       },
