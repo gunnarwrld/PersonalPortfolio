@@ -25,10 +25,10 @@ const contactSchema = z.object({
 
 type ContactFormValues = z.infer<typeof contactSchema>;
 
-const socials = [
+const socialLinks = [
   { icon: Github, href: "https://github.com/gunnarwrld", label: "GitHub" },
-  { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
-  { icon: Mail, href: "mailto:hello@gunnar.dev", label: "Email" },
+  { icon: Linkedin, href: "https://linkedin.com/in/gunnararias", label: "LinkedIn" },
+  { icon: Mail, href: "mailto:ariasgunnar@gmail.com", label: "Email" },
 ];
 
 const ease: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];

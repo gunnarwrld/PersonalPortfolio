@@ -18,9 +18,9 @@ const Footer = () => {
         <div className="flex items-center gap-4">
           {[
             { icon: Github, href: "https://github.com/gunnarwrld", label: "GitHub" },
-            { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
-            { icon: Mail, href: "mailto:hello@gunnar.dev", label: "Email" },
-          ].map((item) => (
+            { icon: Linkedin, href: "https://linkedin.com/in/gunnararias", label: "LinkedIn" },
+            { icon: Mail, href: "mailto:ariasgunnar@gmail.com", label: "Email" },
+          ].map((social) => (
             <motion.a
               key={item.label}
               href={item.href}
