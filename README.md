@@ -2,72 +2,82 @@
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+**URL**: https://gunnarwrld.com
 
-## How can I edit this code?
+```markdown
+# Gunnar Arias — Personal Portfolio
 
-There are several ways of editing your application.
+Welcome to the source for my personal portfolio website. This repository contains a modern, responsive React + TypeScript site built with Vite and Tailwind CSS that showcases my projects, skills and contact information.
 
-**Use Lovable**
+## About this portfolio
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+This portfolio highlights selected projects, technical skills, and a short bio. It's designed to be easy to customize — swap out content in `src/data/projects.ts` and `src/data/skills.ts`, and update components under `src/components/`.
 
-Changes made via Lovable will be committed automatically to this repo.
+Suggested quick edits:
+- Replace `"[Your Name]"` and bio text in the site layout with your name and short tagline.
+- Update project entries in `src/data/projects.ts` with screenshots, descriptions, and links.
+- Adjust theme/colors in `tailwind.config.ts` or `src/index.css`.
 
-**Use your preferred IDE**
+## Highlights
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- Clean, accessible UI built with React + TypeScript
+- Styled using Tailwind CSS and shadcn/ui components
+- Mobile-first, responsive layout
+- Project modals, animated hero, and contact form included
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Tech stack
 
-Follow these steps:
+- Vite
+- React
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
+## Projects
+
+Project data lives in `src/data/projects.ts`. Each project includes title, description, tech list, image(s) and links. To add or remove projects, edit that file and restart the dev server.
+
+## Local development
+
+Requirements: Node.js (recommended via nvm) and npm or bun.
+
+Quick start:
+
+```bash
+# Clone
 git clone <YOUR_GIT_URL>
+cd PersonalPortfolio-1
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Install dependencies
+npm install
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start dev server (Vite)
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Build for production:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+npm run build
+npm run preview
+```
 
-**Use GitHub Codespaces**
+## Customize
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- Replace placeholder text and images in `src/components/*` and `src/data/*`.
+- Configure site metadata in `index.html` and `vite.config.ts` as needed.
 
-## What technologies are used for this project?
+## Contact
 
-This project is built with:
+If you want to get in touch, update the contact details shown on the site (or provide your preferred email/social links in `src/data/contact` if present).
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Notes & assumptions
 
-## How can I deploy this project?
+- I left a few placeholders (like `<YOUR_GIT_URL>` and `[Your Name]`) for you to replace with personal details.
+- If you want, I can also update the README to include a short, personalized bio and list of featured projects; tell me the text and I'll insert it.
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+## License
 
-## Can I connect a custom domain to my Lovable project?
+This repository does not include a license file by default. Add a `LICENSE` file if you want to make the project open source.
 
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+``` 

@@ -27,9 +27,7 @@ const Navbar = () => {
       }`}
     >
       <div className="container mx-auto flex items-center h-16 px-4">
-        <a href="#" className="text-lg font-extrabold text-foreground tracking-tight flex-1">
-          gunnar<span className="text-muted-foreground">.</span>
-        </a>
+
 
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
