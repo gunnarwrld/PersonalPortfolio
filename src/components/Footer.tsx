@@ -20,7 +20,7 @@ const Footer = () => {
             { icon: Github, href: "https://github.com/gunnarwrld", label: "GitHub" },
             { icon: Linkedin, href: "https://linkedin.com/in/gunnararias", label: "LinkedIn" },
             { icon: Mail, href: "mailto:ariasgunnar@gmail.com", label: "Email" },
-          ].map((social) => (
+          ].map((item) => (
             <motion.a
               key={item.label}
               href={item.href}
