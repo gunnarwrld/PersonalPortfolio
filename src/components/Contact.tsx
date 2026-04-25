@@ -1,8 +1,8 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Github, Linkedin, Mail, Send } from "lucide-react";
+import { contactSchema, type ContactFormValues } from "@/lib/contactSchema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,16 +16,6 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { useRef, useState } from "react";
-
-const contactSchema = z.object({
-  name: z.string().trim().min(1, "Name is required").max(100),
-  email: z.string().trim().email("Invalid email address").max(255),
-  message: z.string().trim().min(1, "Message is required").max(2000),
-  // Honeypot — must stay empty. Hidden from users via aria-hidden + CSS.
-  website: z.string().max(0).optional().or(z.literal("")),
-});
-
-type ContactFormValues = z.infer<typeof contactSchema>;
 
 const socials = [
   { icon: Github, href: "https://github.com/gunnarwrld", label: "GitHub" },
