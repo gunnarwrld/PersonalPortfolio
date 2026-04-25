@@ -10,6 +10,7 @@
 
 <p align="center">
   <a href="https://gunnarwrld.com"><img alt="Live site" src="https://img.shields.io/badge/live-gunnarwrld.com-0a0a0a?style=for-the-badge"></a>
+  <a href="https://github.com/gunnarwrld/PersonalPortfolio/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/gunnarwrld/PersonalPortfolio/actions/workflows/ci.yml/badge.svg"></a>
   <img alt="React" src="https://img.shields.io/badge/React-18-149ECA?style=for-the-badge&logo=react&logoColor=white">
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white">
   <img alt="Vite" src="https://img.shields.io/badge/Vite-5-646CFF?style=for-the-badge&logo=vite&logoColor=white">
