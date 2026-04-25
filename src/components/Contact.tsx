@@ -15,12 +15,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(100),
   email: z.string().trim().email("Invalid email address").max(255),
-  message: z.string().trim().min(1, "Message is required").max(1000),
+  message: z.string().trim().min(1, "Message is required").max(2000),
+  // Honeypot — must stay empty. Hidden from users via aria-hidden + CSS.
+  website: z.string().max(0).optional().or(z.literal("")),
 });
 
 type ContactFormValues = z.infer<typeof contactSchema>;
@@ -45,6 +47,7 @@ const itemReveal = {
 const Contact = () => {
   const { toast } = useToast();
   const sectionRef = useRef(null);
+  const [submitting, setSubmitting] = useState(false);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
@@ -55,15 +58,39 @@ const Contact = () => {
 
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
-    defaultValues: { name: "", email: "", message: "" },
+    defaultValues: { name: "", email: "", message: "", website: "" },
   });
 
-  const onSubmit = (data: ContactFormValues) => {
-    toast({
-      title: "Message sent!",
-      description: `Thanks ${data.name}, I'll get back to you soon.`,
-    });
-    form.reset();
+  const onSubmit = async (data: ContactFormValues) => {
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) {
+        const payload = await res.json().catch(() => ({}));
+        throw new Error(payload.error ?? `Request failed (${res.status})`);
+      }
+
+      toast({
+        title: "Message sent",
+        description: `Thanks ${data.name}, I'll get back to you soon.`,
+      });
+      form.reset();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      toast({
+        title: "Couldn't send message",
+        description: message,
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -114,7 +141,36 @@ const Contact = () => {
 
           <motion.div variants={itemReveal}>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5" noValidate>
+                {/* Honeypot — invisible to humans, irresistible to bots. */}
+                <div
+                  aria-hidden="true"
+                  style={{
+                    position: "absolute",
+                    left: "-10000px",
+                    width: 1,
+                    height: 1,
+                    overflow: "hidden",
+                  }}
+                >
+                  <FormField
+                    control={form.control}
+                    name="website"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Website</FormLabel>
+                        <FormControl>
+                          <Input
+                            tabIndex={-1}
+                            autoComplete="off"
+                            placeholder="Leave this empty"
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <FormField
                   control={form.control}
                   name="name"
@@ -160,9 +216,14 @@ const Contact = () => {
                   )}
                 />
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                  <Button type="submit" size="lg" className="w-full sm:w-auto rounded-full px-8">
+                  <Button
+                    type="submit"
+                    size="lg"
+                    disabled={submitting}
+                    className="w-full sm:w-auto rounded-full px-8"
+                  >
                     <Send className="h-4 w-4 mr-2" />
-                    Send Message
+                    {submitting ? "Sending…" : "Send Message"}
                   </Button>
                 </motion.div>
               </form>
