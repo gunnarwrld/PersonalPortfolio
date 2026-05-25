@@ -1,9 +1,10 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import { MapPin, GraduationCap, Rocket } from "lucide-react";
+import { MapPin, GraduationCap, Rocket, Code2 } from "lucide-react";
 import { useRef } from "react";
 
 const stats = [
-  { icon: Rocket, label: "Projects Shipped", value: "4+" },
+  { icon: Rocket, label: "Projects Shipped", value: "5+" },
+  { icon: Code2, label: "Backend Focus", value: "Node / TS" },
   { icon: GraduationCap, label: "CS Student", value: "2nd Year" },
   { icon: MapPin, label: "Based in", value: "Sweden" },
 ];
@@ -55,9 +56,9 @@ const About = () => {
             className="space-y-5"
           >
             {[
-              "I'm a passionate full-stack developer and computer science student from Sweden. I love turning ideas into clean, functional, and user-friendly applications.",
-              "My journey into coding started with curiosity about how things work on the web, and it quickly evolved into a drive to build meaningful products. I work across the full stack — from crafting pixel-perfect UIs with React and Tailwind to designing robust APIs and database architectures.",
-              "When I'm not coding, you'll find me exploring new technologies, contributing to open-source, or diving into AI and machine learning experiments.",
+              "I'm a Computer Science student and full-stack developer based in Kristianstad, Sweden, with a strong lean toward backend engineering. I build production-grade systems — REST APIs, authentication layers, database schemas, and CI pipelines — and care deeply about architecture decisions that hold up under real load.",
+              "Most recently I led the backend for a sports union platform: designing a PostgreSQL schema with Prisma, building a JWT + RBAC auth system with a 4-tier role hierarchy, and establishing a full Vitest + Supertest integration test suite from zero. I'm as comfortable reasoning about a race condition in a transaction as I am crafting a Framer Motion animation.",
+              "Outside of work I'm drawn to edge computing, AI inference at the edge, and the intersection of developer experience and performance. If there's a new Cloudflare primitive or a new LLM I haven't run locally yet, I'm probably already reading the docs.",
             ].map((text, i) => (
               <motion.p key={i} variants={itemReveal} className="text-muted-foreground leading-relaxed">
                 {text}
