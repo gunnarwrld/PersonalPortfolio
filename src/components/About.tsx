@@ -56,9 +56,9 @@ const About = () => {
             className="space-y-5"
           >
             {[
-              "I'm a Computer Science student and full-stack developer based in Kristianstad, Sweden, with a strong lean toward backend engineering. I build production-grade systems — REST APIs, authentication layers, database schemas, and CI pipelines — and care deeply about architecture decisions that hold up under real load.",
-              "Most recently I led the backend for a sports union platform: designing a PostgreSQL schema with Prisma, building a JWT + RBAC auth system with a 4-tier role hierarchy, and establishing a full Vitest + Supertest integration test suite from zero. I'm as comfortable reasoning about a race condition in a transaction as I am crafting a Framer Motion animation.",
-              "Outside of work I'm drawn to edge computing, AI inference at the edge, and the intersection of developer experience and performance. If there's a new Cloudflare primitive or a new LLM I haven't run locally yet, I'm probably already reading the docs.",
+              "Backend-leaning full-stack developer and Computer Science student based in Kristianstad, Sweden. I build production-ready REST APIs, serverless systems, and AI-powered applications — five live projects shipped, each with real users, real deployments, and tested codebases.",
+              "Most recently I led the backend for a sports union platform: architected a PostgreSQL schema with Prisma ORM, secured the API with a 4-tier JWT + RBAC system, and built the full Vitest + Supertest integration suite from zero before the first production deploy. I\'m as comfortable reasoning about a Prisma migration failure in a Railway CI pipeline as I am crafting a Framer Motion spring animation.",
+              "Outside of coursework I follow edge computing and AI inference closely — the AI Study Assistant I shipped runs Llama 3.3 (70B) at sub-50ms latency across 300+ Cloudflare edge locations. If there\'s a new Workers primitive or a model I haven\'t run yet, I\'m already reading the docs.",
             ].map((text, i) => (
               <motion.p key={i} variants={itemReveal} className="text-muted-foreground leading-relaxed">
                 {text}
