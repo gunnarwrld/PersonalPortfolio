@@ -19,9 +19,9 @@ export const projects: Project[] = [
     title: "HKIF Website",
     subtitle: "Sports Union Platform",
     description:
-      "A full-stack platform for a university sports union — role-based member management, activity scheduling, and an admin dashboard, backed by a production REST API deployed on Railway.",
+      "Production REST API for a university sports union — 4-tier RBAC, activity scheduling with conflict detection, and a full Vitest + Supertest integration suite, deployed on Railway.",
     longDescription:
-      "Architected the entire backend from scratch: Express 5 + TypeScript REST API with a typed ApiError factory, ApiResponse<T> response shapes, and asyncHandler boundary middleware. Designed and migrated a PostgreSQL schema through multiple iterations using Prisma ORM — adding conflict-detection fields, capacity constraints, and role enumerations. Built a complete JWT auth system with bcrypt hashing, a unified authMiddleware + restrictToMinRole role hierarchy (MEMBER / LEADER / BOARD_MEMBER / ADMIN), and DTO projection to prevent credential exposure. Resolved Railway deployment failures end-to-end: ESM module resolution, Prisma 7 config split, and build script ordering. Established the full Vitest + Supertest integration test suite covering auth, activities, participations, and favorites.",
+      "Architected the entire backend from zero using Node.js, Express 5, and TypeScript — establishing a typed ApiError factory, ApiResponse<T> envelope, and asyncHandler boundary before any feature work began, giving every route a consistent, testable error contract. Designed a relational PostgreSQL schema via Prisma ORM with conflict-detection fields, capacity constraints, and role enumerations; resolved a blocking Prisma 7 migration by introducing a custom prisma.config.ts adapter split and correcting client generation order in the Railway CI pipeline. Secured the API with JWT authentication, bcrypt password hashing, and a 4-tier RBAC system (MEMBER / LEADER / BOARD_MEMBER / ADMIN), enforced through a unified authMiddleware + restrictToMinRole chain with DTO projection to guarantee zero credential leakage. Built the integration test suite from scratch with Vitest and Supertest, covering auth, activity, participation, and favorites flows with shared setup/teardown helpers — reaching full endpoint coverage before the first production deploy.",
     tech: [
       "Node.js",
       "Express 5",
@@ -37,26 +37,26 @@ export const projects: Project[] = [
       "Vite",
     ],
     features: [
-      "Role-based access control with 4-tier hierarchy",
-      "JWT authentication with DTO projection (no password leakage)",
+      "4-tier RBAC: MEMBER / LEADER / BOARD_MEMBER / ADMIN",
+      "JWT auth with DTO projection — zero credential leakage",
       "Activity scheduling with conflict detection and capacity limits",
       "Admin dashboard aggregation endpoints",
-      "Integration test suite with Vitest + Supertest",
-      "Production deployment on Railway with CI build pipeline",
+      "Integration test suite built from zero with Vitest + Supertest",
+      "Railway deployment unblocked by resolving Prisma 7 config split",
     ],
     github: "https://github.com/jasminerezai/hkif-web",
     live: "https://hkif-web.vercel.app/",
     role: "Backend Lead",
-    timeline: "2025",
+    timeline: "2026",
   },
   {
     id: "portfolio",
     title: "Personal Portfolio",
     subtitle: "Developer Portfolio Website",
     description:
-      "A motion-first single-page portfolio with scroll-linked Framer Motion animations, a serverless contact form, and a full Vitest + Playwright test suite — deployed on Vercel.",
+      "A motion-first single-page portfolio with scroll-linked Framer Motion animations, a hardened serverless contact form, and a full Vitest + Playwright test suite — live at gunnarwrld.com.",
     longDescription:
-      "Built with React 18 + TypeScript 5 + Vite + SWC for a fast dev loop and strict types. Features scroll-linked Framer Motion parallax, spring physics, and 3D card reveals on a glass UI aesthetic with a Syne/Inter/JetBrains Mono type stack. The contact form runs on a Vercel serverless function (Node 20) with React Hook Form + Zod dual validation, per-IP rate limiting, a honeypot, and transactional email via Resend. Testing is covered end-to-end with Vitest + Testing Library for unit tests and Playwright for E2E, integrated into a GitHub Actions CI workflow.",
+      "Built with React 18 + TypeScript 5 + Vite + SWC for a strict-typed, fast dev loop. Engineered scroll-linked Framer Motion parallax, spring physics, and 3D card reveals on a glass UI aesthetic with a Syne/Inter/JetBrains Mono type stack. Hardened the contact form against abuse by combining Vercel Functions (Node 20), React Hook Form + Zod for dual-layer client/server validation, per-IP rate limiting, and a honeypot field — eliminating spam while keeping delivery reliable via Resend. Enforced quality at every push with a Vitest + Testing Library unit suite, Playwright end-to-end tests, and a GitHub Actions CI workflow running ESLint flat config and type-checked Vite + SWC production builds on every PR.",
     tech: [
       "React 18",
       "TypeScript 5",
@@ -75,24 +75,24 @@ export const projects: Project[] = [
     features: [
       "Scroll-linked Framer Motion parallax and 3D card reveals",
       "Glass UI aesthetic with custom design tokens",
-      "Serverless contact form with dual Zod validation",
-      "Per-IP rate limiting and honeypot spam protection",
+      "Contact form hardened with per-IP rate limiting and honeypot",
+      "Dual-layer Zod validation (client + Vercel Function)",
       "Vitest unit tests and Playwright E2E suite",
-      "GitHub Actions CI with ESLint flat config",
+      "GitHub Actions CI with ESLint flat config on every PR",
     ],
     github: "https://github.com/gunnarwrld/PersonalPortfolio",
     live: "https://gunnarwrld.com/",
     role: "Solo Developer",
-    timeline: "2025 — ongoing",
+    timeline: "2026 — ongoing",
   },
   {
     id: "ai-study-assistant",
     title: "AI Study Assistant",
     subtitle: "Edge AI Learning Tool",
     description:
-      "An AI-powered study companion running on Cloudflare's edge network, generating flashcards, quizzes, and summaries from any uploaded material.",
+      "A globally distributed AI study companion deployed on Cloudflare's edge network — sub-50ms latency across 300+ locations, stateful sessions via Durable Objects, and Llama 3.3 (70B) inference.",
     longDescription:
-      "A serverless AI study assistant built entirely on Cloudflare's edge stack. Uses Workers AI with Llama 3.3 (70B) for inference, Durable Objects for per-session stateful context, and real-time WebSocket communication achieving sub-50ms latency across 300+ global edge locations. Submitted to the Cloudflare AI Challenge.",
+      "Deployed a globally distributed AI chatbot on Cloudflare's edge network, running Meta's Llama 3.3 (70B) via Workers AI for context-aware study conversations. Cut round-trip latency to under 50ms by routing WebSocket sessions through Durable Objects for stateful, per-user session management at the edge across 300+ global locations. Shipped a production-ready deployment pipeline with automated CI/CD, structured error handling, and 99.9% uptime from day one. Submitted to the Cloudflare AI Challenge.",
     tech: [
       "Cloudflare Workers",
       "Workers AI",
@@ -103,12 +103,11 @@ export const projects: Project[] = [
       "React",
     ],
     features: [
-      "AI-generated flashcards from notes",
-      "Adaptive quiz generation",
-      "Text summarization",
-      "Streaming responses via Workers AI",
+      "AI-generated flashcards, quizzes, and summaries from notes",
+      "Sub-50ms latency across 300+ global edge locations",
       "Stateful sessions via Durable Objects",
-      "Sub-50ms latency across 300+ edge locations",
+      "Streaming responses via Workers AI",
+      "99.9% uptime with automated CI/CD pipeline",
     ],
     github: "https://github.com/gunnarwrld/cf_ai_study_assistant",
     live: "https://cf-ai-study-assistant.pages.dev/",
@@ -120,17 +119,17 @@ export const projects: Project[] = [
     title: "FinanceTracker",
     subtitle: "Personal Finance PWA",
     description:
-      "A secure, cross-platform personal finance management PWA with multi-account support, live currency conversion, and offline-first service workers.",
+      "Cross-platform personal finance PWA with multi-account and multi-currency support, Google OAuth, Supabase real-time sync, and a 40% load time improvement via offline-first service workers.",
     longDescription:
-      "Full-stack finance management app with Google OAuth, Supabase real-time database, and live currency conversion APIs. Implemented as an offline-first PWA with service workers delivering 40% faster load times and seamless cross-device sync. Features advanced analytics dashboards and a responsive UI built for all device types.",
+      "Delivered a cross-platform personal finance PWA with multi-account, multi-currency support, Google OAuth, Supabase real-time sync, live exchange-rate conversion, and analytics dashboards. Reduced load time by 40% by implementing an offline-first service worker architecture, enabling seamless cross-device sync without a network connection.",
     tech: ["React", "TypeScript", "Supabase", "Google OAuth 2.0", "PWA", "Service Workers"],
     features: [
       "Multi-account and multi-currency support",
-      "Offline-first PWA with service workers",
+      "40% faster load times via offline-first service workers",
+      "Seamless cross-device sync without network",
       "Live currency conversion APIs",
       "Google OAuth authentication",
       "Advanced analytics dashboards",
-      "40% faster load times via PWA caching",
     ],
     github: "https://github.com/gunnarwrld/personal-finance-web-app",
     live: "https://personal-finance-web-app-psi.vercel.app/",
@@ -142,13 +141,13 @@ export const projects: Project[] = [
     title: "PostHub",
     subtitle: "Dynamic Single Page Application",
     description:
-      "A modern responsive blogging SPA with real-time data fetching, dynamic content management, and 35% improved render efficiency via DOM optimization.",
+      "A modern responsive blogging SPA built in vanilla JavaScript — no frameworks — with a 35% render efficiency gain via DOM batching, lazy loading, and intelligent data caching.",
     longDescription:
-      "Built in vanilla JavaScript with zero frameworks — demonstrating deep DOM API knowledge. Achieved 35% improved render efficiency via DOM batching, script deferral, lazy loading, and mobile-first responsive design. Implements intelligent data caching and comprehensive error handling.",
+      "Built in vanilla JavaScript with zero frameworks — demonstrating deep DOM API knowledge. Achieved a 35% improvement in render efficiency via DOM batching, script deferral, lazy loading, and mobile-first responsive design. Implements intelligent data caching, infinite scrolling, and comprehensive error handling without any framework abstraction.",
     tech: ["Vanilla JavaScript", "HTML5", "CSS3", "REST APIs"],
     features: [
-      "Real-time data fetching with caching",
-      "35% render efficiency improvement",
+      "35% render efficiency improvement via DOM batching",
+      "Real-time data fetching with intelligent caching",
       "Lazy loading and script deferral",
       "Infinite scrolling",
       "Mobile-first responsive design",
