@@ -45,6 +45,7 @@ export const projects: Project[] = [
       "Production deployment on Railway with CI build pipeline",
     ],
     github: "https://github.com/jasminerezai/hkif-web",
+    live: "https://hkif-web.vercel.app/",
     role: "Backend Lead",
     timeline: "2025",
   },
