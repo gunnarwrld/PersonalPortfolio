@@ -29,10 +29,10 @@ const Marquee = ({ items, speed = 25 }: MarqueeProps) => {
         {duplicated.map((item, i) => (
           <span
             key={`${item}-${i}`}
-            className="text-sm font-mono tracking-widest uppercase text-muted-foreground/40 select-none flex items-center gap-12"
+            className="text-sm font-mono tracking-widest uppercase text-muted-foreground/70 select-none flex items-center gap-12"
           >
             {item}
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-muted-foreground/20" />
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-muted-foreground/50" />
           </span>
         ))}
       </motion.div>

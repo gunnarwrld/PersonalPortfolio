@@ -24,6 +24,7 @@ const Index = () => {
     <div className="min-h-screen bg-background text-foreground">
       <CustomCursor />
       <Navbar />
+      <main>
       <Hero />
       <Marquee items={techItems} speed={30} />
       <Suspense fallback={null}>
@@ -41,6 +42,7 @@ const Index = () => {
       <Suspense fallback={null}>
         <Contact />
       </Suspense>
+      </main>
       <Footer />
       <Toaster />
     </div>

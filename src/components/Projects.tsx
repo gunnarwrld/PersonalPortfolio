@@ -54,8 +54,17 @@ const Projects = () => {
               key={project.id}
               variants={cardReveal}
               whileHover={{ y: -6, transition: { duration: 0.3, ease: "easeOut" } }}
-              className="glass rounded-xl overflow-hidden group cursor-pointer hover:border-foreground/20 transition-all duration-500 relative"
+              className="glass rounded-xl overflow-hidden group cursor-pointer hover:border-foreground/20 transition-all duration-500 relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               onClick={() => setSelected(project)}
+              role="button"
+              tabIndex={0}
+              aria-label={`View details for ${project.title}`}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setSelected(project);
+                }
+              }}
             >
               {/* Hover glow */}
               <div className="absolute inset-0 bg-foreground/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl" />
