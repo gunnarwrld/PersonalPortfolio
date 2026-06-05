@@ -1,9 +1,10 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import { MapPin, GraduationCap, Rocket } from "lucide-react";
+import { MapPin, GraduationCap, Rocket, Code2 } from "lucide-react";
 import { useRef } from "react";
 
 const stats = [
-  { icon: Rocket, label: "Projects Shipped", value: "4+" },
+  { icon: Rocket, label: "Projects Shipped", value: "5+" },
+  { icon: Code2, label: "Backend Focus", value: "Node / TS" },
   { icon: GraduationCap, label: "CS Student", value: "2nd Year" },
   { icon: MapPin, label: "Based in", value: "Sweden" },
 ];
@@ -23,6 +24,12 @@ const cardReveal = {
   hidden: { opacity: 0, y: 40, rotateY: -10 },
   visible: { opacity: 1, y: 0, rotateY: 0, transition: { duration: 0.7, ease } },
 };
+
+const paragraphs = [
+  "Backend-leaning full-stack developer and Computer Science student based in Kristianstad, Sweden. I build production-ready REST APIs, serverless systems, and AI-powered applications — five live projects shipped, each with real users, real deployments, and tested codebases.",
+  "Most recently I led the backend for a sports union platform: architected a PostgreSQL schema with Prisma ORM, secured the API with a 4-tier JWT + RBAC system, and built the full Vitest + Supertest integration suite from zero before the first production deploy. I'm as comfortable reasoning about a Prisma migration failure in a Railway CI pipeline as I am crafting a Framer Motion spring animation.",
+  "Outside of coursework I follow edge computing and AI inference closely — the AI Study Assistant I shipped runs Llama 3.3 (70B) at sub-50ms latency across 300+ Cloudflare edge locations. If there's a new Workers primitive or a model I haven't run yet, I'm already reading the docs.",
+];
 
 const About = () => {
   const sectionRef = useRef(null);
@@ -54,11 +61,7 @@ const About = () => {
             variants={stagger}
             className="space-y-5"
           >
-            {[
-              "I'm a passionate full-stack developer and computer science student from Sweden. I love turning ideas into clean, functional, and user-friendly applications.",
-              "My journey into coding started with curiosity about how things work on the web, and it quickly evolved into a drive to build meaningful products. I work across the full stack — from crafting pixel-perfect UIs with React and Tailwind to designing robust APIs and database architectures.",
-              "When I'm not coding, you'll find me exploring new technologies, contributing to open-source, or diving into AI and machine learning experiments.",
-            ].map((text, i) => (
+            {paragraphs.map((text, i) => (
               <motion.p key={i} variants={itemReveal} className="text-muted-foreground leading-relaxed">
                 {text}
               </motion.p>

@@ -1,0 +1,6 @@
+# https://www.robotstxt.org
+# All search engines and AI crawlers are welcome.
+User-agent: *
+Allow: /
+
+Sitemap: https://gunnarwrld.com/sitemap.xml
