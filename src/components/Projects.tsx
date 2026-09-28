@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import {
   motion,
   useScroll,
@@ -15,19 +15,17 @@ import type { Project } from "@/data/projects";
 
 const ease: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
 
-// How many cards are visible on each side of the active card
 const SIDE_COUNT = 2;
 const TOTAL = projects.length;
+// Minimum horizontal drag distance (px) to register as a swipe
+const SWIPE_THRESHOLD = 40;
 
 function wrap(index: number) {
   return ((index % TOTAL) + TOTAL) % TOTAL;
 }
 
-// Compute the visual slot for each card relative to the active index.
-// slot 0 = centre, -1 = left neighbour, +1 = right neighbour, etc.
 function getSlot(index: number, active: number): number {
   let slot = index - active;
-  // Wrap so slot is in [-TOTAL/2, TOTAL/2)
   if (slot > TOTAL / 2) slot -= TOTAL;
   if (slot < -TOTAL / 2) slot += TOTAL;
   return slot;
@@ -43,6 +41,9 @@ const Projects = () => {
   const [active, setActive] = useState(0);
   const [selected, setSelected] = useState<Project | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  // Track whether the pointer moved enough to be a swipe (not a click)
+  const dragDeltaRef = useRef(0);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -55,10 +56,36 @@ const Projects = () => {
   const prev = useCallback(() => setActive((a) => wrap(a - 1)), []);
   const next = useCallback(() => setActive((a) => wrap(a + 1)), []);
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === "ArrowLeft") prev();
-      if (e.key === "ArrowRight") next();
+  // Global keyboard listener — active whenever the section is in the viewport
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      // Only hijack arrow keys when the projects section is roughly visible
+      const section = sectionRef.current;
+      if (!section) return;
+      const { top, bottom } = section.getBoundingClientRect();
+      const inView = top < window.innerHeight && bottom > 0;
+      if (!inView) return;
+
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        prev();
+      }
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        next();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [prev, next]);
+
+  // Drag / swipe handlers on the stage div
+  const handleDragEnd = useCallback(
+    (_e: MouseEvent | TouchEvent | PointerEvent, info: { offset: { x: number } }) => {
+      const dx = info.offset.x;
+      dragDeltaRef.current = Math.abs(dx);
+      if (dx < -SWIPE_THRESHOLD) next();
+      else if (dx > SWIPE_THRESHOLD) prev();
     },
     [prev, next],
   );
@@ -77,18 +104,22 @@ const Projects = () => {
           </motion.div>
         </div>
 
-        {/* Carousel stage */}
-        <div
-          className="relative flex items-center justify-center"
+        {/* Carousel stage — draggable */}
+        <motion.div
+          ref={stageRef}
+          className="relative flex items-center justify-center cursor-grab active:cursor-grabbing"
           style={{ perspective: "1200px", height: "420px" }}
-          onKeyDown={handleKeyDown}
-          tabIndex={-1}
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.08}
+          onDragEnd={handleDragEnd}
+          // Prevent text selection while dragging
+          onDragStart={() => { dragDeltaRef.current = 0; }}
         >
           {projects.map((project, i) => {
             const slot = getSlot(i, active);
             const absSlot = Math.abs(slot);
 
-            // Hide cards beyond SIDE_COUNT
             if (absSlot > SIDE_COUNT) return null;
 
             const isActive = slot === 0;
@@ -113,19 +144,16 @@ const Projects = () => {
                   transition: { duration: 0.55, ease },
                 }}
                 style={{ zIndex, position: "absolute", transformStyle: "preserve-3d" }}
-                className="w-[320px] sm:w-[380px] cursor-pointer"
+                className="w-[320px] sm:w-[380px]"
+                // Distinguish tap from drag: only open/focus if the drag delta was small
                 onClick={() => {
-                  if (isActive) {
-                    setSelected(project);
-                  } else {
-                    setActive(i);
-                  }
+                  if (dragDeltaRef.current > SWIPE_THRESHOLD) return;
+                  if (isActive) setSelected(project);
+                  else setActive(i);
                 }}
                 role="button"
                 tabIndex={isActive ? 0 : -1}
-                aria-label={`${
-                  isActive ? "View details for" : "Focus"
-                } ${project.title}`}
+                aria-label={`${isActive ? "View details for" : "Focus"} ${project.title}`}
                 onKeyDown={(e) => {
                   if (isActive && (e.key === "Enter" || e.key === " ")) {
                     e.preventDefault();
@@ -229,7 +257,7 @@ const Projects = () => {
               </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
         {/* Navigation controls */}
         <div className="flex items-center justify-center gap-6 mt-8">
@@ -243,7 +271,6 @@ const Projects = () => {
             <ChevronLeft className="h-4 w-4" />
           </Button>
 
-          {/* Dot indicators */}
           <div className="flex gap-2">
             {projects.map((_, i) => (
               <button
