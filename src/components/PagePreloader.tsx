@@ -1,31 +1,33 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 
 const STEPS = 5;
 
-const stairVariants = {
+// animate must be a function (for `custom` stagger) — Variants accepts
+// resolver functions per key as long as the whole object is typed Variants.
+const stairVariants: Variants = {
   initial: { scaleY: 1 },
   animate: (i: number) => ({
     scaleY: 0,
     transition: {
       duration: 0.55,
       delay: i * 0.07,
-      ease: [0.76, 0, 0.24, 1],
+      ease: [0.76, 0, 0.24, 1] as number[],
     },
   }),
   exit: { scaleY: 0 },
 };
 
-const labelVariants = {
+const labelVariants: Variants = {
   hidden: { opacity: 0, y: 16 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as number[] },
   },
   exit: {
     opacity: 0,
     y: -16,
-    transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] as number[] },
   },
 };
 
