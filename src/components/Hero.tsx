@@ -7,9 +7,11 @@ import {
 } from "framer-motion";
 import { ArrowDown, Github } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRef, useEffect, useState } from "react";
-import FloatingOrbs from "@/components/FloatingOrbs";
+import { useRef, useEffect, useState, useCallback } from "react";
+import StarField from "@/components/StarField";
 import MotionPathOrb from "@/components/MotionPathOrb";
+import ScrambleText from "@/components/ScrambleText";
+import FillText from "@/components/FillText";
 
 const ease: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
 
@@ -23,7 +25,14 @@ const textReveal: Variants = {
   }),
 };
 
-// SVG stroke draw via CSS custom properties — no external deps, works in jsdom
+const ROLES = [
+  "Full-Stack Developer",
+  "Backend Engineer",
+  "TypeScript Dev",
+  "Open Source Builder",
+];
+
+// SVG stroke draw via CSS strokeDashoffset — no external deps, works in jsdom
 const SvgSignature = () => {
   const [drawn, setDrawn] = useState(false);
 
@@ -51,7 +60,9 @@ const SvgSignature = () => {
         style={{
           strokeDasharray: 1200,
           strokeDashoffset: drawn ? 0 : 1200,
-          transition: drawn ? "stroke-dashoffset 1.6s cubic-bezier(0.76, 0, 0.24, 1)" : "none",
+          transition: drawn
+            ? "stroke-dashoffset 1.6s cubic-bezier(0.76, 0, 0.24, 1)"
+            : "none",
         }}
       />
     </svg>
@@ -59,10 +70,32 @@ const SvgSignature = () => {
 };
 
 const Hero = () => {
-  const ref = useRef(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  // Tilt state — updated on mousemove, reset on mouseleave
+  const tiltX = useSpring(0, { stiffness: 60, damping: 18 });
+  const tiltY = useSpring(0, { stiffness: 60, damping: 18 });
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLElement>) => {
+      const rect = sectionRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      // Normalise cursor position to [-1, 1] relative to section centre
+      const nx = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
+      const ny = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
+      // rotateY: positive nx → tilt right; rotateX: positive ny → tilt down
+      tiltY.set(nx * 10);
+      tiltX.set(-ny * 6);
+    },
+    [tiltX, tiltY],
+  );
+
+  const handleMouseLeave = useCallback(() => {
+    tiltX.set(0);
+    tiltY.set(0);
+  }, [tiltX, tiltY]);
 
   const { scrollYProgress } = useScroll({
-    target: ref,
+    target: sectionRef,
     offset: ["start start", "end start"],
   });
 
@@ -78,31 +111,62 @@ const Hero = () => {
 
   return (
     <section
-      ref={ref}
+      ref={sectionRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
-      style={{ perspective: "1000px" }}
+      style={{ perspective: "1200px" }}
     >
-      <FloatingOrbs />
-      <MotionPathOrb rx={380} ry={130} cx={50} cy={48} duration={22} size={72} opacity="opacity-[0.06]" />
+      {/* Background layer */}
+      <StarField />
+      <MotionPathOrb
+        rx={380}
+        ry={130}
+        cx={50}
+        cy={48}
+        duration={22}
+        size={72}
+        opacity="opacity-[0.06]"
+      />
 
       <SvgSignature />
 
       <motion.div style={{ opacity }} className="relative container mx-auto px-4 text-center">
+        {/* Subtitle — scramble loop */}
         <motion.div style={{ y: subtitleY }}>
-          <div className="overflow-hidden">
+          <div className="overflow-hidden mb-6">
             <motion.p
               custom={0}
               initial="hidden"
               animate="visible"
               variants={textReveal}
-              className="text-muted-foreground font-mono text-xs sm:text-sm mb-6 tracking-[0.3em] uppercase"
+              className="text-muted-foreground font-mono text-xs sm:text-sm tracking-[0.3em] uppercase"
             >
-              Full-Stack Developer
+              <ScrambleText words={ROLES} />
             </motion.p>
           </div>
         </motion.div>
 
-        <motion.div style={{ y: titleY }}>
+        {/* Title block — 3-D mouse tilt */}
+        <motion.div
+          style={{
+            y: titleY,
+            rotateX: tiltX,
+            rotateY: tiltY,
+            transformStyle: "preserve-3d",
+          }}
+        >
+          {/* Subtle light plane that shifts with tilt */}
+          <motion.div
+            className="absolute inset-0 pointer-events-none rounded-3xl"
+            style={{
+              background:
+                "radial-gradient(ellipse 60% 40% at 50% 50%, hsl(var(--foreground)/0.04) 0%, transparent 70%)",
+              rotateX: useTransform(tiltX, (v) => -v * 0.4),
+              rotateY: useTransform(tiltY, (v) => -v * 0.4),
+            }}
+          />
+
           <div className="overflow-hidden">
             <motion.h1
               custom={1}
@@ -115,17 +179,21 @@ const Hero = () => {
             </motion.h1>
           </div>
 
-          <div className="overflow-hidden">
-            <motion.h1
-              custom={2}
-              initial="hidden"
-              animate="visible"
-              variants={textReveal}
-              className="text-6xl sm:text-8xl lg:text-9xl font-extrabold tracking-tighter mb-8 leading-[0.9] text-gradient"
-            >
-              Gunnar
-            </motion.h1>
-          </div>
+          {/* SVG fill-sweep on name */}
+          <motion.div
+            custom={2}
+            initial="hidden"
+            animate="visible"
+            variants={textReveal}
+            className="mb-8"
+          >
+            <FillText
+              text="Gunnar"
+              delay={1200}
+              duration={1100}
+              className="text-6xl sm:text-8xl lg:text-9xl font-extrabold tracking-tighter leading-[0.9]"
+            />
+          </motion.div>
         </motion.div>
 
         <motion.div style={{ y: subtitleY }}>
