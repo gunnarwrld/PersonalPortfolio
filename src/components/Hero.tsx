@@ -11,6 +11,7 @@ import { useRef, useEffect, useState, useCallback } from "react";
 import StarField from "@/components/StarField";
 import MotionPathOrb from "@/components/MotionPathOrb";
 import ScrambleText from "@/components/ScrambleText";
+import HoverRevealText from "@/components/HoverRevealText";
 
 const ease: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
 
@@ -164,29 +165,42 @@ const Hero = () => {
             }}
           />
 
+          {/*
+           * HoverRevealText on both lines:
+           * — letters slide up out of view on hover, replaced by a gradient copy sliding in.
+           * — The motion.div entrance animation (textReveal) still runs on page load;
+           *   the hover effect is layered on top.
+           */}
           <div className="overflow-hidden">
-            <motion.h1
+            <motion.div
               custom={1}
               initial="hidden"
               animate="visible"
               variants={textReveal}
-              className="text-6xl sm:text-8xl lg:text-9xl font-extrabold tracking-tighter mb-2 leading-[0.9]"
             >
-              Hi, I&#39;m
-            </motion.h1>
+              <HoverRevealText
+                text="Hi, I'm"
+                as="h1"
+                staggerMs={28}
+                className="text-6xl sm:text-8xl lg:text-9xl font-extrabold tracking-tighter mb-2 leading-[0.9]"
+              />
+            </motion.div>
           </div>
 
-          {/* Original gradient text — unchanged from main */}
           <div className="overflow-hidden">
-            <motion.h1
+            <motion.div
               custom={2}
               initial="hidden"
               animate="visible"
               variants={textReveal}
-              className="text-6xl sm:text-8xl lg:text-9xl font-extrabold tracking-tighter mb-8 leading-[0.9] text-gradient"
             >
-              Gunnar
-            </motion.h1>
+              <HoverRevealText
+                text="Gunnar"
+                as="h1"
+                staggerMs={22}
+                className="text-6xl sm:text-8xl lg:text-9xl font-extrabold tracking-tighter mb-8 leading-[0.9] text-gradient"
+              />
+            </motion.div>
           </div>
         </motion.div>
 
