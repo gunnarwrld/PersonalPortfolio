@@ -1,12 +1,10 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, type Variants } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { skillGroups } from "@/data/skills";
 import { useRef, useEffect } from "react";
-import anime from "animejs";
+import { animate, stagger } from "animejs";
 
-const ease: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
-
-const badgeReveal = {
+const badgeReveal: Variants = {
   hidden: { opacity: 0, scale: 0.8 },
   visible: { opacity: 1, scale: 1, transition: { duration: 0.3 } },
 };
@@ -29,7 +27,6 @@ const Skills = () => {
     const grid = gridRef.current;
     if (!grid) return;
 
-    // Set cards invisible before the observer fires
     const cards = Array.from(grid.querySelectorAll<HTMLElement>(".skill-card"));
     cards.forEach((c) => {
       c.style.opacity = "0";
@@ -42,15 +39,14 @@ const Skills = () => {
           hasAnimated.current = true;
           observer.disconnect();
 
-          // 3-column grid: [cols, rows] matches lg:grid-cols-3 layout
-          anime({
-            targets: cards,
+          // Named export animate(), stagger() - v4 API (no default export)
+          animate(cards, {
             opacity: [0, 1],
             translateY: [28, 0],
             scale: [0.88, 1],
             duration: 600,
-            easing: "easeOutExpo",
-            delay: anime.stagger(80, {
+            ease: "outExpo",
+            delay: stagger(80, {
               grid: [3, Math.ceil(cards.length / 3)],
               from: "center",
             }),
@@ -71,7 +67,7 @@ const Skills = () => {
           <motion.div style={{ x: headingX, opacity: headingOpacity }}>
             <p className="text-xs font-mono tracking-[0.3em] uppercase text-muted-foreground mb-3">02 - Skills</p>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-12">
-              Skills & Tech
+              Skills &amp; Tech
             </h2>
           </motion.div>
         </div>

@@ -1,13 +1,13 @@
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, type Variants } from "framer-motion";
 import { ArrowDown, Github } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRef, useEffect } from "react";
 import FloatingOrbs from "@/components/FloatingOrbs";
-import { createDrawable } from "animejs";
+import { animate, svg } from "animejs";
 
 const ease: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
 
-const textReveal = {
+const textReveal: Variants = {
   hidden: { opacity: 0, y: 80, rotateX: 40 },
   visible: (i: number) => ({
     opacity: 1,
@@ -31,16 +31,15 @@ const Hero = () => {
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   // Animate SVG stroke draw after hero text has revealed (~0.9 s)
+  // svg.createDrawable returns an array of drawable proxies
   useEffect(() => {
     const path = svgPathRef.current;
     if (!path) return;
 
-    const drawable = createDrawable(path);
-    // Start invisible then draw in
-    drawable.draw(0);
+    const drawables = svg.createDrawable(path);
 
     const id = setTimeout(() => {
-      drawable.animate({
+      animate(drawables, {
         draw: ["0 0", "0 1"],
         duration: 1600,
         ease: "inOutQuart",
@@ -143,7 +142,7 @@ const Hero = () => {
                   animate={{ x: [0, 4, 0] }}
                   transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
                 >
-                  →
+                  &rarr;
                 </motion.span>
               </a>
             </Button>
