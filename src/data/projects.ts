@@ -15,6 +15,39 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    id: "smart-home-gitops",
+    title: "Smart Home GitOps",
+    subtitle: "Android Security Monitor",
+    description:
+      "Built an Android app that detects adversarial AI attacks on GitOps infrastructure in real time — using a 7-pattern on-device heuristic engine and a full GitHub REST API write loop to let a human operator force-merge or reject from the app.",
+    longDescription:
+      "Architected a fully functional Android application around a cybersecurity research scenario: a smart home managed as infrastructure-as-code, where a legitimate AI (EcoAgent) proposes energy-saving changes via Pull Requests while an adversarial AI (LuxAgent) injects psychologically-crafted deceptive comments to manipulate the human operator into rejecting them. Built the threat detection engine as a pure Kotlin domain object — zero Android dependencies — implementing a 7-category weighted heuristic that scores PR comments against patterns like HVAC failure language, direct blocking commands, and artificial urgency, triggering a security alert at 40% or above. Implemented MVVM + Clean Architecture with a strict unidirectional dependency rule (UI → ViewModel → Repository → API), using StateFlow for UI state and SharedFlow for one-shot snackbar events, with a 30-second background polling loop managed in viewModelScope. Closed the full GitOps write loop from the app: on Force Merge, the app fetches the current blob SHA, decodes Base64 JSON, modifies the infrastructure state, re-encodes, commits directly to main via PUT /contents, then closes the PR via PATCH /pulls — all in a single atomic coroutine sequence. Hardened all write operations with a 3-layer catch (HttpException per status code, IOException, generic fallback) and a double-submit guard, ensuring zero crashes on network failure.",
+    tech: [
+      "Kotlin 2.2.0",
+      "Jetpack Compose",
+      "MVVM",
+      "Clean Architecture",
+      "Kotlin Coroutines",
+      "StateFlow",
+      "Retrofit 2",
+      "OkHttp 4",
+      "Gson",
+      "GitHub REST API",
+      "Gradle 9",
+    ],
+    features: [
+      "On-device 7-pattern weighted heuristic engine — zero network calls for detection",
+      "Full GitOps write loop: fetch SHA, modify JSON, commit to main, close PR",
+      "MVVM + Clean Architecture with strict unidirectional dependency rule",
+      "30s background polling loop with StateFlow-driven animated state transitions",
+      "3-layer fault tolerance — HttpException per status code, IOException, safety net",
+      "Token injected via BuildConfig at compile time — zero hardcoded secrets",
+    ],
+    github: "https://github.com/gunnarwrld/smart-home-gitops",
+    role: "Solo Developer",
+    timeline: "2026",
+  },
+  {
     id: "hkif-web",
     title: "HKIF Website",
     subtitle: "Sports Union Platform",
