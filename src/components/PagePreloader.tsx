@@ -2,8 +2,9 @@ import { motion, AnimatePresence, type Variants } from "framer-motion";
 
 const STEPS = 5;
 
-// animate must be a function (for `custom` stagger) — Variants accepts
-// resolver functions per key as long as the whole object is typed Variants.
+const ease: [number, number, number, number] = [0.76, 0, 0.24, 1];
+const easeOut: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
+
 const stairVariants: Variants = {
   initial: { scaleY: 1 },
   animate: (i: number) => ({
@@ -11,7 +12,7 @@ const stairVariants: Variants = {
     transition: {
       duration: 0.55,
       delay: i * 0.07,
-      ease: [0.76, 0, 0.24, 1] as number[],
+      ease,
     },
   }),
   exit: { scaleY: 0 },
@@ -22,12 +23,12 @@ const labelVariants: Variants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as number[] },
+    transition: { duration: 0.5, ease: easeOut },
   },
   exit: {
     opacity: 0,
     y: -16,
-    transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] as number[] },
+    transition: { duration: 0.35, ease: easeOut },
   },
 };
 
