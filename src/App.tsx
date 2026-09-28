@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import PagePreloader from "@/components/PagePreloader";
+import CustomCursor from "@/components/CustomCursor";
 
 // NotFound is rarely visited - lazy-load to keep it out of the main bundle
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
@@ -36,6 +37,7 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <CustomCursor />
         <PagePreloader isVisible={showPreloader} />
         <BrowserRouter>
           <Suspense fallback={null}>
