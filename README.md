@@ -49,7 +49,10 @@
 ```
 .
 ├── api/
-│   └── contact.ts          # Vercel serverless route — validates + sends email via Resend
+│   ├── contact.ts          # Vercel serverless route — validates + sends email via Resend
+│   └── og.tsx              # Edge OG image for /api/og (social cards)
+├── e2e/
+│   └── smoke.spec.ts       # Playwright smoke tests
 ├── public/                 # Static assets served at the site root
 ├── src/
 │   ├── components/         # Hero, About, Skills, Projects, Contact, Navbar, …
@@ -72,7 +75,7 @@
 ```bash
 git clone https://github.com/gunnarwrld/PersonalPortfolio.git
 cd PersonalPortfolio
-npm install            # or: bun install
+npm install
 cp .env.example .env.local
 npm run dev            # http://localhost:8080
 ```
@@ -132,7 +135,7 @@ To deploy your own fork:
 
 ## Roadmap
 
-- [ ] Server-side render or prerender so social cards include a real `og:image`
+- [x] Dynamic `og:image` via [`api/og.tsx`](api/og.tsx) — the homepage meta tags already point at `/api/og` (1200×630, edge runtime)
 - [ ] Per-project case-study pages with screenshots, decisions, and trade-offs
 - [ ] `/blog` route with MDX
 - [ ] Lighthouse CI in GitHub Actions

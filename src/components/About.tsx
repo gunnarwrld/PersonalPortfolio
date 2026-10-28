@@ -1,9 +1,10 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { MapPin, GraduationCap, Rocket, Code2 } from "lucide-react";
 import { useRef } from "react";
+import { projects } from "@/data/projects";
 
 const stats = [
-  { icon: Rocket, label: "Projects Shipped", value: "5+" },
+  { icon: Rocket, label: "Projects built", value: String(projects.length) },
   { icon: Code2, label: "Backend Focus", value: "Node / TS" },
   { icon: GraduationCap, label: "CS Student", value: "2nd Year" },
   { icon: MapPin, label: "Based in", value: "Sweden" },
@@ -26,9 +27,9 @@ const cardReveal = {
 };
 
 const paragraphs = [
-  "Backend-leaning full-stack developer and Computer Science student based in Kristianstad, Sweden. I build production-ready REST APIs, serverless systems, and AI-powered applications — five live projects shipped, each with real users, real deployments, and tested codebases.",
+  "Backend-leaning full-stack developer and Computer Science student based in Kristianstad, Sweden. I build REST APIs, edge workers, and Android apps. The projects below are the ones with code behind them — some are deployed, and others are local services with tests you can run from the repository.",
   "Most recently I led the backend for a sports union platform: architected a PostgreSQL schema with Prisma ORM, secured the API with a 4-tier JWT + RBAC system, and built the full Vitest + Supertest integration suite from zero before the first production deploy. I'm as comfortable reasoning about a Prisma migration failure in a Railway CI pipeline as I am crafting a Framer Motion spring animation.",
-  "Outside of coursework I follow edge computing and AI inference closely — the AI Study Assistant I shipped runs Llama 3.3 (70B) at sub-50ms latency across 300+ Cloudflare edge locations. If there's a new Workers primitive or a model I haven't run yet, I'm already reading the docs.",
+  "Outside of coursework I follow edge computing and AI inference closely. The AI Study Assistant runs Llama 3.3 on Cloudflare Workers AI, and a Durable Object keeps each study session's chat history in SQLite. If there's a new Workers primitive or a model I haven't run yet, I'm already reading the docs.",
 ];
 
 const About = () => {
