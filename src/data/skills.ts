@@ -19,6 +19,7 @@ export const skillGroups: SkillGroup[] = [
       "React Hook Form",
       "Next.js",
       "Vite",
+      "Jetpack Compose",
     ],
   },
   {
@@ -26,13 +27,16 @@ export const skillGroups: SkillGroup[] = [
     skills: [
       "Node.js",
       "Express 5",
-      "TypeScript",
       "REST API Design",
       "JWT",
       "bcryptjs",
       "Zod",
       "Python",
       "FastAPI",
+      "Kotlin",
+      "Spring Boot",
+      "BullMQ",
+      "Socket.io",
     ],
   },
   {
@@ -42,8 +46,7 @@ export const skillGroups: SkillGroup[] = [
       "Prisma ORM",
       "Supabase",
       "MongoDB",
-      "Firebase",
-      "MySQL",
+      "Redis",
     ],
   },
   {
@@ -67,7 +70,7 @@ export const skillGroups: SkillGroup[] = [
       "Git",
       "GitHub Actions",
       "CI/CD",
-      "Docker",
+      "Docker Compose",
       "ESM/CJS Module Resolution",
     ],
   },
@@ -76,10 +79,24 @@ export const skillGroups: SkillGroup[] = [
     skills: [
       "Llama 3.3",
       "Workers AI",
-      "OpenAI API",
+      "Groq",
       "Prompt Engineering",
-      "LangChain",
       "Conversational AI",
     ],
   },
+];
+
+/** Tech names in the homepage marquee. Kept next to the skill matrix so both stay in sync. */
+export const marqueeItems = [
+  "React",
+  "TypeScript",
+  "Tailwind CSS",
+  "Node.js",
+  "PostgreSQL",
+  "Python",
+  "Docker Compose",
+  "Supabase",
+  "Git",
+  "REST APIs",
+  "AI/ML",
 ];
