@@ -179,9 +179,14 @@ const Projects = () => {
                           {project.subtitle}
                         </p>
                       </div>
-                      <span className="text-xs text-muted-foreground font-mono shrink-0 ml-2">
-                        {project.timeline}
-                      </span>
+                      <div className="flex flex-col items-end gap-1 shrink-0 ml-2">
+                        <span className="text-xs text-muted-foreground font-mono">
+                          {project.timeline}
+                        </span>
+                        <Badge variant="outline" className="text-[10px] px-2 py-0 font-mono">
+                          {project.status}
+                        </Badge>
+                      </div>
                     </div>
 
                     <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
