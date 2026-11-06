@@ -8,10 +8,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Github, ExternalLink, CheckCircle2 } from "lucide-react";
-import type { Project } from "@/data/projects";
+import type { ResolvedProject } from "@/lib/githubSync";
 
 interface Props {
-  project: Project | null;
+  project: ResolvedProject | null;
   onClose: () => void;
 }
 
@@ -25,6 +25,8 @@ const ProjectModal = ({ project, onClose }: Props) => {
           <DialogTitle className="text-2xl">{project.title}</DialogTitle>
           <DialogDescription className="font-mono text-xs text-primary">
             {project.subtitle} · {project.role} · {project.timeline} · {project.status}
+            {project.lastUpdatedLabel ? ` · Updated ${project.lastUpdatedLabel}` : ""}
+            {project.archived ? " · Archived" : ""}
           </DialogDescription>
         </DialogHeader>
 
@@ -48,6 +50,19 @@ const ProjectModal = ({ project, onClose }: Props) => {
           <div className="rounded-md border border-border/60 p-3">
             <h4 className="text-sm font-semibold mb-1 text-foreground">Limits</h4>
             <p className="text-sm text-muted-foreground">{project.limits}</p>
+          </div>
+        )}
+
+        {project.languages.length > 0 && (
+          <div>
+            <h4 className="text-sm font-semibold mb-2 text-foreground">Languages</h4>
+            <div className="flex flex-wrap gap-1.5">
+              {project.languages.map((language) => (
+                <Badge key={language.name} variant="secondary" className="text-xs">
+                  {language.name} {language.percentage.toFixed(1)}%
+                </Badge>
+              ))}
+            </div>
           </div>
         )}
 

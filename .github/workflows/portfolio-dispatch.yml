@@ -1,0 +1,41 @@
+name: Portfolio dispatch
+
+# Reusable workflow. Project repos call this on a push to their default branch.
+# The secret is passed by the caller; it is not read from this repository.
+
+on:
+  workflow_call:
+    secrets:
+      PORTFOLIO_DISPATCH_TOKEN:
+        required: true
+
+permissions: {}
+
+jobs:
+  dispatch:
+    name: Dispatch project-updated
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch project-updated to PersonalPortfolio
+        env:
+          PORTFOLIO_DISPATCH_TOKEN: ${{ secrets.PORTFOLIO_DISPATCH_TOKEN }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          if [ -z "$PORTFOLIO_DISPATCH_TOKEN" ]; then
+            echo "PORTFOLIO_DISPATCH_TOKEN is empty."
+            exit 1
+          fi
+          payload="$(jq -n \
+            --arg repository "$GITHUB_REPOSITORY" \
+            --arg ref "$GITHUB_REF" \
+            --arg sha "$GITHUB_SHA" \
+            --arg default_branch "$DEFAULT_BRANCH" \
+            '{event_type:"project-updated", client_payload:{repository:$repository, ref:$ref, sha:$sha, default_branch:$default_branch}}')"
+          curl --fail-with-body -sS -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${PORTFOLIO_DISPATCH_TOKEN}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "User-Agent: gunnarwrld-portfolio-sync" \
+            https://api.github.com/repos/gunnarwrld/PersonalPortfolio/dispatches \
+            --data "$payload"

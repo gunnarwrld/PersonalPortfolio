@@ -1,0 +1,329 @@
+{
+  "generatedAt": "2026-11-06T15:07:08.181Z",
+  "owner": "gunnarwrld",
+  "repos": {
+    "gunnarwrld/PostHub-DynamicWebsite": {
+      "name": "PostHub-DynamicWebsite",
+      "fullName": "gunnarwrld/PostHub-DynamicWebsite",
+      "description": null,
+      "topics": [],
+      "primaryLanguage": "JavaScript",
+      "languages": [
+        {
+          "name": "JavaScript",
+          "percentage": 55.6
+        },
+        {
+          "name": "CSS",
+          "percentage": 33
+        },
+        {
+          "name": "HTML",
+          "percentage": 11.4
+        }
+      ],
+      "homepage": "https://post-hub-dynamic-website.vercel.app",
+      "defaultBranch": "main",
+      "pushedAt": "2026-11-06T15:00:02Z",
+      "archived": false,
+      "stars": 1,
+      "fork": false,
+      "htmlUrl": "https://github.com/gunnarwrld/PostHub-DynamicWebsite",
+      "onSite": true
+    },
+    "gunnarwrld/cf_ai_study_assistant": {
+      "name": "cf_ai_study_assistant",
+      "fullName": "gunnarwrld/cf_ai_study_assistant",
+      "description": null,
+      "topics": [],
+      "primaryLanguage": "JavaScript",
+      "languages": [
+        {
+          "name": "JavaScript",
+          "percentage": 57.7
+        },
+        {
+          "name": "CSS",
+          "percentage": 18.1
+        },
+        {
+          "name": "Shell",
+          "percentage": 9.6
+        },
+        {
+          "name": "Batchfile",
+          "percentage": 7.8
+        },
+        {
+          "name": "HTML",
+          "percentage": 6.8
+        }
+      ],
+      "homepage": null,
+      "defaultBranch": "main",
+      "pushedAt": "2026-11-06T14:55:56Z",
+      "archived": false,
+      "stars": 0,
+      "fork": false,
+      "htmlUrl": "https://github.com/gunnarwrld/cf_ai_study_assistant",
+      "onSite": true
+    },
+    "gunnarwrld/clicky-recurring-runs": {
+      "name": "clicky-recurring-runs",
+      "fullName": "gunnarwrld/clicky-recurring-runs",
+      "description": null,
+      "topics": [],
+      "primaryLanguage": "Python",
+      "languages": [
+        {
+          "name": "Python",
+          "percentage": 100
+        }
+      ],
+      "homepage": null,
+      "defaultBranch": "main",
+      "pushedAt": "2026-11-06T14:58:38Z",
+      "archived": false,
+      "stars": 0,
+      "fork": false,
+      "htmlUrl": "https://github.com/gunnarwrld/clicky-recurring-runs",
+      "onSite": true
+    },
+    "gunnarwrld/fair-football-fee": {
+      "name": "fair-football-fee",
+      "fullName": "gunnarwrld/fair-football-fee",
+      "description": null,
+      "topics": [],
+      "primaryLanguage": "Python",
+      "languages": [
+        {
+          "name": "Python",
+          "percentage": 99.7
+        },
+        {
+          "name": "Mako",
+          "percentage": 0.3
+        }
+      ],
+      "homepage": null,
+      "defaultBranch": "main",
+      "pushedAt": "2026-11-06T14:56:20Z",
+      "archived": false,
+      "stars": 0,
+      "fork": false,
+      "htmlUrl": "https://github.com/gunnarwrld/fair-football-fee",
+      "onSite": false
+    },
+    "gunnarwrld/forge-wallet-android": {
+      "name": "forge-wallet-android",
+      "fullName": "gunnarwrld/forge-wallet-android",
+      "description": "Offline-first Android wallet on Ledger Forge: payments survive airplane mode and process death, and settle exactly once.",
+      "topics": [],
+      "primaryLanguage": "Kotlin",
+      "languages": [
+        {
+          "name": "Kotlin",
+          "percentage": 100
+        }
+      ],
+      "homepage": null,
+      "defaultBranch": "main",
+      "pushedAt": "2026-11-06T14:58:35Z",
+      "archived": false,
+      "stars": 0,
+      "fork": false,
+      "htmlUrl": "https://github.com/gunnarwrld/forge-wallet-android",
+      "onSite": false
+    },
+    "gunnarwrld/futbol_data_aggregator_api": {
+      "name": "futbol_data_aggregator_api",
+      "fullName": "gunnarwrld/futbol_data_aggregator_api",
+      "description": "High-Performance Soccer Data Aggregator & REST API — Node.js, TypeScript, Express, Prisma, PostgreSQL, Redis. Pulls live and historical data from API-Football, normalizes it into a relational database, and serves it through optimized, rate-limited, cached endpoints.",
+      "topics": [],
+      "primaryLanguage": "TypeScript",
+      "languages": [
+        {
+          "name": "TypeScript",
+          "percentage": 95.5
+        },
+        {
+          "name": "JavaScript",
+          "percentage": 4.5
+        }
+      ],
+      "homepage": "https://futboldataaggregatorapi-production.up.railway.app/",
+      "defaultBranch": "main",
+      "pushedAt": "2026-10-28T17:19:50Z",
+      "archived": false,
+      "stars": 0,
+      "fork": false,
+      "htmlUrl": "https://github.com/gunnarwrld/futbol_data_aggregator_api",
+      "onSite": true
+    },
+    "gunnarwrld/lab01_fullstack": {
+      "name": "lab01_fullstack",
+      "fullName": "gunnarwrld/lab01_fullstack",
+      "description": null,
+      "topics": [],
+      "primaryLanguage": "JavaScript",
+      "languages": [
+        {
+          "name": "JavaScript",
+          "percentage": 87.4
+        },
+        {
+          "name": "CSS",
+          "percentage": 11.7
+        },
+        {
+          "name": "HTML",
+          "percentage": 0.9
+        }
+      ],
+      "homepage": null,
+      "defaultBranch": "master",
+      "pushedAt": "2026-11-06T14:55:53Z",
+      "archived": false,
+      "stars": 0,
+      "fork": false,
+      "htmlUrl": "https://github.com/gunnarwrld/lab01_fullstack",
+      "onSite": false
+    },
+    "gunnarwrld/ledger-api": {
+      "name": "ledger-api",
+      "fullName": "gunnarwrld/ledger-api",
+      "description": null,
+      "topics": [],
+      "primaryLanguage": "Kotlin",
+      "languages": [
+        {
+          "name": "Kotlin",
+          "percentage": 86.3
+        },
+        {
+          "name": "PLpgSQL",
+          "percentage": 7
+        },
+        {
+          "name": "Python",
+          "percentage": 5.6
+        },
+        {
+          "name": "Dockerfile",
+          "percentage": 1.1
+        }
+      ],
+      "homepage": null,
+      "defaultBranch": "master",
+      "pushedAt": "2026-11-06T14:58:01Z",
+      "archived": false,
+      "stars": 0,
+      "fork": false,
+      "htmlUrl": "https://github.com/gunnarwrld/ledger-api",
+      "onSite": true
+    },
+    "gunnarwrld/ledger-sentinel-ai": {
+      "name": "ledger-sentinel-ai",
+      "fullName": "gunnarwrld/ledger-sentinel-ai",
+      "description": "Java 21 double-entry payments ledger: idempotent transfers, ordered row locks, reversals and model-based tests. Synthetic data only.",
+      "topics": [],
+      "primaryLanguage": "Groovy",
+      "languages": [
+        {
+          "name": "Groovy",
+          "percentage": 65.1
+        },
+        {
+          "name": "Java",
+          "percentage": 33
+        },
+        {
+          "name": "PLpgSQL",
+          "percentage": 1.9
+        }
+      ],
+      "homepage": null,
+      "defaultBranch": "main",
+      "pushedAt": "2026-11-06T14:57:58Z",
+      "archived": false,
+      "stars": 0,
+      "fork": false,
+      "htmlUrl": "https://github.com/gunnarwrld/ledger-sentinel-ai",
+      "onSite": false
+    },
+    "gunnarwrld/matchday-hub": {
+      "name": "matchday-hub",
+      "fullName": "gunnarwrld/matchday-hub",
+      "description": "ASP.NET Core 10 team-sport match data service on Azure: live events via Service Bus and SignalR, companion to the Fútbol Data Aggregator",
+      "topics": [],
+      "primaryLanguage": null,
+      "languages": [],
+      "homepage": null,
+      "defaultBranch": "main",
+      "pushedAt": "2026-10-30T19:45:23Z",
+      "archived": false,
+      "stars": 0,
+      "fork": false,
+      "htmlUrl": "https://github.com/gunnarwrld/matchday-hub",
+      "onSite": false
+    },
+    "gunnarwrld/personal-finance-web-app": {
+      "name": "personal-finance-web-app",
+      "fullName": "gunnarwrld/personal-finance-web-app",
+      "description": null,
+      "topics": [],
+      "primaryLanguage": "TypeScript",
+      "languages": [
+        {
+          "name": "TypeScript",
+          "percentage": 91.4
+        },
+        {
+          "name": "PLpgSQL",
+          "percentage": 6.9
+        },
+        {
+          "name": "JavaScript",
+          "percentage": 0.8
+        },
+        {
+          "name": "CSS",
+          "percentage": 0.7
+        },
+        {
+          "name": "HTML",
+          "percentage": 0.2
+        }
+      ],
+      "homepage": "https://personal-finance-web-app-psi.vercel.app",
+      "defaultBranch": "main",
+      "pushedAt": "2026-11-06T15:01:23Z",
+      "archived": false,
+      "stars": 0,
+      "fork": false,
+      "htmlUrl": "https://github.com/gunnarwrld/personal-finance-web-app",
+      "onSite": true
+    },
+    "gunnarwrld/smart-home-gitops": {
+      "name": "smart-home-gitops",
+      "fullName": "gunnarwrld/smart-home-gitops",
+      "description": null,
+      "topics": [],
+      "primaryLanguage": "Kotlin",
+      "languages": [
+        {
+          "name": "Kotlin",
+          "percentage": 100
+        }
+      ],
+      "homepage": null,
+      "defaultBranch": "main",
+      "pushedAt": "2026-11-06T15:03:47Z",
+      "archived": false,
+      "stars": 0,
+      "fork": false,
+      "htmlUrl": "https://github.com/gunnarwrld/smart-home-gitops",
+      "onSite": true
+    }
+  }
+}
