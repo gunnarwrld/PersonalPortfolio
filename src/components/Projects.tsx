@@ -9,11 +9,14 @@ import {
 import { ExternalLink, Github, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { projects } from "@/data/projects";
+import { projects as projectCopy } from "@/data/projects";
+import { githubSync } from "@/data/githubSyncData";
+import { resolveProjects, type ResolvedProject } from "@/lib/githubSync";
 import ProjectModal from "@/components/ProjectModal";
-import type { Project } from "@/data/projects";
 
 const ease: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
+
+const projects = resolveProjects(projectCopy, githubSync);
 
 const SIDE_COUNT = 2;
 const TOTAL = projects.length;
@@ -39,7 +42,7 @@ const cardVariants: Variants = {
 
 const Projects = () => {
   const [active, setActive] = useState(0);
-  const [selected, setSelected] = useState<Project | null>(null);
+  const [selected, setSelected] = useState<ResolvedProject | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   // Track whether the pointer moved enough to be a swipe (not a click)
@@ -153,7 +156,13 @@ const Projects = () => {
                 }}
                 role="button"
                 tabIndex={isActive ? 0 : -1}
-                aria-label={`${isActive ? "View details for" : "Focus"} ${project.title}`}
+                aria-label={[
+                  `${isActive ? "View details for" : "Focus"} ${project.title}`,
+                  project.archived ? "archived" : null,
+                  project.lastUpdatedLabel ? `updated ${project.lastUpdatedLabel}` : null,
+                ]
+                  .filter(Boolean)
+                  .join(", ")}
                 onKeyDown={(e) => {
                   if (isActive && (e.key === "Enter" || e.key === " ")) {
                     e.preventDefault();
@@ -170,6 +179,11 @@ const Projects = () => {
                 >
                   <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
                   <div className="p-6">
+                    {project.archived && (
+                      <Badge variant="outline" className="mb-3 text-[10px] uppercase tracking-wider">
+                        Archived
+                      </Badge>
+                    )}
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <h3 className="text-lg font-bold text-foreground">
@@ -180,8 +194,11 @@ const Projects = () => {
                         </p>
                       </div>
                       <div className="flex flex-col items-end gap-1 shrink-0 ml-2">
-                        <span className="text-xs text-muted-foreground font-mono">
-                          {project.timeline}
+                        <span
+                          className="text-xs text-muted-foreground font-mono text-right"
+                          title={project.synced ? "Last push on GitHub" : undefined}
+                        >
+                          {project.lastUpdatedLabel ?? project.timeline}
                         </span>
                         <Badge variant="outline" className="text-[10px] px-2 py-0 font-mono">
                           {project.status}
@@ -194,7 +211,7 @@ const Projects = () => {
                     </p>
 
                     <div className="flex flex-wrap gap-1.5 mb-5">
-                      {project.tech.slice(0, 5).map((t) => (
+                      {project.stack.slice(0, 5).map((t) => (
                         <Badge
                           key={t}
                           variant="secondary"
@@ -203,9 +220,9 @@ const Projects = () => {
                           {t}
                         </Badge>
                       ))}
-                      {project.tech.length > 5 && (
+                      {project.stack.length > 5 && (
                         <Badge variant="secondary" className="text-[10px] px-2 py-0">
-                          +{project.tech.length - 5}
+                          +{project.stack.length - 5}
                         </Badge>
                       )}
                     </div>

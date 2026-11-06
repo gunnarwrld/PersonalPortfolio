@@ -36,6 +36,9 @@ jobs:
       - name: Type-check (api)
         run: npx tsc -p api/tsconfig.json --noEmit
 
+      - name: Type-check (sync script)
+        run: npx tsc -p tsconfig.scripts.json --noEmit
+
   unit-tests:
     name: Unit tests (Vitest)
     runs-on: ubuntu-latest

@@ -1,0 +1,104 @@
+name: Sync GitHub project facts
+
+# Opens a pull request on the rolling branch `github-sync`. Never pushes to main.
+# repository_dispatch only runs the copy of this file on the default branch.
+
+on:
+  repository_dispatch:
+    types: [project-updated]
+  workflow_dispatch:
+    inputs:
+      repository:
+        description: "Optional repo to refresh (name or owner/name). Empty refreshes the watch list."
+        required: false
+        type: string
+  schedule:
+    # 06:17 UTC. Off the hour so the backup sweep is not competing with every other cron.
+    - cron: "17 6 * * *"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: sync-github-projects
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Refresh facts and open a pull request
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Refresh GitHub facts
+        id: sync
+        env:
+          # Public metadata. Do not put PORTFOLIO_DISPATCH_TOKEN here: a token
+          # scoped only to this repository cannot read the other projects.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SYNC_REPOSITORY: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.repository || github.event_name == 'workflow_dispatch' && inputs.repository || '' }}
+        run: npm run sync:github -- --report sync-report.json
+
+      - name: Open or update the review pull request
+        if: steps.sync.outputs.changed == 'true'
+        env:
+          DISPATCH_TOKEN: ${{ secrets.PORTFOLIO_DISPATCH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TITLE: ${{ steps.sync.outputs.title }}
+        run: |
+          set -euo pipefail
+          BRANCH="github-sync"
+          BASE="main"
+          if [ "$BRANCH" = "$BASE" ] || [ "$BRANCH" = "master" ]; then
+            echo "Refusing to publish the sync branch onto the default branch."
+            exit 1
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cp src/data/github-sync.json /tmp/github-sync.json
+          git checkout -f -B "$BRANCH" "origin/${BASE}"
+          cp /tmp/github-sync.json src/data/github-sync.json
+          git add src/data/github-sync.json
+          if git diff --cached --quiet; then
+            echo "Sync file matches ${BASE}. Not opening a pull request."
+            exit 0
+          fi
+          git commit -m "$TITLE"
+
+          if [ -n "${DISPATCH_TOKEN}" ]; then
+            TOKEN="$DISPATCH_TOKEN"
+          else
+            TOKEN="$GITHUB_TOKEN"
+            echo "::notice title=Sync pull request uses GITHUB_TOKEN::PORTFOLIO_DISPATCH_TOKEN is not set on PersonalPortfolio. Opening the pull request requires the repository setting Allow GitHub Actions to create and approve pull requests. Workflows in this repo will not run on that pull request. Add the PAT so lint, tests, and the Vercel preview run."
+          fi
+          export GH_TOKEN="$TOKEN"
+
+          git fetch origin "+refs/heads/${BRANCH}:refs/remotes/origin/${BRANCH}" || true
+          if git rev-parse --verify --quiet "refs/remotes/origin/${BRANCH}" >/dev/null; then
+            git -c "http.extraheader=AUTHORIZATION: bearer ${TOKEN}" push --force-with-lease="refs/heads/${BRANCH}:refs/remotes/origin/${BRANCH}" origin "HEAD:${BRANCH}"
+          else
+            git -c "http.extraheader=AUTHORIZATION: bearer ${TOKEN}" push origin "HEAD:${BRANCH}"
+          fi
+
+          existing="$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$BRANCH" --base "$BASE" --state open --json number --jq '.[0].number')"
+          if [ -n "$existing" ] && [ "$existing" != "null" ]; then
+            gh pr edit "$existing" --repo "$GITHUB_REPOSITORY" --title "$TITLE" --body-file sync-report.md
+          else
+            gh pr create --repo "$GITHUB_REPOSITORY" --base "$BASE" --head "$BRANCH" --title "$TITLE" --body-file sync-report.md
+          fi

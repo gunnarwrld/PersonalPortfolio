@@ -12,6 +12,12 @@ export interface Project {
   longDescription: string;
   tech: string[];
   features: string[];
+  /**
+   * `owner/name` of a repository tracked in `github-sync.json`.
+   * When set, the card reads languages, last push, live URL, repo URL, and
+   * archived from that file. Blurbs, features, status, and array order stay here.
+   */
+  repo?: string;
   github?: string;
   live?: string;
   role: string;
@@ -55,6 +61,7 @@ export const projects: Project[] = [
       "Date-range and month endpoint with Zod-validated query parameters",
       "Railway deploy fixed by switching to NodeNext module resolution",
     ],
+    // jasminerezai/hkif-web is outside the gunnarwrld watch list, so this card stays manual.
     github: "https://github.com/jasminerezai/hkif-web",
     live: "https://hkif-web.vercel.app/",
     role: "Backend developer, student team",
@@ -90,6 +97,7 @@ export const projects: Project[] = [
       "Redis sliding-window rate limits and API keys",
       "Vitest unit tests for AppError and the response envelope",
     ],
+    repo: "gunnarwrld/futbol_data_aggregator_api",
     github: "https://github.com/gunnarwrld/futbol_data_aggregator_api",
     live: "https://futboldataaggregatorapi-production.up.railway.app",
     role: "Solo Developer",
@@ -125,6 +133,7 @@ export const projects: Project[] = [
       "Integration tests on PostgreSQL 17 via Testcontainers",
       "CI with ktlint, detekt and Kover coverage",
     ],
+    repo: "gunnarwrld/ledger-api",
     github: "https://github.com/gunnarwrld/ledger-api",
     role: "Solo Developer",
     timeline: "2026",
@@ -149,6 +158,7 @@ export const projects: Project[] = [
       "pytest for overlap, pause/resume, and timezone validation",
       "OpenAPI docs from FastAPI at /docs",
     ],
+    repo: "gunnarwrld/clicky-recurring-runs",
     github: "https://github.com/gunnarwrld/clicky-recurring-runs",
     role: "Solo Developer",
     timeline: "2026",
@@ -183,6 +193,7 @@ export const projects: Project[] = [
       "Installable PWA (vite-plugin-pwa and Workbox)",
       "Zod form schemas and TanStack Query for server state",
     ],
+    repo: "gunnarwrld/personal-finance-web-app",
     github: "https://github.com/gunnarwrld/personal-finance-web-app",
     live: "https://personal-finance-web-app-psi.vercel.app/",
     role: "Full-Stack Developer",
@@ -217,6 +228,7 @@ export const projects: Project[] = [
       "Vanilla JavaScript UI hosted on Cloudflare Pages",
       "Wrangler deploy scripts for the Worker and the UI",
     ],
+    repo: "gunnarwrld/cf_ai_study_assistant",
     github: "https://github.com/gunnarwrld/cf_ai_study_assistant",
     live: "https://cf-ai-study-assistant.pages.dev/",
     role: "Solo Developer",
@@ -255,6 +267,7 @@ export const projects: Project[] = [
       "Unit tests that check project copy against the repositories",
       "CI: ESLint, type-check, Vitest, build and Playwright smoke test",
     ],
+    // This repository is the sync target. Leaving it unmapped avoids a loop.
     github: "https://github.com/gunnarwrld/PersonalPortfolio",
     live: "https://gunnarwrld.com/",
     role: "Solo Developer",
@@ -286,6 +299,7 @@ export const projects: Project[] = [
       "30-second polling loop with StateFlow-driven state changes",
       "Per-status HTTP error handling and a double-submit guard",
     ],
+    repo: "gunnarwrld/smart-home-gitops",
     github: "https://github.com/gunnarwrld/smart-home-gitops",
     role: "Solo Developer",
     timeline: "2026",
@@ -309,6 +323,7 @@ export const projects: Project[] = [
       "Hash routing without a framework",
       "Mobile-first layout",
     ],
+    repo: "gunnarwrld/PostHub-DynamicWebsite",
     github: "https://github.com/gunnarwrld/PostHub-DynamicWebsite",
     live: "https://post-hub-dynamic-website.vercel.app/",
     role: "Frontend Developer",

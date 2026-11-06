@@ -48,23 +48,33 @@
 
 ```
 .
+├── .github/workflows/
+│   ├── ci.yml                    # Lint, types, Vitest, build, Playwright
+│   ├── sync-github-projects.yml  # Refresh facts and open a review PR
+│   └── portfolio-dispatch.yml    # Reusable notifier other repos call
 ├── api/
 │   ├── contact.ts          # Vercel serverless route — validates + sends email via Resend
 │   └── og.tsx              # Edge OG image for /api/og (social cards)
 ├── e2e/
 │   └── smoke.spec.ts       # Playwright smoke tests
 ├── public/                 # Static assets served at the site root
+├── scripts/
+│   └── sync-github.ts      # Reads the public GitHub API and writes github-sync.json
 ├── src/
 │   ├── components/         # Hero, About, Skills, Projects, Contact, Navbar, …
 │   ├── data/
-│   │   ├── projects.ts     # Edit me to add/update projects
-│   │   └── skills.ts       # Edit me to update the skill matrix
+│   │   ├── projects.ts      # Hand-written cards. Set `repo` to link a GitHub project.
+│   │   ├── watchedRepos.ts  # Repos the daily sync refreshes
+│   │   ├── github-sync.json # Generated GitHub facts. Do not edit by hand.
+│   │   └── skills.ts        # Edit me to update the skill matrix
 │   ├── hooks/              # Reusable hooks (use-mobile, use-toast)
-│   ├── lib/                # Utilities (cn helper, etc.)
+│   ├── lib/                # Utilities (cn helper, github sync)
 │   ├── pages/              # Index + 404
 │   ├── test/               # Vitest setup + unit tests
 │   ├── App.tsx             # Routes
 │   └── main.tsx            # App entry
+├── templates/
+│   └── notify-portfolio.yml # Copy into another repo's .github/workflows/
 ├── tailwind.config.ts
 ├── vite.config.ts
 └── playwright.config.ts
@@ -108,6 +118,7 @@ In Vercel, add these under **Project → Settings → Environment Variables** fo
 | `npm run lint` | ESLint over the whole project. |
 | `npm test` | Vitest in CI mode. |
 | `npm run test:watch` | Vitest in watch mode. |
+| `npm run sync:github` | Refresh `src/data/github-sync.json` from the public GitHub API. |
 
 ## Contact form architecture
 
@@ -133,6 +144,91 @@ To deploy your own fork:
 1. [Import the repo into Vercel](https://vercel.com/new) — framework auto-detected as **Vite**, no overrides needed.
 2. Add the three environment variables above.
 3. Push to `main`.
+
+## Syncing project facts from GitHub
+
+Pushes to the default branch of a project repo open a pull request here that refreshes GitHub-derived facts. Nothing in this flow pushes to `main`. You merge the PR when the diff looks right.
+
+The sync reads each watched repo from the public API and writes `src/data/github-sync.json`:
+
+- description, topics, and language breakdown
+- homepage, default branch, last push, archived flag, and stars
+
+Cards that set `repo` in [`src/data/projects.ts`](src/data/projects.ts) use that file for languages, last push, the live link, the repo link, and the archived flag. Blurbs, feature lists, screenshots, and the order of the cards stay in `projects.ts`. A watched repo with no `repo` field does not get a card. The pull request lists it under **Not on the site yet**.
+
+Watched repos live in [`src/data/watchedRepos.ts`](src/data/watchedRepos.ts). The daily run refreshes that list only. A `repository_dispatch` for one repo updates that repo in the file. The next daily run drops a repo that is not on the list, so add a keeper to `WATCHED_REPOS`.
+
+`repository_dispatch` only starts workflows that are already on the default branch. Merge this setup before you expect notifiers to do anything.
+
+### Workflows
+
+| File | When it runs |
+|---|---|
+| [`.github/workflows/sync-github-projects.yml`](.github/workflows/sync-github-projects.yml) | `repository_dispatch` type `project-updated`, **Actions → Sync GitHub project facts → Run workflow**, and a daily sweep at 06:17 UTC. |
+| [`.github/workflows/portfolio-dispatch.yml`](.github/workflows/portfolio-dispatch.yml) | Called by other repos. Posts the dispatch event. |
+| [`templates/notify-portfolio.yml`](templates/notify-portfolio.yml) | The file you copy into a project repo. |
+
+If the generated file matches `main`, the sync workflow stops and does not open a pull request. When something changed, it force-pushes the rolling branch `github-sync` (rebuilt from `main` each run) and opens or updates one PR.
+
+### Token
+
+Create one fine-grained personal access token:
+
+1. GitHub → **Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token**.
+2. Resource owner: **gunnarwrld**. Repository access: **Only select repositories → PersonalPortfolio**.
+3. Permissions:
+   - **Contents: Read and write.** This is the minimum `repository_dispatch` needs. GitHub lists `POST /repos/{owner}/{repo}/dispatches` under Contents write, with no extra permission beside it. **Metadata: Read-only** is selected automatically.
+   - **Pull requests: Read and write.** The dispatch call does not need this. Add it so the same token, stored on PersonalPortfolio, can open the review PR. A pull request opened that way runs lint, tests, Playwright, and the Vercel preview. The default `GITHUB_TOKEN` does not start those workflows.
+4. Copy the token once. It is a secret. Do not commit it and do not paste it into a workflow file.
+
+Classic tokens can dispatch to a public repository with the **`public_repo`** scope. Prefer the fine-grained token above.
+
+Add the token as an Actions secret named **`PORTFOLIO_DISPATCH_TOKEN`**:
+
+| Repository | Settings → Secrets and variables → Actions | Why |
+|---|---|---|
+| Each project repo that should notify the site | `PORTFOLIO_DISPATCH_TOKEN` | Sends `project-updated` to this repo. Contents write on PersonalPortfolio is enough here. |
+| **PersonalPortfolio** | `PORTFOLIO_DISPATCH_TOKEN` | Pushes `github-sync` and opens the PR as you, so CI runs. Needs Contents write and Pull requests write. |
+
+The sync job reads other repos without this token. Their metadata is public. A token limited to PersonalPortfolio cannot see those repos, so the workflow does not use it for the API read.
+
+### Repository setting
+
+You do **not** have to change Actions permissions if `PORTFOLIO_DISPATCH_TOKEN` is set on PersonalPortfolio.
+
+If that secret is missing, the workflow falls back to `GITHUB_TOKEN`. That path needs:
+
+**PersonalPortfolio → Settings → Actions → General → Workflow permissions → Allow GitHub Actions to create and approve pull requests.**
+
+Leave it off unless you are using the fallback. Pull requests opened with `GITHUB_TOKEN` do not start the workflows in this repo (lint, Vitest, Playwright). Vercel can still build a preview, because that check comes from the Vercel GitHub App.
+
+Do not grant Actions write access to `main`. This workflow never pushes the default branch.
+
+### Notifier for a project repo
+
+Actions has to be enabled on that repo (the default). Copy [`templates/notify-portfolio.yml`](templates/notify-portfolio.yml) to `.github/workflows/notify-portfolio.yml`:
+
+```yaml
+name: Notify portfolio
+
+on:
+  push:
+
+permissions: {}
+
+jobs:
+  dispatch:
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    uses: gunnarwrld/PersonalPortfolio/.github/workflows/portfolio-dispatch.yml@main
+    secrets:
+      PORTFOLIO_DISPATCH_TOKEN: ${{ secrets.PORTFOLIO_DISPATCH_TOKEN }}
+```
+
+The `if` limits the job to the repo's default branch, including repos whose default branch is not `main`. Pushes to other branches start the workflow and skip the job.
+
+Then add `PORTFOLIO_DISPATCH_TOKEN` on that repo. To show the project on the site, add a card in `src/data/projects.ts` with `repo` set to `gunnarwrld/<name>`, and add the name to `WATCHED_REPOS` if it is not already there. The sync will not create the card for you.
+
+Run the refresh locally with `npm run sync:github`. `npm run sync:github -- --repo ledger-api` refreshes one repo. Unauthenticated requests are enough for public repos; the script uses `GITHUB_TOKEN` only when it is already set.
 
 ## Roadmap
 
