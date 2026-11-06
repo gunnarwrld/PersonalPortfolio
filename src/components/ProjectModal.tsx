@@ -24,7 +24,7 @@ const ProjectModal = ({ project, onClose }: Props) => {
         <DialogHeader>
           <DialogTitle className="text-2xl">{project.title}</DialogTitle>
           <DialogDescription className="font-mono text-xs text-primary">
-            {project.subtitle} · {project.role} · {project.timeline}
+            {project.subtitle} · {project.role} · {project.timeline} · {project.status}
           </DialogDescription>
         </DialogHeader>
 
@@ -43,6 +43,13 @@ const ProjectModal = ({ project, onClose }: Props) => {
             ))}
           </ul>
         </div>
+
+        {project.limits && (
+          <div className="rounded-md border border-border/60 p-3">
+            <h4 className="text-sm font-semibold mb-1 text-foreground">Limits</h4>
+            <p className="text-sm text-muted-foreground">{project.limits}</p>
+          </div>
+        )}
 
         <div>
           <h4 className="text-sm font-semibold mb-2 text-foreground">Tech Stack</h4>

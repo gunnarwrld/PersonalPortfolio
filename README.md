@@ -102,7 +102,8 @@ In Vercel, add these under **Project → Settings → Environment Variables** fo
 | Command | What it does |
 |---|---|
 | `npm run dev` | Vite dev server with HMR. |
-| `npm run build` | Type-checked production build. |
+| `npm run build` | Production build with Vite (no type-check; CI type-checks in a separate job). |
+| `npm run typecheck` | TypeScript check of the app and the `api/` functions. |
 | `npm run preview` | Serve the production build locally. |
 | `npm run lint` | ESLint over the whole project. |
 | `npm test` | Vitest in CI mode. |
@@ -111,7 +112,7 @@ In Vercel, add these under **Project → Settings → Environment Variables** fo
 ## Contact form architecture
 
 ```
-Browser ──POST /api/contact──► Vercel Edge ──► api/contact.ts (Node 20)
+Browser ──POST /api/contact──► Vercel func ──► api/contact.ts (Node 20)
                                                   │
                                                   ├── Zod parse + length caps
                                                   ├── Per-IP rate limit (5/min)

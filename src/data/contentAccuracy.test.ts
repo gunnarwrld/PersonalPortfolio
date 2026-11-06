@@ -28,7 +28,7 @@ describe("portfolio copy stays tied to the repos", () => {
     );
   });
 
-  it("keeps the football API live URL while it is redeployed", () => {
+  it("keeps the football API live URL", () => {
     const futbol = projects.find((project) => project.id === "futbol-data-aggregator");
     expect(futbol?.live).toBe(
       "https://futboldataaggregatorapi-production.up.railway.app",
@@ -40,7 +40,7 @@ describe("portfolio copy stays tied to the repos", () => {
     expect(study?.tech).toContain("JavaScript");
     expect(study?.tech).not.toContain("TypeScript");
     expect(study?.tech).not.toContain("React");
-    expect(study?.features.join(" ")).toMatch(/no test suite and no CI workflow/);
+    expect(study?.limits).toMatch(/No automated test suite and no CI workflow/);
   });
 
   it("does not credit FinanceTracker with Stripe edge functions or a load-time percentage", () => {
@@ -48,7 +48,54 @@ describe("portfolio copy stays tied to the repos", () => {
     expect(finance?.tech).not.toContain("Stripe");
     expect(finance?.features.join(" ")).not.toMatch(/Stripe|40%/);
     expect(finance?.longDescription).toMatch(/groq-proxy/);
-    expect(finance?.longDescription).toMatch(/not in the repository/);
+    expect(finance?.limits).toMatch(/not in the repository/);
+    expect(finance?.limits).toMatch(/Payments are not enabled/);
+  });
+
+  it("leads with the three projects that best show backend work", () => {
+    expect(projects.slice(0, 3).map((project) => project.id)).toEqual([
+      "hkif-web",
+      "futbol-data-aggregator",
+      "ledger-api",
+    ]);
+  });
+
+  it("gives every project a status", () => {
+    for (const project of projects) {
+      expect(["Live", "Local demo", "Coursework", "Learning project"]).toContain(project.status);
+    }
+  });
+
+  it("describes Smart Home GitOps as a rule-based coursework prototype", () => {
+    const smartHome = projects.find((project) => project.id === "smart-home-gitops");
+    const text = JSON.stringify(smartHome);
+    expect(smartHome?.status).toBe("Coursework");
+    expect(text).not.toMatch(/adversarial AI attacks|in real time|atomic coroutine|zero hardcoded secrets|research/i);
+    expect(text).toMatch(/not an atomic merge/);
+    expect(smartHome?.limits).toMatch(/extract it/);
+  });
+
+  it("keeps HKIF claims to work shown in the team's pull requests", () => {
+    const hkif = projects.find((project) => project.id === "hkif-web");
+    expect(JSON.stringify(hkif)).not.toMatch(/entire backend from zero|full endpoint coverage|Backend Lead/i);
+    expect(hkif?.role).toMatch(/student team/);
+  });
+
+  it("keeps Ledger Forge in step with the repo's Docker and PostgreSQL tests", () => {
+    const ledger = projects.find((project) => project.id === "ledger-api");
+    expect(ledger?.longDescription).not.toMatch(/no Dockerfile|H2/);
+    expect(ledger?.tech).toContain("Testcontainers");
+  });
+
+  it("does not call PostHub's contact form functional", () => {
+    const posthub = projects.find((project) => project.id === "posthub");
+    expect(posthub?.timeline).toBe("2025");
+    expect(posthub?.limits).toMatch(/UI-only/);
+    expect(JSON.stringify(posthub)).not.toMatch(/validated contact form/);
+  });
+
+  it("keeps internal notes out of the copy", () => {
+    expect(projectText).not.toMatch(/while the service is redeployed|does not measure|No measured/i);
   });
 
   it("drops unverifiable metrics from project copy", () => {
