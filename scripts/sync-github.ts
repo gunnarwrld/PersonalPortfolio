@@ -12,9 +12,9 @@ import {
   type GithubRepositoryApi,
   type GithubSyncFile,
 } from "../src/lib/githubSync.ts";
+import { GITHUB_API, fetchGithubJson, pickGithubToken } from "../src/lib/githubFetch.ts";
 
 const DEFAULT_OUTPUT = "src/data/github-sync.json";
-const API = "https://api.github.com";
 
 function argValue(flag: string): string | undefined {
   const index = process.argv.indexOf(flag);
@@ -24,26 +24,6 @@ function argValue(flag: string): string | undefined {
     throw new Error(`${flag} needs a value`);
   }
   return value;
-}
-
-async function fetchJson(url: string, token: string | undefined): Promise<unknown> {
-  const headers: Record<string, string> = {
-    Accept: "application/vnd.github+json",
-    "X-GitHub-Api-Version": "2022-11-28",
-    "User-Agent": "gunnarwrld-portfolio-sync",
-  };
-  if (token) headers.Authorization = `Bearer ${token}`;
-
-  let lastError: Error | undefined;
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    const response = await fetch(url, { headers });
-    if (response.ok) return response.json() as Promise<unknown>;
-    const body = (await response.text()).slice(0, 200);
-    lastError = new Error(`GitHub API ${response.status} for ${url}: ${body}`);
-    if (![429, 502, 503, 504].includes(response.status) || attempt === 1) throw lastError;
-    await new Promise((resolve) => setTimeout(resolve, 1000 * (attempt + 1)));
-  }
-  throw lastError ?? new Error(`GitHub API failed for ${url}`);
 }
 
 function asRepository(value: unknown, fullName: string): GithubRepositoryApi {
@@ -71,8 +51,8 @@ async function fetchFacts(fullName: string, onSite: boolean, token: string | und
   const { owner, name } = parseRepository(fullName, GITHUB_OWNER);
   const encoded = `${encodeURIComponent(owner)}/${encodeURIComponent(name)}`;
   const [repository, languages] = await Promise.all([
-    fetchJson(`${API}/repos/${encoded}`, token),
-    fetchJson(`${API}/repos/${encoded}/languages`, token),
+    fetchGithubJson(`${GITHUB_API}/repos/${encoded}`, { token }),
+    fetchGithubJson(`${GITHUB_API}/repos/${encoded}/languages`, { token }),
   ]);
   return toRepoFacts(asRepository(repository, fullName), asLanguages(languages, fullName), onSite);
 }
@@ -91,10 +71,11 @@ function writeGithubOutput(changed: boolean, title: string) {
 }
 
 async function main() {
-  // Public reads. A fine-grained PORTFOLIO_DISPATCH_TOKEN scoped only to
-  // PersonalPortfolio cannot see the other repositories, so this script does
-  // not use that secret. GITHUB_TOKEN here is the Actions token (or unset locally).
-  const token = process.env.GITHUB_TOKEN?.trim() || undefined;
+  // Public reads. SYNC_TOKEN (optional) is a token that can read the other
+  // repositories. Without it the Actions GITHUB_TOKEN is tried, and any repo it
+  // cannot see is re-read anonymously (see src/lib/githubFetch.ts). Do not use
+  // PORTFOLIO_DISPATCH_TOKEN here: it is scoped to PersonalPortfolio only.
+  const token = pickGithubToken(process.env);
   const requestedInput = argValue("--repo") || process.env.SYNC_REPOSITORY || "";
   const reportPath = argValue("--report");
   const outputPath = argValue("--output") || DEFAULT_OUTPUT;
