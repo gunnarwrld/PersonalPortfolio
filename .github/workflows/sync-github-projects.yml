@@ -89,11 +89,16 @@ jobs:
           fi
           export GH_TOKEN="$TOKEN"
 
-          git fetch origin "+refs/heads/${BRANCH}:refs/remotes/origin/${BRANCH}" || true
+                    # git over HTTPS needs Basic auth with the x-access-token user, not Bearer.
+          BASIC="$(printf 'x-access-token:%s' "$TOKEN" | base64 | tr -d '\n')"
+          echo "::add-mask::${BASIC}"
+          AUTH_HEADER="http.https://github.com/.extraheader=AUTHORIZATION: basic ${BASIC}"
+
+          git -c "$AUTH_HEADER" fetch origin "+refs/heads/${BRANCH}:refs/remotes/origin/${BRANCH}" || true
           if git rev-parse --verify --quiet "refs/remotes/origin/${BRANCH}" >/dev/null; then
-            git -c "http.extraheader=AUTHORIZATION: bearer ${TOKEN}" push --force-with-lease="refs/heads/${BRANCH}:refs/remotes/origin/${BRANCH}" origin "HEAD:${BRANCH}"
+            git -c "$AUTH_HEADER" push --force-with-lease="refs/heads/${BRANCH}:refs/remotes/origin/${BRANCH}" origin "HEAD:${BRANCH}"
           else
-            git -c "http.extraheader=AUTHORIZATION: bearer ${TOKEN}" push origin "HEAD:${BRANCH}"
+            git -c "$AUTH_HEADER" push origin "HEAD:${BRANCH}"
           fi
 
           existing="$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$BRANCH" --base "$BASE" --state open --json number --jq '.[0].number')"
