@@ -1,6 +1,6 @@
-# gunnarwrld.com — Personal Portfolio
+# gunnarwrld.com: Personal Portfolio
 
-> The source for [**gunnarwrld.com**](https://gunnarwrld.com) — a single-page React + TypeScript portfolio in a woodcut / comic style, with a star mascot, project cards fed by a GitHub sync, and a working contact form backed by a Vercel serverless function.
+> The source for [**gunnarwrld.com**](https://gunnarwrld.com): a single-page React + TypeScript portfolio in a woodcut / comic style, with a star mascot, project cards fed by a GitHub sync, and a working contact form backed by a Vercel serverless function.
 
 <p align="center">
   <a href="https://gunnarwrld.com">
@@ -22,13 +22,13 @@
 
 ## Highlights
 
-- 🪵 **A small woodcut design system** — ten colours with one job each, three self-hosted typefaces (Alfa Slab One, Work Sans, Courier Prime), ivory ink lines and hatched hard shadows. Details in [Design system](#design-system).
-- ⭐ **A mascot that answers** — the star pops in under a spotlight, waves when you point at it, and jumps with confetti when a message is sent. The moves are plain CSS keyframes, and all of it stops for visitors who prefer reduced motion.
-- 🔄 **Project facts from GitHub** — each card shows languages, last push and live link from a daily sync that opens a review pull request.
-- 📨 **Real contact form** — React Hook Form + Zod on the client, validated again on a Vercel serverless function that sends mail through [Resend](https://resend.com), with a honeypot and per-IP rate limiting.
-- ⚡ **Vite + SWC + TypeScript** — fast dev loop, ESLint flat config, no animation library in the bundle.
-- 🧪 **Tested with Vitest + Testing Library + Playwright** — unit tests (including tests that keep the project copy honest), end-to-end tests on desktop and phone sizes, and an [axe](https://github.com/dequelabs/axe-core) accessibility scan.
-- ♿ **Accessible by default** — semantic landmarks, labelled controls, a focus ring that shows on dark and on paper, measured colour contrast.
+- 🪵 **A small woodcut design system**: ten colours with one job each, three self-hosted typefaces (Alfa Slab One, Work Sans, Courier Prime), ivory ink lines and hatched hard shadows. Details in [Design system](#design-system).
+- ⭐ **A mascot that answers**: the star pops in under a spotlight, waves when you point at it, and jumps with confetti when a message is sent. The moves are plain CSS keyframes, and all of it stops for visitors who prefer reduced motion.
+- 🔄 **Project facts from GitHub**: each card shows languages, last push and live link from a daily sync that opens a review pull request.
+- 📨 **Real contact form**: React Hook Form + Zod on the client, validated again on a Vercel serverless function that sends mail through [Resend](https://resend.com), with a honeypot and per-IP rate limiting.
+- ⚡ **Vite + SWC + TypeScript**: fast dev loop, ESLint flat config, no animation library in the bundle.
+- 🧪 **Tested with Vitest + Testing Library + Playwright**: unit tests (including tests that keep the project copy honest), end-to-end tests on desktop and phone sizes, and an [axe](https://github.com/dequelabs/axe-core) accessibility scan.
+- ♿ **Accessible by default**: semantic landmarks, labelled controls, a focus ring that shows on dark and on paper, measured colour contrast.
 
 ## Tech stack
 
@@ -54,7 +54,7 @@
 │   ├── sync-github-projects.yml  # Refresh facts and open a review PR
 │   └── portfolio-dispatch.yml    # Reusable notifier other repos call
 ├── api/
-│   ├── contact.ts          # Vercel serverless route — validates + sends email via Resend
+│   ├── contact.ts          # Vercel serverless route: validates + sends email via Resend
 │   └── og.tsx              # Edge OG image for /api/og (social cards)
 ├── e2e/
 │   └── smoke.spec.ts       # Playwright smoke tests
@@ -176,7 +176,7 @@ The site auto-deploys from `main` to Vercel. Pushing to a feature branch creates
 
 To deploy your own fork:
 
-1. [Import the repo into Vercel](https://vercel.com/new) — framework auto-detected as **Vite**, no overrides needed.
+1. [Import the repo into Vercel](https://vercel.com/new): framework auto-detected as **Vite**, no overrides needed.
 2. Add the three environment variables above.
 3. Push to `main`.
 
@@ -267,14 +267,14 @@ Run the refresh locally with `npm run sync:github`. `npm run sync:github -- --re
 
 ## Roadmap
 
-- [x] Dynamic `og:image` via [`api/og.tsx`](api/og.tsx) — the homepage meta tags already point at `/api/og` (1200×630, edge runtime)
+- [x] Dynamic `og:image` via [`api/og.tsx`](api/og.tsx): the homepage meta tags already point at `/api/og` (1200×630, edge runtime)
 - [ ] Per-project case-study pages with screenshots, decisions, and trade-offs
 - [ ] `/blog` route with MDX
 - [ ] Lighthouse CI in GitHub Actions
 
 ## License
 
-MIT © Gunnar Arias — see [LICENSE](./LICENSE).
+MIT © Gunnar Arias: see [LICENSE](./LICENSE).
 
 ---
 

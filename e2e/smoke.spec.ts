@@ -2,7 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { test, expect } from "@playwright/test";
 
 /**
- * Smoke tests — fast, broad coverage of the home page.
+ * Smoke tests: fast, broad coverage of the home page.
  * If any of these break, something fundamental shipped wrong.
  */
 

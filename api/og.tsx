@@ -13,7 +13,7 @@ import { ImageResponse } from "@vercel/og";
  * Defaults match the gunnarwrld.com brand: the star mascot in its amber light
  * on a mahogany stage, the name in ivory wood type.
  *
- * Renders at 1200x630 — the canonical OG card size (also fine for Twitter
+ * Renders at 1200x630: the canonical OG card size (also fine for Twitter
  * `summary_large_image`).
  *
  * The display font and the mascot are fetched from this deployment's own
@@ -22,7 +22,7 @@ import { ImageResponse } from "@vercel/og";
  *
  * NOTE: We're on Vite (Vercel framework preset = "Other"), not Next.js.
  * In that mode `export const runtime = "edge"` is IGNORED and the function
- * is built as a Node.js serverless function — where @vercel/og crashes.
+ * is built as a Node.js serverless function: where @vercel/og crashes.
  * The required form is `export const config = { runtime: "edge" }`.
  * Source: https://vercel.com/docs/functions/runtimes/edge (framework=other)
  */

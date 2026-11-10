@@ -58,7 +58,7 @@ describe("<Contact />", () => {
       target: { value: "ada@lovelace.dev" },
     });
     fireEvent.input(screen.getByPlaceholderText(/tell me about your project/i), {
-      target: { value: "Hello — would love to chat about a frontend role." },
+      target: { value: "Hello, would love to chat about a frontend role." },
     });
     fireEvent.click(screen.getByRole("button", { name: /send message/i }));
 
@@ -71,7 +71,7 @@ describe("<Contact />", () => {
     expect(body).toMatchObject({
       name: "Ada Lovelace",
       email: "ada@lovelace.dev",
-      message: "Hello — would love to chat about a frontend role.",
+      message: "Hello, would love to chat about a frontend role.",
     });
   });
 });

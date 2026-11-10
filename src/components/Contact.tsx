@@ -107,7 +107,7 @@ const Contact = () => {
 
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="mt-6 space-y-5" noValidate>
-                  {/* Honeypot — invisible to humans, irresistible to bots. */}
+                  {/* Honeypot: invisible to humans, irresistible to bots. */}
                   <div
                     aria-hidden="true"
                     style={{

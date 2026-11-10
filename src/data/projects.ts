@@ -113,7 +113,7 @@ export const projects: Project[] = [
     description:
       "Kotlin and Spring Boot ledger that stores money as integer minor units, writes balanced journal entries to PostgreSQL, and locks wallet rows so concurrent transfers cannot overdraw.",
     longDescription:
-      "REST service for a small auditable wallet. Amounts are positive longs in minor units (1250 SEK is 12.50) with an ISO 4217 currency code — no floats in the API. Every transfer is a journal entry: the service checks that debits equal credits, and a deferred PostgreSQL trigger checks again at commit. POST /api/v1/transfers requires an Idempotency-Key; the same key and body replay the original receipt, and a different body returns 409. Transfers lock every involved account in ascending UUID order under READ COMMITTED before checking funds. Flyway applies the schema and the append-only triggers at startup. Docker Compose runs PostgreSQL 17 and the API, with a readiness probe. Integration tests start PostgreSQL 17 with Testcontainers and cover idempotent replay, key-reuse conflicts and concurrent transfers; CI runs them with ktlint, detekt and Kover.",
+      "REST service for a small auditable wallet. Amounts are positive longs in minor units (1250 SEK is 12.50) with an ISO 4217 currency code, with no floats in the API. Every transfer is a journal entry: the service checks that debits equal credits, and a deferred PostgreSQL trigger checks again at commit. POST /api/v1/transfers requires an Idempotency-Key; the same key and body replay the original receipt, and a different body returns 409. Transfers lock every involved account in ascending UUID order under READ COMMITTED before checking funds. Flyway applies the schema and the append-only triggers at startup. Docker Compose runs PostgreSQL 17 and the API, with a readiness probe. Integration tests start PostgreSQL 17 with Testcontainers and cover idempotent replay, key-reuse conflicts and concurrent transfers; CI runs them with ktlint, detekt and Kover.",
     tech: [
       "Kotlin",
       "Spring Boot",
@@ -170,7 +170,7 @@ export const projects: Project[] = [
     title: "FinanceTracker",
     subtitle: "Personal Finance PWA",
     description:
-      "Multi-currency personal finance PWA on Supabase — Google OAuth, Postgres with row-level security, and Groq spending insights through the groq-proxy Edge Function.",
+      "Multi-currency personal finance PWA on Supabase: Google OAuth, Postgres with row-level security, and Groq spending insights through the groq-proxy Edge Function.",
     longDescription:
       "React and TypeScript SPA built with Vite. Supabase handles Google OAuth, PostgreSQL, and row-level security policies so budgets, transfers, bills, and subscription rows stay scoped to the signed-in user. Postgres functions write a ledger row and adjust account balances in one transaction. Multi-currency amounts convert through the Frankfurter API. Spending insights call the groq-proxy Edge Function, which checks the caller and forwards the prompt to Groq (llama-3.3-70b-versatile). vite-plugin-pwa with Workbox makes the app installable.",
     tech: [
@@ -209,7 +209,7 @@ export const projects: Project[] = [
     description:
       "Study chat in plain JavaScript on Cloudflare Workers: a Durable Object stores each session in SQLite and calls Llama 3.3 through Workers AI over REST and WebSocket.",
     longDescription:
-      "worker/index.js routes /health, /api/chat, /api/history, and /api/search. StudyAgent is a Durable Object (worker/study-agent.js) that keeps conversation history in SQLite and calls Workers AI model @cf/meta/llama-3.3-70b-instruct-fp8-fast. The same session can talk over WebSocket; the README documents the chat, getHistory, and search message types. The frontend is frontend/index.html, styles.css, and app.js — vanilla JavaScript on Cloudflare Pages. Deploy is wrangler deploy for the Worker and wrangler pages deploy for the UI.",
+      "worker/index.js routes /health, /api/chat, /api/history, and /api/search. StudyAgent is a Durable Object (worker/study-agent.js) that keeps conversation history in SQLite and calls Workers AI model @cf/meta/llama-3.3-70b-instruct-fp8-fast. The same session can talk over WebSocket; the README documents the chat, getHistory, and search message types. The frontend is frontend/index.html, styles.css, and app.js: vanilla JavaScript on Cloudflare Pages. Deploy is wrangler deploy for the Worker and wrangler pages deploy for the UI.",
     tech: [
       "JavaScript",
       "Cloudflare Workers",
@@ -270,7 +270,7 @@ export const projects: Project[] = [
     github: "https://github.com/gunnarwrld/PersonalPortfolio",
     live: "https://gunnarwrld.com/",
     role: "Solo Developer",
-    timeline: "2026 — ongoing",
+    timeline: "2026, ongoing",
     status: "Live",
   },
   {
@@ -311,7 +311,7 @@ export const projects: Project[] = [
     title: "PostHub",
     subtitle: "Dynamic Single Page Application",
     description:
-      "Responsive blogging SPA in vanilla JavaScript — no framework — that loads DummyJSON posts with client-side user caching, hash routing, and a Load More list.",
+      "Responsive blogging SPA in vanilla JavaScript, with no framework, that loads DummyJSON posts with client-side user caching, hash routing, and a Load More list.",
     longDescription:
       "index.html, style.css, and script.js. Posts, comments, and author profiles come from the DummyJSON REST API. User records are cached on a plain appData object so a profile is not fetched twice. The list grows through a Load More button (setupLoadMoreButton / loadMorePosts). Hash routing and modals are in the same script. Mobile-first CSS.",
     tech: ["Vanilla JavaScript", "HTML5", "CSS3", "REST APIs"],

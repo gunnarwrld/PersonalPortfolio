@@ -17,7 +17,7 @@ const contactSchema = z.object({
   name: z.string().trim().min(1).max(100),
   email: z.string().trim().email().max(255),
   message: z.string().trim().min(1).max(2000),
-  // Honeypot — bots typically fill every field. Real users leave it blank.
+  // Honeypot: bots typically fill every field. Real users leave it blank.
   website: z.string().max(0).optional().or(z.literal("")),
 });
 
@@ -67,7 +67,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
-  // Honeypot — silently succeed so bots don't learn it failed.
+  // Honeypot: silently succeed so bots don't learn it failed.
   if (parsed.data.website) {
     return res.status(200).json({ ok: true });
   }

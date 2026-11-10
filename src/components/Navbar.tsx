@@ -29,10 +29,9 @@ const Navbar = () => {
           scrolled && "shadow-[5px_5px_0_0_rgb(var(--cocoa))]",
         )}
       >
-        <a href="#top" className="flex items-center gap-2.5 rounded-sm pr-2">
+        <a href="#top" className="flex items-center rounded-full">
           <MascotBadge size={40} eager />
-          <span className="font-display text-xl uppercase leading-none">Gunnar</span>
-          <span className="sr-only">, back to top</span>
+          <span className="sr-only">Gunnar Arias, back to top</span>
         </a>
 
         <ul className="hidden items-center gap-1 md:flex">

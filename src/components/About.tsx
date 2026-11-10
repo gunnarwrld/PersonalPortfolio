@@ -12,7 +12,7 @@ const facts = [
 ];
 
 const paragraphs = [
-  "Backend-leaning full-stack developer and Computer Science student based in Kristianstad, Sweden. I build REST APIs, edge workers, and Android apps. The projects below are the ones with code behind them — some are deployed, and others are local services with tests you can run from the repository.",
+  "Backend-leaning full-stack developer and Computer Science student based in Kristianstad, Sweden. I build REST APIs, edge workers, and Android apps. The projects below are the ones with code behind them: some are deployed, and others are local services with tests you can run from the repository.",
   "Most recently I worked on the backend of a sports union platform with a student team: I built the JWT authentication and the four-level role hierarchy, set up the Vitest + Supertest integration tests, and fixed the build so the API runs on Railway. I'm as comfortable reasoning about a Prisma migration failure in a Railway CI pipeline as I am tuning the easing on a button press.",
   "Outside of coursework I follow edge computing and AI inference closely. The AI Study Assistant runs Llama 3.3 on Cloudflare Workers AI, and a Durable Object keeps each study session's chat history in SQLite. If there's a new Workers primitive or a model I haven't run yet, I'm already reading the docs.",
 ];
