@@ -1,6 +1,6 @@
-# gunnarwrld.com — Personal Portfolio
+# gunnarwrld.com: Personal Portfolio
 
-> The source for [**gunnarwrld.com**](https://gunnarwrld.com) — a single-page React + TypeScript portfolio with motion design, glass UI, and a working contact form backed by a Vercel serverless function.
+> The source for [**gunnarwrld.com**](https://gunnarwrld.com): a single-page React + TypeScript portfolio in a woodcut / comic style, with a star mascot, project cards fed by a GitHub sync, and a working contact form backed by a Vercel serverless function.
 
 <p align="center">
   <a href="https://gunnarwrld.com">
@@ -22,12 +22,13 @@
 
 ## Highlights
 
-- 🎬 **Motion-first hero** — scroll-linked Framer Motion with parallax, springs, and 3D card reveals.
-- 🪟 **Glass UI on a dark grid** — Syne / Inter / JetBrains Mono type stack with a numbered section rhythm (`01 — About`, `02 — Skills`, …).
-- 📨 **Real contact form** — React Hook Form + Zod on the client, validated again on a Vercel serverless function that sends mail through [Resend](https://resend.com), with a honeypot and per-IP rate limiting.
-- ⚡ **Vite + SWC + TypeScript** — fast dev loop, strict types, ESLint flat config.
-- 🧪 **Tested with Vitest + Testing Library + Playwright** for unit and end-to-end coverage.
-- ♿ **Accessible by default** — semantic landmarks, labelled controls, focus-visible affordances.
+- 🪵 **A small woodcut design system**: ten colours with one job each, three self-hosted typefaces (Alfa Slab One, Work Sans, Courier Prime), ivory ink lines and hatched hard shadows. Details in [Design system](#design-system).
+- ⭐ **A mascot that answers**: the star pops in under a spotlight, waves when you point at it, and jumps with confetti when a message is sent. The moves are plain CSS keyframes, and all of it stops for visitors who prefer reduced motion.
+- 🔄 **Project facts from GitHub**: each card shows languages, last push and live link from a daily sync that opens a review pull request.
+- 📨 **Real contact form**: React Hook Form + Zod on the client, validated again on a Vercel serverless function that sends mail through [Resend](https://resend.com), with a honeypot and per-IP rate limiting.
+- ⚡ **Vite + SWC + TypeScript**: fast dev loop, ESLint flat config, no animation library in the bundle.
+- 🧪 **Tested with Vitest + Testing Library + Playwright**: unit tests (including tests that keep the project copy honest), end-to-end tests on desktop and phone sizes, and an [axe](https://github.com/dequelabs/axe-core) accessibility scan.
+- ♿ **Accessible by default**: semantic landmarks, labelled controls, a focus ring that shows on dark and on paper, measured colour contrast.
 
 ## Tech stack
 
@@ -37,12 +38,12 @@
 | Build | Vite 5 (`@vitejs/plugin-react-swc`) |
 | Styling | Tailwind CSS 3 + `tailwindcss-animate` + custom design tokens |
 | UI primitives | [shadcn/ui](https://ui.shadcn.com) on top of Radix |
-| Motion | Framer Motion 12 |
+| Motion | CSS keyframes and transitions (no animation library) |
 | Forms & validation | React Hook Form + Zod |
 | API | Vercel Serverless Functions (Node 20) |
 | Email | [Resend](https://resend.com) |
 | Hosting | Vercel |
-| Testing | Vitest, @testing-library/react, Playwright |
+| Testing | Vitest, @testing-library/react, Playwright, axe-core |
 
 ## Project structure
 
@@ -53,24 +54,31 @@
 │   ├── sync-github-projects.yml  # Refresh facts and open a review PR
 │   └── portfolio-dispatch.yml    # Reusable notifier other repos call
 ├── api/
-│   ├── contact.ts          # Vercel serverless route — validates + sends email via Resend
+│   ├── contact.ts          # Vercel serverless route: validates + sends email via Resend
 │   └── og.tsx              # Edge OG image for /api/og (social cards)
 ├── e2e/
 │   └── smoke.spec.ts       # Playwright smoke tests
-├── public/                 # Static assets served at the site root
+├── public/
+│   ├── fonts/              # Self-hosted typefaces (woff2, plus woff for the OG image)
+│   ├── mascot/             # The star: hero sticker, logo badge, OG image art
+│   └── 404.html            # Static not-found page, served by the host with a real 404
 ├── scripts/
-│   └── sync-github.ts      # Reads the public GitHub API and writes github-sync.json
+│   ├── sync-github.ts      # Reads the public GitHub API and writes github-sync.json
+│   └── mascot/             # How the mascot files and its moves were generated
 ├── src/
-│   ├── components/         # Hero, About, Skills, Projects, Contact, Navbar, …
+│   ├── components/         # Hero, About, Skills, Projects, Contact, Navbar, Mascot, …
 │   ├── data/
 │   │   ├── projects.ts      # Hand-written cards. Set `repo` to link a GitHub project.
 │   │   ├── watchedRepos.ts  # Repos the daily sync refreshes
 │   │   ├── github-sync.json # Generated GitHub facts. Do not edit by hand.
-│   │   └── skills.ts        # Edit me to update the skill matrix
-│   ├── hooks/              # Reusable hooks (use-mobile, use-toast)
-│   ├── lib/                # Utilities (cn helper, github sync)
+│   │   ├── skills.ts        # Edit me to update the skill matrix
+│   │   └── site.ts          # Name, email, social links and section names, in one place
+│   ├── hooks/              # Reusable hooks (use-scroll-spy, use-toast)
+│   ├── lib/                # Utilities (cn helper, github sync, language shares)
 │   ├── pages/              # Index + 404
+│   ├── styles/             # Generated CSS (the mascot's moves)
 │   ├── test/               # Vitest setup + unit tests
+│   ├── index.css           # Design tokens, components and motion
 │   ├── App.tsx             # Routes
 │   └── main.tsx            # App entry
 ├── templates/
@@ -120,6 +128,33 @@ In Vercel, add these under **Project → Settings → Environment Variables** fo
 | `npm run test:watch` | Vitest in watch mode. |
 | `npm run sync:github` | Refresh `src/data/github-sync.json` from the public GitHub API. |
 
+## Design system
+
+The look is a vintage woodcut / comic print: a dark stage drawn in ivory ink, paper for the things you could pick up, and orange for the mascot.
+
+**Colours.** Ten tokens in [`src/index.css`](src/index.css), mapped to Tailwind in [`tailwind.config.ts`](tailwind.config.ts). Each has one job, and the jobs follow from measured WCAG contrast:
+
+| Token | Hex | Job |
+|---|---|---|
+| mahogany | `#441505` | Page background |
+| espresso | `#260B02` | Deep panels; text on paper |
+| russet | `#5E230D` | Warm glow at the top of the page; hover fill on dark |
+| ivory | `#FAF5E8` | Every line and border; main text on dark (14.2:1 on mahogany) |
+| parchment | `#DECBB8` | Paper surfaces; second-level text on dark (9.8:1) |
+| stone | `#C8C3B7` | Third-level text on dark only (it disappears on parchment) |
+| cocoa | `#8C6B56` | Dots, hatching and grain. Never text: at most 4.4:1 on any surface |
+| tangerine | `#FF8800` | The mascot and the one primary button per view (espresso label, 7.8:1) |
+| amber | `#FFB700` | The spotlight; primary button hover |
+| rust | `#D44D00` | Primary button shadow and error borders. Never small text |
+
+The three browns are too close to separate surfaces (1.2 to 1.5:1 between them), so every edge is an ivory line. The focus ring is two-tone, ivory and espresso, so it shows on the dark stage and on paper.
+
+**Type.** Alfa Slab One for the name, section names and buttons; Work Sans for reading; Courier Prime for anything that came from a repository (dates, language shares, statuses). All three are open-licensed and served from [`public/fonts`](public/fonts).
+
+**Motion.** One choreographed moment, the hero entrance. Everything else answers the visitor: panels print in as they scroll into view, buttons press down like a stamp, the star reacts to the contact form. `prefers-reduced-motion` turns all of it off, and content never depends on an animation to become visible.
+
+**Mascot.** The star is the logo and the focal art. [`scripts/mascot/README.md`](scripts/mascot/README.md) explains how its files and its moves are generated.
+
 ## Contact form architecture
 
 ```
@@ -141,7 +176,7 @@ The site auto-deploys from `main` to Vercel. Pushing to a feature branch creates
 
 To deploy your own fork:
 
-1. [Import the repo into Vercel](https://vercel.com/new) — framework auto-detected as **Vite**, no overrides needed.
+1. [Import the repo into Vercel](https://vercel.com/new): framework auto-detected as **Vite**, no overrides needed.
 2. Add the three environment variables above.
 3. Push to `main`.
 
@@ -232,15 +267,15 @@ Run the refresh locally with `npm run sync:github`. `npm run sync:github -- --re
 
 ## Roadmap
 
-- [x] Dynamic `og:image` via [`api/og.tsx`](api/og.tsx) — the homepage meta tags already point at `/api/og` (1200×630, edge runtime)
+- [x] Dynamic `og:image` via [`api/og.tsx`](api/og.tsx): the homepage meta tags already point at `/api/og` (1200×630, edge runtime)
 - [ ] Per-project case-study pages with screenshots, decisions, and trade-offs
 - [ ] `/blog` route with MDX
 - [ ] Lighthouse CI in GitHub Actions
 
 ## License
 
-MIT © Gunnar Arias — see [LICENSE](./LICENSE).
+MIT © Gunnar Arias: see [LICENSE](./LICENSE).
 
 ---
 
-<sub>Built in Sweden 🇸🇪 with too much coffee. Reach me at [ariasgunnar@gmail.com](mailto:ariasgunnar@gmail.com) · [LinkedIn](https://linkedin.com/in/gunnararias) · [GitHub](https://github.com/gunnarwrld).</sub>
+<sub>Built in Sweden 🇸🇪, fuelled by mate. Reach me at [ariasgunnar@gmail.com](mailto:ariasgunnar@gmail.com) · [LinkedIn](https://linkedin.com/in/gunnararias) · [GitHub](https://github.com/gunnarwrld).</sub>

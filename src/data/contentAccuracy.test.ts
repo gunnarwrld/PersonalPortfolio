@@ -144,7 +144,7 @@ describe("sitemap", () => {
   const xml = readFileSync(path.resolve("public/sitemap.xml"), "utf8");
 
   it("uses a current lastmod and no fragment URLs", () => {
-    expect(xml).toContain("<lastmod>2026-10-28</lastmod>");
+    expect(xml).toContain("<lastmod>2026-11-10</lastmod>");
     expect(xml).not.toMatch(/#/);
     expect(xml).not.toContain("2026-04-25");
     expect(xml.match(/<loc>/g)).toHaveLength(1);

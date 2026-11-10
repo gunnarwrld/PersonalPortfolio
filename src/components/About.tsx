@@ -1,103 +1,57 @@
-import { motion, useScroll, useTransform } from "framer-motion";
-import { MapPin, GraduationCap, Rocket, Code2 } from "lucide-react";
-import { useRef } from "react";
+import { MascotBadge } from "@/components/Mascot";
+import { Reveal } from "@/components/Reveal";
+import { SectionHeading } from "@/components/SectionHeading";
 import { projects } from "@/data/projects";
+import { site } from "@/data/site";
 
-const stats = [
-  { icon: Rocket, label: "Projects built", value: String(projects.length) },
-  { icon: Code2, label: "Backend Focus", value: "Node / TS" },
-  { icon: GraduationCap, label: "CS student, graduating", value: "June 2027" },
-  { icon: MapPin, label: "Based in", value: "Sweden" },
+const facts = [
+  { label: "Based in", value: site.location },
+  { label: "Studying", value: "Computer Science, graduating June 2027" },
+  { label: "Focus", value: "Backend: Node and TypeScript" },
+  { label: "Projects built", value: String(projects.length) },
 ];
 
-const ease: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
-
-const stagger = {
-  visible: { transition: { staggerChildren: 0.15 } },
-};
-
-const itemReveal = {
-  hidden: { opacity: 0, x: -40 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease } },
-};
-
-const cardReveal = {
-  hidden: { opacity: 0, y: 40, rotateY: -10 },
-  visible: { opacity: 1, y: 0, rotateY: 0, transition: { duration: 0.7, ease } },
-};
-
 const paragraphs = [
-  "Backend-leaning full-stack developer and Computer Science student based in Kristianstad, Sweden. I build REST APIs, edge workers, and Android apps. The projects below are the ones with code behind them — some are deployed, and others are local services with tests you can run from the repository.",
-  "Most recently I worked on the backend of a sports union platform with a student team: I built the JWT authentication and the four-level role hierarchy, set up the Vitest + Supertest integration tests, and fixed the build so the API runs on Railway. I'm as comfortable reasoning about a Prisma migration failure in a Railway CI pipeline as I am crafting a Framer Motion spring animation.",
+  "Backend-leaning full-stack developer and Computer Science student based in Kristianstad, Sweden. I build REST APIs, edge workers, and Android apps. The projects below are the ones with code behind them: some are deployed, and others are local services with tests you can run from the repository.",
+  "Most recently I worked on the backend of a sports union platform with a student team: I built the JWT authentication and the four-level role hierarchy, set up the Vitest + Supertest integration tests, and fixed the build so the API runs on Railway. I'm as comfortable reasoning about a Prisma migration failure in a Railway CI pipeline as I am tuning the easing on a button press.",
   "Outside of coursework I follow edge computing and AI inference closely. The AI Study Assistant runs Llama 3.3 on Cloudflare Workers AI, and a Durable Object keeps each study session's chat history in SQLite. If there's a new Workers primitive or a model I haven't run yet, I'm already reading the docs.",
 ];
 
 const About = () => {
-  const sectionRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-
-  const headingX = useTransform(scrollYProgress, [0, 0.3], [-80, 0]);
-  const headingOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
-
   return (
-    <section id="about" ref={sectionRef} className="py-24 sm:py-32">
-      <div className="container mx-auto px-4">
-        <div className="overflow-hidden">
-          <motion.div style={{ x: headingX, opacity: headingOpacity }}>
-            <p className="text-xs font-mono tracking-[0.3em] uppercase text-muted-foreground mb-3">01 — About</p>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-12">
-              About Me
-            </h2>
-          </motion.div>
-        </div>
+    <section id="about" aria-labelledby="about-title" className="py-20 sm:py-28">
+      <div className="container">
+        <SectionHeading id="about" title="About" say="The short version of me." />
 
-        <div className="grid md:grid-cols-2 gap-16 items-start">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={stagger}
-            className="space-y-5"
-          >
-            {paragraphs.map((text, i) => (
-              <motion.p key={i} variants={itemReveal} className="text-muted-foreground leading-relaxed">
-                {text}
-              </motion.p>
-            ))}
-          </motion.div>
+        <div className="grid items-start gap-x-12 gap-y-12 lg:grid-cols-[1.4fr_1fr]">
+          <Reveal className="ink-panel p-6 sm:p-9">
+            <div className="max-w-[66ch] space-y-5 text-[1.0625rem] leading-[1.7] text-parchment">
+              {paragraphs.map((text, i) => (
+                <p key={i} className={i === 0 ? "text-ivory" : undefined}>
+                  {text}
+                </p>
+              ))}
+            </div>
+          </Reveal>
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={stagger}
-            className="grid gap-4"
-            style={{ perspective: "800px" }}
-          >
-            {stats.map((stat) => (
-              <motion.div
-                key={stat.label}
-                variants={cardReveal}
-                whileHover={{ scale: 1.02, y: -2, transition: { duration: 0.2 } }}
-                className="glass rounded-xl p-5 flex items-center gap-4 hover:border-foreground/20 transition-colors duration-300 cursor-default"
-              >
-                <motion.div
-                  className="flex items-center justify-center w-12 h-12 rounded-lg bg-foreground/5 text-foreground"
-                  whileHover={{ rotate: 10 }}
-                  transition={{ type: "spring", stiffness: 300 }}
+          {/* The facts, typed on an index card. */}
+          <Reveal className="paper p-6 sm:p-8 lg:rotate-1" delay={120}>
+            <div className="flex items-center gap-3 border-b-[3px] border-double border-espresso pb-4">
+              <MascotBadge size={52} />
+              <p className="font-display text-2xl uppercase leading-none">{site.name}</p>
+            </div>
+            <dl className="typed">
+              {facts.map((fact) => (
+                <div
+                  key={fact.label}
+                  className="grid grid-cols-[8.5rem_1fr] gap-3 border-b border-dashed border-espresso/50 py-3 last:border-b-0 last:pb-0"
                 >
-                  <stat.icon className="h-6 w-6" />
-                </motion.div>
-                <div>
-                  <p className="text-2xl font-extrabold text-foreground">{stat.value}</p>
-                  <p className="text-sm text-muted-foreground">{stat.label}</p>
+                  <dt className="font-bold">{fact.label}</dt>
+                  <dd>{fact.value}</dd>
                 </div>
-              </motion.div>
-            ))}
-          </motion.div>
+              ))}
+            </dl>
+          </Reveal>
         </div>
       </div>
     </section>

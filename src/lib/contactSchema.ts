@@ -16,7 +16,7 @@ export const contactSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(100),
   email: z.string().trim().email("Invalid email address").max(255),
   message: z.string().trim().min(1, "Message is required").max(2000),
-  // Honeypot — must stay empty. Bots fill every field; humans never see it.
+  // Honeypot: must stay empty. Bots fill every field; humans never see it.
   website: z.string().max(0).optional().or(z.literal("")),
 });
 

@@ -458,7 +458,7 @@ export function renderSyncReport(report: SyncReport): string {
 
   const writeChange = (change: RepoChange) => {
     const where = change.onSite ? "on the site" : "not on the site";
-    lines.push(`- **${change.fullName}** (${where}) — ${change.changes.join("; ")}`);
+    lines.push(`- **${change.fullName}** (${where}): ${change.changes.join("; ")}`);
   };
 
   if (report.updated.length === 0 && report.removed.length === 0) {

@@ -1,50 +1,25 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Github, Linkedin, Mail, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import { contactSchema, type ContactFormValues } from "@/lib/contactSchema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Confetti, Mascot, MascotRig, type MascotMove } from "@/components/Mascot";
+import { Reveal } from "@/components/Reveal";
+import { SectionHeading } from "@/components/SectionHeading";
 import { useToast } from "@/hooks/use-toast";
-import { useRef, useState } from "react";
-
-const socials = [
-  { icon: Github, href: "https://github.com/gunnarwrld", label: "GitHub" },
-  { icon: Linkedin, href: "https://linkedin.com/in/gunnaarias", label: "LinkedIn" },
-  { icon: Mail, href: "mailto:ariasgunnar@gmail.com", label: "Email" },
-];
-
-const ease: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
-
-const stagger = {
-  visible: { transition: { staggerChildren: 0.15 } },
-};
-
-const itemReveal = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease } },
-};
+import { site, socials } from "@/data/site";
 
 const Contact = () => {
   const { toast } = useToast();
-  const sectionRef = useRef(null);
   const [submitting, setSubmitting] = useState(false);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-
-  const headingX = useTransform(scrollYProgress, [0, 0.3], [-80, 0]);
-  const headingOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
+  // The star on the poster answers the form: a jump when a message goes out, a flinch when it fails.
+  const [move, setMove] = useState<MascotMove>("idle");
+  const [bursts, setBursts] = useState(0);
+  const backToIdle = useCallback(() => setMove("idle"), []);
 
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
@@ -70,156 +45,149 @@ const Contact = () => {
         description: `Thanks ${data.name}, I'll get back to you soon.`,
       });
       form.reset();
+      setMove("celebrate");
+      setBursts((count) => count + 1);
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
       toast({
         title: "Couldn't send message",
-        description: message,
+        description: `${message} You can also email ${site.email}.`,
         variant: "destructive",
       });
+      setMove("oops");
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <section id="contact" ref={sectionRef} className="py-24 sm:py-32">
-      <div className="container mx-auto px-4">
-        <div className="overflow-hidden">
-          <motion.div style={{ x: headingX, opacity: headingOpacity }}>
-            <p className="text-xs font-mono tracking-[0.3em] uppercase text-muted-foreground mb-3">04 — Contact</p>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-12">
-              Get In Touch
-            </h2>
-          </motion.div>
-        </div>
-
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={stagger}
-          className="grid md:grid-cols-2 gap-12"
-        >
-          <motion.div variants={itemReveal}>
-            <p className="text-muted-foreground mb-8 leading-relaxed">
-              I'm always open to discussing new projects, collaboration
-              opportunities, or just having a chat about tech. Drop me a message!
+    <section id="contact" aria-labelledby="contact-title" className="py-20 sm:py-28">
+      <div className="container">
+        {/* Heading and links on the left, the poster beside them, so the form is in view at once. */}
+        <div className="grid items-start gap-x-14 gap-y-4 lg:grid-cols-[1fr_1.2fr]">
+          <div>
+            <SectionHeading id="contact" title="Contact" say="Hiring, or have a project? Write to me." />
+            <Reveal>
+            <p className="max-w-[52ch] text-lg leading-relaxed text-parchment">
+              I&apos;m always open to discussing new projects, collaboration opportunities, or just having a chat
+              about tech. Drop me a message!
             </p>
 
-            <div className="flex gap-4">
-              {socials.map((s, i) => (
-                <motion.a
-                  key={s.label}
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center w-12 h-12 rounded-full glass text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all duration-300"
-                  aria-label={s.label}
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 + i * 0.1 }}
-                >
-                  <s.icon className="h-5 w-5" />
-                </motion.a>
+            <ul className="mt-8 flex flex-wrap gap-5">
+              {socials.map((social) => (
+                <li key={social.label}>
+                  <Button variant="ink" asChild>
+                    <a
+                      href={social.href}
+                      {...(social.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                    >
+                      <social.icon aria-hidden="true" />
+                      {social.label}
+                    </a>
+                  </Button>
+                </li>
               ))}
-            </div>
-          </motion.div>
+            </ul>
+            </Reveal>
+          </div>
 
-          <motion.div variants={itemReveal}>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5" noValidate>
-                {/* Honeypot — invisible to humans, irresistible to bots. */}
-                <div
-                  aria-hidden="true"
-                  style={{
-                    position: "absolute",
-                    left: "-10000px",
-                    width: 1,
-                    height: 1,
-                    overflow: "hidden",
-                  }}
-                >
+          {/* The poster. The star stands on its top edge. */}
+          <div className="relative mt-24 sm:mt-28 lg:mt-24">
+            <div className="absolute bottom-full right-5 z-10 w-24 translate-y-[0.5rem] sm:right-8 sm:w-32">
+              <MascotRig move={move} onDone={backToIdle} className="relative">
+                <Mascot alt="" sizes="8rem" />
+                {move === "celebrate" && <Confetti key={bursts} />}
+              </MascotRig>
+            </div>
+
+            <Reveal className="paper p-6 sm:p-9" delay={120}>
+              <h3 className="border-b-[3px] border-double border-espresso pb-4 text-center font-display text-3xl uppercase leading-none sm:text-4xl">
+                Write to me
+              </h3>
+
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="mt-6 space-y-5" noValidate>
+                  {/* Honeypot: invisible to humans, irresistible to bots. */}
+                  <div
+                    aria-hidden="true"
+                    style={{
+                      position: "absolute",
+                      left: "-10000px",
+                      width: 1,
+                      height: 1,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <FormField
+                      control={form.control}
+                      name="website"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Website</FormLabel>
+                          <FormControl>
+                            <Input tabIndex={-1} autoComplete="off" placeholder="Leave this empty" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                   <FormField
                     control={form.control}
-                    name="website"
+                    name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Website</FormLabel>
+                        <FormLabel>Name</FormLabel>
                         <FormControl>
-                          <Input
-                            tabIndex={-1}
-                            autoComplete="off"
-                            placeholder="Leave this empty"
-                            {...field}
-                          />
+                          <Input placeholder="Your name" autoComplete="name" {...field} />
                         </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
-                </div>
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Your name" {...field} className="glass focus:border-foreground/30 transition-colors" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input placeholder="your@email.com" type="email" {...field} className="glass focus:border-foreground/30 transition-colors" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="message"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Message</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Tell me about your project..."
-                          rows={5}
-                          {...field}
-                          className="glass resize-none focus:border-foreground/30 transition-colors"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                  <Button
-                    type="submit"
-                    size="lg"
-                    disabled={submitting}
-                    className="w-full sm:w-auto rounded-full px-8"
-                  >
-                    <Send className="h-4 w-4 mr-2" />
-                    {submitting ? "Sending…" : "Send Message"}
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input placeholder="your@email.com" type="email" autoComplete="email" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="message"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Message</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="Tell me about your project..." rows={5} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit" variant="cta" size="xl" disabled={submitting} className="w-full">
+                    <Send aria-hidden="true" />
+                    {submitting ? "Sending…" : "Send message"}
                   </Button>
-                </motion.div>
-              </form>
-            </Form>
-          </motion.div>
-        </motion.div>
+                  <p className="typed text-center">
+                    Or email{" "}
+                    <a
+                      href={`mailto:${site.email}`}
+                      className="font-bold underline decoration-2 underline-offset-4 hover:decoration-4"
+                    >
+                      {site.email}
+                    </a>
+                  </p>
+                </form>
+              </Form>
+            </Reveal>
+          </div>
+        </div>
       </div>
     </section>
   );

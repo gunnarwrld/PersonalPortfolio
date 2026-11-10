@@ -1,52 +1,38 @@
-import { motion } from "framer-motion";
-import { ArrowUp, Github, Linkedin, Mail } from "lucide-react";
+import { ArrowUp } from "lucide-react";
+import { site, socials } from "@/data/site";
+
+const iconLink =
+  "flex h-11 w-11 items-center justify-center rounded-sm border-2 border-ivory text-ivory transition-colors hover:bg-ivory hover:text-espresso";
 
 const Footer = () => {
   return (
-    <motion.footer
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.8 }}
-      className="border-t border-border py-8"
-    >
-      <div className="container mx-auto px-4 flex flex-col items-center justify-center gap-4 text-center">
-        <p className="text-sm text-muted-foreground">
-          © {new Date().getFullYear()} Gunnar. All rights reserved.
+    <footer className="border-t-[3px] border-ivory bg-espresso py-8">
+      <div className="container flex flex-col items-center justify-between gap-5 sm:flex-row">
+        <p className="typed text-center text-parchment sm:text-left">
+          © {new Date().getFullYear()} {site.name}. Built in Sweden, fuelled by mate.
         </p>
 
-        <div className="flex items-center gap-4">
-          {[
-            { icon: Github, href: "https://github.com/gunnarwrld", label: "GitHub" },
-            { icon: Linkedin, href: "https://linkedin.com/in/gunnararias", label: "LinkedIn" },
-            { icon: Mail, href: "mailto:ariasgunnar@gmail.com", label: "Email" },
-          ].map((item) => (
-            <motion.a
-              key={item.label}
-              href={item.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-              aria-label={item.label}
-              whileHover={{ y: -2 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <item.icon className="h-4 w-4" />
-            </motion.a>
+        <ul className="flex items-center gap-3">
+          {socials.map((social) => (
+            <li key={social.label}>
+              <a
+                href={social.href}
+                aria-label={social.label}
+                className={iconLink}
+                {...(social.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              >
+                <social.icon aria-hidden="true" className="h-5 w-5" />
+              </a>
+            </li>
           ))}
-
-          <motion.button
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="ml-2 text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Back to top"
-            whileHover={{ y: -3 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <ArrowUp className="h-4 w-4" />
-          </motion.button>
-        </div>
+          <li>
+            <a href="#top" aria-label="Back to top" className={iconLink}>
+              <ArrowUp aria-hidden="true" className="h-5 w-5" />
+            </a>
+          </li>
+        </ul>
       </div>
-    </motion.footer>
+    </footer>
   );
 };
 

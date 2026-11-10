@@ -25,7 +25,7 @@ Object.defineProperty(window, "IntersectionObserver", {
   value: IntersectionObserverStub,
 });
 
-// Same story for ResizeObserver — framer-motion and Radix both reach for it.
+// Same story for ResizeObserver: framer-motion and Radix both reach for it.
 class ResizeObserverStub {
   observe() {}
   unobserve() {}
