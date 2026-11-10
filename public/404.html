@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#441505" />
+    <meta name="color-scheme" content="dark" />
+    <title>Page not found — Gunnar Arias</title>
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="preload" href="/fonts/alfa-slab-one-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <!--
+      The host serves this file, with a real 404 status, for any address that
+      does not exist. It stands alone: no app bundle, just the same fonts,
+      colours and mascot as the site (see src/index.css for the tokens).
+    -->
+    <style>
+      @font-face {
+        font-family: "Alfa Slab One";
+        src: url("/fonts/alfa-slab-one-latin.woff2") format("woff2");
+        font-weight: 400;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Work Sans";
+        src: url("/fonts/work-sans-var-latin.woff2") format("woff2");
+        font-weight: 100 900;
+        font-display: swap;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        min-height: 100svh;
+        display: grid;
+        place-items: center;
+        padding: 3rem 1.25rem;
+        background-color: #441505;
+        background-image: radial-gradient(ellipse 95% 60% at 50% -12%, #5e230d 0%, transparent 72%),
+          linear-gradient(to bottom, transparent 55%, #260b02 100%);
+        background-repeat: no-repeat;
+        color: #faf5e8;
+        font-family: "Work Sans", ui-sans-serif, system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        text-align: center;
+      }
+      main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      img {
+        display: block;
+        width: min(52vw, 13rem);
+        height: auto;
+      }
+      .bubble {
+        position: relative;
+        margin: 2rem 0 0;
+        padding: 0.6rem 0.95rem;
+        border-radius: 0.9rem;
+        background: #faf5e8;
+        color: #260b02;
+        font-weight: 600;
+        line-height: 1.35;
+      }
+      .bubble::after {
+        content: "";
+        position: absolute;
+        top: -0.82rem;
+        left: 50%;
+        width: 1.15rem;
+        height: 1rem;
+        margin-left: -0.575rem;
+        background: #faf5e8;
+        clip-path: polygon(50% 0, 100% 100%, 0 100%);
+      }
+      h1 {
+        margin: 2rem 0 0;
+        font-family: "Alfa Slab One", Georgia, serif;
+        font-size: clamp(4.5rem, 24vw, 9rem);
+        font-weight: 400;
+        line-height: 1;
+      }
+      .lead {
+        margin: 1rem 0 0;
+        color: #decbb8;
+        font-size: 1.125rem;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        min-height: 3.5rem;
+        margin-top: 2.25rem;
+        padding: 0.8rem 1.6rem;
+        border: 3px solid #260b02;
+        border-radius: 2px;
+        background: #ff8800;
+        box-shadow: 5px 5px 0 0 #d44d00;
+        color: #260b02;
+        font-family: "Alfa Slab One", Georgia, serif;
+        font-size: 1.125rem;
+        letter-spacing: 0.03em;
+        line-height: 1;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+      .btn:hover {
+        background: #ffb700;
+      }
+      .btn:active {
+        transform: translate(5px, 5px);
+        box-shadow: none;
+      }
+      :focus-visible {
+        outline: 3px solid #faf5e8;
+        outline-offset: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <picture>
+        <source type="image/avif" srcset="/mascot/estrella-480.avif" />
+        <img src="/mascot/estrella-480.webp" alt="" width="480" height="593" />
+      </picture>
+      <p class="bubble">Nothing is printed on this page.</p>
+      <h1>404</h1>
+      <p class="lead">The page you asked for does not exist.</p>
+      <a class="btn" href="/">Back to home</a>
+    </main>
+  </body>
+</html>
