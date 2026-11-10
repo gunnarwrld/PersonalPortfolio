@@ -32,21 +32,16 @@ describe("project cards use synced GitHub facts", () => {
   it("shows languages, last push, and archived, and keeps the hand-written blurb", async () => {
     render(<Projects />);
 
-    const card = screen.getByRole("button", { name: /Smart Home GitOps/ });
+    const card = screen.getByRole("article", { name: /Smart Home GitOps/ });
     expect(within(card).getByText("Archived")).toBeInTheDocument();
     expect(within(card).getByText("Kotlin")).toBeInTheDocument();
-    expect(within(card).getByText("Jan 2, 2026")).toBeInTheDocument();
+    expect(within(card).getByText(/Jan 2, 2026/)).toBeInTheDocument();
     expect(within(card).getByText("Coursework")).toBeInTheDocument();
     expect(within(card).getByText(/polls a GitOps repository/)).toBeInTheDocument();
     expect(within(card).queryByText("from github, not the card")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "View details for HKIF Website" })).toBeInTheDocument();
 
-    fireEvent.click(card);
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: "View details for Smart Home GitOps, archived, updated Jan 2, 2026",
-      }),
-    );
+    fireEvent.click(within(card).getByRole("button", { name: "View details for Smart Home GitOps" }));
 
     const dialog = await screen.findByRole("dialog");
     expect(within(dialog).getByText("Kotlin 100.0%")).toBeInTheDocument();
@@ -57,5 +52,26 @@ describe("project cards use synced GitHub facts", () => {
       "href",
       "https://github.com/gunnarwrld/smart-home-gitops",
     );
+  });
+
+  it("gives the code and live links of each card their own names, and keeps them out of the dialog trigger", () => {
+    render(<Projects />);
+
+    const card = screen.getByRole("article", { name: /PostHub/ });
+    expect(within(card).getByRole("link", { name: "View source code for PostHub" })).toHaveAttribute(
+      "href",
+      "https://github.com/gunnarwrld/PostHub-DynamicWebsite",
+    );
+    expect(within(card).getByRole("link", { name: "View live demo for PostHub" })).toBeInTheDocument();
+
+    fireEvent.click(within(card).getByRole("link", { name: "View source code for PostHub" }));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("numbers the cards in the order of the data file", () => {
+    render(<Projects />);
+
+    const first = screen.getByRole("article", { name: /HKIF Website/ });
+    expect(within(first).getByText("No. 1")).toBeInTheDocument();
   });
 });

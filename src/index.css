@@ -1,12 +1,33 @@
+@import "./styles/mascot-moves.css";
+
 /* ==========================================================================
-   Self-hosted fonts — eliminates render-blocking Google Fonts requests.
-   Using variable fonts (single file per family, all weights).
-   font-display: swap ensures text is visible immediately with fallback.
+   Self-hosted fonts (all SIL Open Font License). Latin subset, one file per
+   face. The two "Fallback" faces re-size a local font to the same metrics so
+   the swap does not move the layout.
    ========================================================================== */
 
 @font-face {
-  font-family: 'Inter';
-  src: url('/fonts/inter-var-latin.woff2') format('woff2');
+  font-family: "Alfa Slab One";
+  src: url("/fonts/alfa-slab-one-latin.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+    U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+    U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Alfa Slab One Fallback";
+  src: local("Georgia");
+  ascent-override: 85.8457%;
+  descent-override: 27.5932%;
+  size-adjust: 120.6817%;
+}
+
+@font-face {
+  font-family: "Work Sans";
+  src: url("/fonts/work-sans-var-latin.woff2") format("woff2");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -16,9 +37,18 @@
 }
 
 @font-face {
-  font-family: 'Syne';
-  src: url('/fonts/syne-var-latin.woff2') format('woff2');
-  font-weight: 400 800;
+  font-family: "Work Sans Fallback";
+  src: local("Arial"), local("ArialMT");
+  ascent-override: 83.0851%;
+  descent-override: 21.7093%;
+  line-gap-override: 0%;
+  size-adjust: 111.9334%;
+}
+
+@font-face {
+  font-family: "Courier Prime";
+  src: url("/fonts/courier-prime-400-latin.woff2") format("woff2");
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
@@ -27,9 +57,9 @@
 }
 
 @font-face {
-  font-family: 'JetBrains Mono';
-  src: url('/fonts/jetbrains-mono-var-latin.woff2') format('woff2');
-  font-weight: 100 800;
+  font-family: "Courier Prime";
+  src: url("/fonts/courier-prime-700-latin.woff2") format("woff2");
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
@@ -41,90 +71,821 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================================================================
+   Tokens. Ten colours, each with one job (contrast measured, see README):
+
+   Stage    mahogany  page background
+            espresso  deep panels, text on paper
+            russet    warm glow, hover fill on dark
+   Ink      ivory     every line and border, main text on dark
+            parchment paper surfaces, second-level text on dark
+            stone     third-level text on dark only
+            cocoa     dots, hatching and grain only, never text
+   Accent   tangerine the mascot and the one primary button per view
+            amber     the spotlight, primary button hover
+            rust      primary button shadow, error borders, never small text
+   ========================================================================== */
+
 @layer base {
   :root {
-    --background: 240 10% 4%;
-    --foreground: 0 0% 95%;
+    --mahogany: 68 21 5;
+    --espresso: 38 11 2;
+    --russet: 94 35 13;
+    --ivory: 250 245 232;
+    --parchment: 222 203 184;
+    --cocoa: 140 107 86;
+    --stone: 200 195 183;
+    --tangerine: 255 136 0;
+    --amber: 255 183 0;
+    --rust: 212 77 0;
 
-    --card: 240 10% 6%;
-    --card-foreground: 0 0% 95%;
+    --line: 3px; /* ink line weight */
+    --drop: 6px; /* hard shadow offset */
+    --radius: 2px;
 
-    --popover: 240 10% 6%;
-    --popover-foreground: 0 0% 95%;
+    --hatch-cocoa: repeating-linear-gradient(-45deg, rgb(var(--cocoa)) 0 1.5px, transparent 1.5px 5px);
+    --hatch-ivory: repeating-linear-gradient(-45deg, rgb(var(--ivory)) 0 1.5px, transparent 1.5px 5px);
+    --hatch-espresso: repeating-linear-gradient(-45deg, rgb(var(--espresso)) 0 1.5px, transparent 1.5px 5px);
 
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
+    /* Paper grain drawn by an SVG noise filter: no image request. */
+    --grain-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.98 0 0 0 0 0.96 0 0 0 0 0.91 0 0 0 1.6 -0.72'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)'/%3E%3C/svg%3E");
+    --grain-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.15 0 0 0 0 0.04 0 0 0 0 0.01 0 0 0 0.8 -0.38'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)'/%3E%3C/svg%3E");
 
-    --secondary: 240 4% 16%;
-    --secondary-foreground: 0 0% 98%;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-    --muted: 240 4% 16%;
-    --muted-foreground: 240 5% 65%;
-
-    --accent: 240 4% 16%;
-    --accent-foreground: 0 0% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 240 4% 16%;
-    --input: 240 4% 16%;
-    --ring: 240 5% 65%;
-
-    --radius: 0.75rem;
-
-    --sidebar-background: 240 10% 4%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 0 0% 98%;
-    --sidebar-primary-foreground: 240 5.9% 10%;
-    --sidebar-accent: 240 4% 16%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 240 4% 16%;
-    --sidebar-ring: 240 5% 65%;
+    color-scheme: dark;
   }
-}
 
-@layer base {
+  @supports (animation-timing-function: linear(0, 1)) {
+    :root {
+      --spring: linear(
+        0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 12.9%, 0.938 16.7%, 1.017, 1.077, 1.121,
+        1.149 24.3%, 1.159, 1.163, 1.161, 1.154 29.9%, 1.129 32.8%, 1.051 39.6%, 1.017 43.1%,
+        0.991, 0.977 51%, 0.974 53.8%, 0.975 57.1%, 0.997 69.8%, 1.003 76.9%, 1
+      );
+    }
+  }
+
   * {
-    @apply border-border;
-    cursor: none;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-    cursor: none;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Syne', ui-sans-serif, system-ui, sans-serif;
-  }
-
-  code, pre, .font-mono {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    border-color: rgb(var(--ivory));
   }
 
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
-  /* Restore cursor on mobile */
-  @media (pointer: coarse) {
-    * {
-      cursor: auto;
-    }
-    body {
-      cursor: auto;
-    }
+  body {
+    background-color: rgb(var(--mahogany));
+    color: rgb(var(--ivory));
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* The stage: a russet glow from above, sinking into espresso. A fixed layer,
+     not background-attachment, so phones do not repaint it while scrolling. */
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+  }
+  body::before {
+    z-index: -2;
+    background:
+      radial-gradient(ellipse 95% 60% at 50% -12%, rgb(var(--russet)) 0%, transparent 72%),
+      linear-gradient(to bottom, transparent 55%, rgb(var(--espresso)) 100%);
+  }
+  body::after {
+    z-index: -1;
+    background-image: var(--grain-light);
+    opacity: 0.2;
+  }
+
+  ::selection {
+    background: rgb(var(--ivory));
+    color: rgb(var(--espresso));
+  }
+
+  /* Two-tone focus ring: the ivory line shows on the dark stage, the espresso
+     line shows on paper. Orange is never used for focus. */
+  :focus-visible {
+    outline: 3px solid rgb(var(--ivory));
+    outline-offset: 3px;
+    box-shadow: 0 0 0 3px rgb(var(--espresso));
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
   }
 }
 
-@layer utilities {
-  .glass {
-    @apply bg-card/60 backdrop-blur-xl border border-border/50;
+/* ==========================================================================
+   Components
+   ========================================================================== */
+
+@layer components {
+  /* ---- Surfaces --------------------------------------------------------
+     Both draw their face and their hard shadow with pseudo-elements, so the
+     shadow can be hatched like an engraving instead of a flat block. */
+  .ink-panel,
+  .paper {
+    position: relative;
+    isolation: isolate;
+  }
+  .ink-panel::before,
+  .paper::before,
+  .ink-panel::after,
+  .paper::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    pointer-events: none;
+  }
+  .ink-panel::before {
+    z-index: -1;
+    background-color: rgb(var(--espresso));
+    border: var(--line) solid rgb(var(--ivory));
+  }
+  .paper {
+    color: rgb(var(--espresso));
+  }
+  .paper::before {
+    z-index: -1;
+    background-color: rgb(var(--parchment));
+    background-image: var(--grain-dark);
+    /* a printed frame line just inside the edge */
+    box-shadow:
+      inset 0 0 0 5px rgb(var(--parchment)),
+      inset 0 0 0 7px rgb(var(--espresso));
+  }
+  .ink-panel::after,
+  .paper::after {
+    z-index: -2;
+    translate: var(--drop) var(--drop);
+    background: var(--hatch-cocoa);
+    transition: translate 0.14s var(--ease-out);
+  }
+  .paper::after {
+    background: var(--hatch-ivory);
   }
 
-  .text-gradient {
-    @apply bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent;
+  /* ---- Buttons ---------------------------------------------------------
+     Face and shadow are pseudo-elements; pressing moves the face onto the
+     shadow, like a stamp coming down. */
+  .btn {
+    --btn-drop: 5px;
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    min-height: 2.75rem;
+    padding: 0.55rem 1.15rem;
+    font-family: theme("fontFamily.display");
+    font-size: 1rem;
+    line-height: 1;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--btn-ink);
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      translate 0.09s ease-out,
+      color 0.15s ease-out;
+  }
+  .btn::before,
+  .btn::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+  }
+  .btn::before {
+    z-index: -1;
+    background: var(--btn-face);
+    border: var(--line) solid var(--btn-line);
+    transition: background-color 0.15s ease-out;
+  }
+  .btn::after {
+    z-index: -2;
+    translate: var(--btn-drop) var(--btn-drop);
+    background: var(--btn-shade);
+    transition: translate 0.09s ease-out;
+  }
+  .btn:hover {
+    translate: -1px -1px;
+  }
+  .btn:hover::after {
+    translate: calc(var(--btn-drop) + 1px) calc(var(--btn-drop) + 1px);
+  }
+  .btn:active {
+    translate: var(--btn-drop) var(--btn-drop);
+  }
+  .btn:active::after {
+    translate: 0 0;
+  }
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.6;
+    translate: none;
+  }
+  .btn svg {
+    width: 1.1em;
+    height: 1.1em;
+    flex-shrink: 0;
+  }
+
+  /* The one orange button per view. */
+  .btn-cta {
+    --btn-face: rgb(var(--tangerine));
+    --btn-line: rgb(var(--espresso));
+    --btn-shade: rgb(var(--rust));
+    --btn-ink: rgb(var(--espresso));
+  }
+  .btn-cta:hover {
+    --btn-face: rgb(var(--amber));
+  }
+  /* Outline button for the dark stage. */
+  .btn-ink {
+    --btn-face: rgb(var(--espresso));
+    --btn-line: rgb(var(--ivory));
+    --btn-shade: var(--hatch-ivory);
+    --btn-ink: rgb(var(--ivory));
+  }
+  .btn-ink:hover {
+    --btn-face: rgb(var(--ivory));
+    --btn-ink: rgb(var(--espresso));
+  }
+  /* Outline button for paper surfaces. */
+  .btn-paper {
+    --btn-face: rgb(var(--ivory));
+    --btn-line: rgb(var(--espresso));
+    --btn-shade: var(--hatch-espresso);
+    --btn-ink: rgb(var(--espresso));
+  }
+  .btn-paper:hover {
+    --btn-face: rgb(var(--espresso));
+    --btn-ink: rgb(var(--ivory));
+  }
+  .btn-sm {
+    --btn-drop: 4px;
+    min-height: 2.5rem;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.875rem;
+  }
+  .btn-xl {
+    min-height: 3.5rem;
+    padding: 0.8rem 1.6rem;
+    font-size: 1.125rem;
+  }
+  .btn-icon {
+    --btn-drop: 4px;
+    min-height: 2.75rem;
+    width: 2.75rem;
+    padding: 0;
+  }
+
+  /* ---- Small type pieces ---------------------------------------------- */
+  /* Anything that came from a repo is "typed". */
+  .typed {
+    font-family: theme("fontFamily.mono");
+    font-size: 0.9375rem;
+    line-height: 1.45;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.55rem;
+    border: 2px solid currentColor;
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  /* Project status, as a rubber stamp. */
+  .stamp {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border: 3px double currentColor;
+    border-radius: 3px;
+    font-family: theme("fontFamily.mono");
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    rotate: -3deg;
+  }
+  .stamp[data-tone="solid"] {
+    border-style: solid;
+    background-color: rgb(var(--espresso));
+    border-color: rgb(var(--espresso));
+    color: rgb(var(--parchment));
+  }
+
+  /* ---- Speech bubble --------------------------------------------------- */
+  .bubble {
+    position: relative;
+    display: inline-block;
+    max-width: 34ch;
+    padding: 0.6rem 0.95rem;
+    border-radius: 0.9rem;
+    background-color: rgb(var(--ivory));
+    color: rgb(var(--espresso));
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.35;
+    text-align: left;
+  }
+  .bubble::after {
+    content: "";
+    position: absolute;
+    width: 1.15rem;
+    height: 1rem;
+    background-color: rgb(var(--ivory));
+  }
+  .bubble[data-tail="left"]::after {
+    left: -0.72rem;
+    bottom: 0.55rem;
+    clip-path: polygon(100% 0, 0 100%, 100% 72%);
+  }
+  .bubble[data-tail="up"]::after,
+  .bubble[data-tail="hero"]::after {
+    top: -0.82rem;
+    left: 50%;
+    translate: -50% 0;
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  }
+  @media (min-width: 1024px) {
+    .bubble[data-tail="hero"]::after {
+      top: auto;
+      left: -0.72rem;
+      bottom: 0.55rem;
+      translate: none;
+      clip-path: polygon(100% 0, 0 100%, 100% 72%);
+    }
+  }
+
+  /* ---- Form fields (they live on the contact poster) ------------------- */
+  .field {
+    display: block;
+    width: 100%;
+    padding: 0.65rem 0.8rem;
+    border: var(--line) solid rgb(var(--espresso));
+    border-radius: var(--radius);
+    background-color: rgb(var(--ivory));
+    color: rgb(var(--espresso));
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+  .field::placeholder {
+    color: rgb(var(--russet) / 0.72);
+  }
+  .field[aria-invalid="true"] {
+    border-color: rgb(var(--rust));
+  }
+  .field:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  /* ---- Masthead: solid wood type with an engraved drop shade ----------- */
+  .masthead {
+    font-family: theme("fontFamily.display");
+    /* Sized from the text column (a size container), so the name always fits it. */
+    font-size: clamp(3rem, 19cqi, 9rem);
+    line-height: 0.88;
+    letter-spacing: 0.005em;
+    text-transform: uppercase;
+  }
+  .masthead-line {
+    position: relative;
+    isolation: isolate;
+    display: block;
+    width: fit-content;
+    color: rgb(var(--ivory));
+  }
+  .masthead-shade {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    translate: 0.06em 0.06em;
+    color: transparent;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      rgb(var(--ivory)) 0 0.022em,
+      transparent 0.022em 0.052em
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    user-select: none;
+  }
+
+  /* ---- Hero light ------------------------------------------------------ */
+  .spotlight {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 200%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  /* ---- Ribbon ---------------------------------------------------------- */
+  .ribbon {
+    position: relative;
+    margin-inline: -1.5rem;
+    overflow: hidden;
+    rotate: -1.4deg;
+    border-block: var(--line) solid rgb(var(--espresso));
+    background-color: rgb(var(--parchment));
+    background-image: var(--grain-dark);
+    color: rgb(var(--espresso));
+  }
+  .ribbon-track {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+    width: max-content;
+    padding: 0.7rem 1.75rem;
+    font-family: theme("fontFamily.display");
+    font-size: clamp(1.15rem, 2.4vw, 1.6rem);
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* ---- Project plates -------------------------------------------------- */
+  .plate {
+    container-type: inline-size;
+    cursor: pointer;
+    transition: translate 0.14s var(--ease-out);
+  }
+  .plate:hover,
+  .plate:focus-within {
+    translate: -2px -2px;
+  }
+  .plate:hover::after,
+  .plate:focus-within::after {
+    translate: calc(var(--drop) + 3px) calc(var(--drop) + 3px);
+  }
+  .plate:active {
+    translate: 2px 2px;
+  }
+  .plate:active::after {
+    translate: calc(var(--drop) - 3px) calc(var(--drop) - 3px);
+  }
+  .plate-title {
+    font-family: theme("fontFamily.display");
+    font-size: clamp(1.5rem, 9cqi, 2.6rem);
+    line-height: 0.98;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+  }
+  .plate-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    min-height: 2.75rem;
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+  .plate-link:hover {
+    text-decoration-thickness: 4px;
+  }
+
+  /* ---- Language share bar (thin segmented bar; figures sit beside it) --- */
+  .lang-bar {
+    display: flex;
+    gap: 2px;
+    height: 8px;
+  }
+  .lang-seg {
+    min-width: 3px;
+    background-color: rgb(var(--espresso));
+  }
+  .lang-seg:first-child {
+    border-radius: 4px 0 0 4px;
+  }
+  .lang-seg:last-child {
+    border-radius: 0 4px 4px 0;
+  }
+  .lang-seg:only-child {
+    border-radius: 4px;
+  }
+  /* One ink, so parts are told apart by tone: solid, two hatches, then a flat mid tone. */
+  .lang-seg[data-slot="1"],
+  .lang-swatch[data-slot="1"] {
+    background: repeating-linear-gradient(45deg, rgb(var(--espresso)) 0 1.5px, transparent 1.5px 4px);
+  }
+  .lang-seg[data-slot="2"],
+  .lang-swatch[data-slot="2"] {
+    background: repeating-linear-gradient(135deg, rgb(var(--espresso)) 0 1.5px, transparent 1.5px 4px);
+  }
+  .lang-seg[data-slot="3"],
+  .lang-swatch[data-slot="3"] {
+    background: rgb(var(--cocoa));
+  }
+  .lang-swatch {
+    display: inline-block;
+    width: 0.7rem;
+    height: 0.7rem;
+    flex-shrink: 0;
+    border-radius: 2px;
+    background-color: rgb(var(--espresso));
+  }
+
+  /* ---- Skip link ------------------------------------------------------- */
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 100;
+    padding: 0.6rem 0.9rem;
+    border-radius: var(--radius);
+    background-color: rgb(var(--ivory));
+    color: rgb(var(--espresso));
+    font-weight: 700;
+  }
+  .skip-link:focus {
+    top: 1rem;
+  }
+}
+
+/* ==========================================================================
+   Utilities
+   ========================================================================== */
+
+@layer utilities {
+  .halftone {
+    background-image: radial-gradient(rgb(var(--cocoa) / 0.65) 1px, transparent 1.6px);
+    background-size: 7px 7px;
+  }
+  .hatch {
+    background-image: var(--hatch-cocoa);
+  }
+  .fade-up {
+    -webkit-mask-image: linear-gradient(to top, #000, transparent);
+    mask-image: linear-gradient(to top, #000, transparent);
+  }
+}
+
+/* ==========================================================================
+   Motion. One choreographed moment (the hero entrance); everything else
+   answers the visitor. All of it stops for prefers-reduced-motion.
+   ========================================================================== */
+
+/* Panels "print" once when they scroll into view. The hidden start state only
+   applies when scripts run (html.js), so content is never lost without them.
+   Before printing, a panel is hidden with opacity, not clip-path: a clipped
+   element never counts as "in view" for the observer that triggers the print. */
+.js .reveal:not([data-inked]) {
+  opacity: 0;
+}
+.js .reveal[data-inked] {
+  animation: print-in 0.75s var(--ease-out) var(--reveal-delay, 0ms) both;
+}
+
+@keyframes print-in {
+  from {
+    clip-path: inset(0 0 100% 0);
+    translate: 0 14px;
+  }
+  to {
+    clip-path: inset(-24px);
+    translate: 0 0;
+  }
+}
+.js .reveal:not([data-inked]) .stamp {
+  opacity: 0;
+}
+.js .reveal[data-inked] .stamp {
+  animation: stamp-in 0.26s steps(3, end) both;
+  animation-delay: calc(var(--reveal-delay, 0ms) + 420ms);
+}
+
+@keyframes stamp-in {
+  from {
+    opacity: 0;
+    scale: 1.7;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+/* Hero entrance: light on, star pops, name inks in, button stamps down. */
+.beam {
+  animation:
+    beam-on 0.5s steps(1, end) both,
+    beam-dip 11s linear 3s infinite;
+}
+.pool {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pool-in 0.4s var(--ease-out) both;
+}
+.hero-ink {
+  animation: ink-in 0.65s var(--ease-out) both;
+  animation-delay: var(--at, 0s);
+}
+.hero-pop {
+  animation: pop-in 0.5s var(--spring) both;
+  animation-delay: var(--at, 0s);
+}
+.hero-stamp {
+  animation: stamp-down 0.3s var(--ease-out) both;
+  animation-delay: var(--at, 0s);
+}
+
+@keyframes beam-on {
+  0% {
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.85;
+  }
+  30% {
+    opacity: 0.15;
+  }
+  46% {
+    opacity: 1;
+  }
+  58% {
+    opacity: 0.5;
+  }
+  70%,
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes beam-dip {
+  0%,
+  90%,
+  100% {
+    opacity: 1;
+  }
+  91.5% {
+    opacity: 0.78;
+  }
+  93% {
+    opacity: 0.96;
+  }
+  94.5% {
+    opacity: 0.82;
+  }
+  96% {
+    opacity: 1;
+  }
+}
+@keyframes pool-in {
+  from {
+    scale: 0 1;
+  }
+  to {
+    scale: 1 1;
+  }
+}
+@keyframes ink-in {
+  from {
+    clip-path: inset(-12% 100% -12% 0);
+  }
+  to {
+    clip-path: inset(-12% -12% -12% 0);
+  }
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    scale: 0.6;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+@keyframes stamp-down {
+  from {
+    opacity: 0;
+    scale: 1.3;
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+/* Confetti from the star when a message is sent. */
+.confetti-bit {
+  position: absolute;
+  left: 50%;
+  top: 38%;
+  width: 0.5rem;
+  height: 0.8rem;
+  border-radius: 1px;
+  opacity: 0;
+  animation: confetti 1.5s cubic-bezier(0.2, 0.7, 0.3, 1) var(--d, 0s) both;
+}
+@keyframes confetti {
+  0% {
+    opacity: 1;
+    translate: 0 0;
+    rotate: 0deg;
+  }
+  45% {
+    opacity: 1;
+    translate: calc(var(--x) * 0.75) var(--peak);
+  }
+  100% {
+    opacity: 0;
+    translate: var(--x) var(--fall);
+    rotate: var(--spin);
+  }
+}
+
+/* The ribbon slides as the page scrolls past it (where the browser supports
+   scroll-driven animation); it never moves by itself. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .ribbon-track {
+      animation: ribbon-slide linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+  }
+}
+@keyframes ribbon-slide {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: -22% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+  .js .reveal,
+  .js .reveal:not([data-inked]),
+  .js .reveal[data-inked] {
+    animation: none;
+    clip-path: none;
+    opacity: 1;
+    translate: none;
+  }
+  .js .reveal:not([data-inked]) .stamp,
+  .js .reveal[data-inked] .stamp {
+    animation: none;
+    opacity: 1;
+  }
+  .confetti-bit {
+    display: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .masthead-shade {
+    display: none;
+  }
+  .btn,
+  .chip,
+  .field {
+    border: 2px solid ButtonText;
   }
 }

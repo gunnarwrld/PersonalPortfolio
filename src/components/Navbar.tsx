@@ -1,72 +1,93 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Menu } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
+import { MascotBadge } from "@/components/Mascot";
+import { Sheet, SheetCloseButton, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { navLinks } from "@/data/site";
+import { useScrollSpy } from "@/hooks/use-scroll-spy";
+import { cn } from "@/lib/utils";
 
-const navLinks = [
-  { label: "About", href: "#about" },
-  { label: "Skills", href: "#skills" },
-  { label: "Projects", href: "#projects" },
-  { label: "Contact", href: "#contact" },
-];
+const SECTION_IDS = navLinks.map((link) => link.href.slice(1));
 
 const Navbar = () => {
-  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const { scrolled, active } = useScrollSpy(SECTION_IDS);
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled ? "glass shadow-lg" : "bg-transparent"
-      }`}
-    >
-      <div className="container mx-auto flex items-center h-16 px-4">
+    <header className="fixed inset-x-0 top-0 z-40 px-3 pt-3 sm:px-4 sm:pt-4">
+      {/* Once the page has moved, content fades out as it passes under the bar instead of peeking around it. */}
+      <div
+        aria-hidden="true"
+        className={cn(
+          "pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-mahogany via-mahogany/85 to-transparent transition-opacity duration-300",
+          scrolled ? "opacity-100" : "opacity-0",
+        )}
+      />
+      <nav
+        aria-label="Main"
+        className={cn(
+          "relative mx-auto flex h-14 max-w-5xl items-center justify-between rounded-sm border-[3px] border-ivory bg-espresso pl-2 pr-2 transition-shadow duration-200 sm:h-16 sm:pl-3",
+          scrolled && "shadow-[5px_5px_0_0_rgb(var(--cocoa))]",
+        )}
+      >
+        <a href="#top" className="flex items-center gap-2.5 rounded-sm pr-2">
+          <MascotBadge size={40} eager />
+          <span className="font-display text-xl uppercase leading-none">Gunnar</span>
+          <span className="sr-only">, back to top</span>
+        </a>
 
-
-        {/* Desktop */}
-        <div className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors tracking-widest uppercase"
-            >
-              {link.label}
-            </a>
-          ))}
-        </div>
-
-        {/* Mobile */}
-        <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger asChild className="md:hidden">
-            <Button variant="ghost" size="icon" aria-label="Open navigation menu">
-              <Menu className="h-5 w-5" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="right" className="w-64 bg-background">
-            <SheetTitle className="sr-only">Navigation</SheetTitle>
-            <div className="flex flex-col gap-6 mt-8">
-              {navLinks.map((link) => (
+        <ul className="hidden items-center gap-1 md:flex">
+          {navLinks.map((link) => {
+            const current = active === link.href.slice(1);
+            return (
+              <li key={link.href}>
                 <a
-                  key={link.href}
                   href={link.href}
-                  onClick={() => setOpen(false)}
-                  className="text-lg font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  aria-current={current ? "location" : undefined}
+                  className={cn(
+                    "relative block rounded-sm px-3.5 py-2 font-semibold text-parchment transition-colors hover:bg-ivory hover:text-espresso",
+                    // An ink underline marks the section on screen.
+                    current && "text-ivory after:absolute after:inset-x-3.5 after:bottom-0.5 after:h-[3px] after:bg-current",
+                  )}
                 >
                   {link.label}
                 </a>
-              ))}
+              </li>
+            );
+          })}
+        </ul>
+
+        <Sheet open={open} onOpenChange={setOpen}>
+          <SheetTrigger asChild>
+            <button
+              type="button"
+              aria-label="Open menu"
+              className="flex h-11 w-11 items-center justify-center rounded-sm border-2 border-ivory text-ivory transition-colors hover:bg-ivory hover:text-espresso md:hidden"
+            >
+              <Menu aria-hidden="true" className="h-5 w-5" />
+            </button>
+          </SheetTrigger>
+          <SheetContent aria-describedby={undefined}>
+            <div className="flex items-center justify-between">
+              <SheetTitle>Menu</SheetTitle>
+              <SheetCloseButton />
             </div>
+            <ul className="mt-4 flex flex-col gap-2.5">
+              {navLinks.map((link) => (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    className="block rounded-sm border-2 border-ivory px-4 py-3 font-display text-2xl uppercase leading-none transition-colors hover:bg-ivory hover:text-espresso"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </SheetContent>
         </Sheet>
-      </div>
-    </nav>
+      </nav>
+    </header>
   );
 };
 

@@ -3,25 +3,8 @@ export interface SkillGroup {
   skills: string[];
 }
 
+// Order matters: the Skills section prints these as panels, backend work first.
 export const skillGroups: SkillGroup[] = [
-  {
-    category: "Frontend",
-    skills: [
-      "React 18",
-      "TypeScript",
-      "JavaScript (ES6+)",
-      "HTML5",
-      "CSS3",
-      "Tailwind CSS",
-      "Framer Motion",
-      "shadcn/ui",
-      "Radix UI",
-      "React Hook Form",
-      "Next.js",
-      "Vite",
-      "Jetpack Compose",
-    ],
-  },
   {
     category: "Backend",
     skills: [
@@ -72,6 +55,23 @@ export const skillGroups: SkillGroup[] = [
       "CI/CD",
       "Docker Compose",
       "ESM/CJS Module Resolution",
+    ],
+  },
+  {
+    category: "Frontend",
+    skills: [
+      "React 18",
+      "TypeScript",
+      "JavaScript (ES6+)",
+      "HTML5",
+      "CSS3",
+      "Tailwind CSS",
+      "shadcn/ui",
+      "Radix UI",
+      "React Hook Form",
+      "Next.js",
+      "Vite",
+      "Jetpack Compose",
     ],
   },
   {

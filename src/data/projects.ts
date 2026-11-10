@@ -241,15 +241,14 @@ export const projects: Project[] = [
     title: "Personal Portfolio",
     subtitle: "Developer Portfolio Website",
     description:
-      "This site: a motion-first single-page portfolio with Framer Motion animations, a rate-limited serverless contact form, and Vitest + Playwright checks in GitHub Actions.",
+      "This site: a woodcut-style single-page portfolio with its own small design system, a rate-limited serverless contact form, and Vitest + Playwright checks in GitHub Actions.",
     longDescription:
-      "Built with React 18 + TypeScript 5 + Vite + SWC. Scroll-linked Framer Motion parallax, spring physics, and 3D card reveals on a glass UI with a Syne/Inter/JetBrains Mono type stack. The contact form posts to a Vercel Function (Node 20) that validates with Zod, applies a per-IP rate limit and a honeypot check, then sends through Resend. GitHub Actions runs ESLint, a TypeScript check of the app and the API, Vitest unit tests (including tests that keep this project copy matched to the repositories), a production build, and a Playwright smoke test on every pull request.",
+      "Built with React 18 + TypeScript 5 + Vite + SWC. The woodcut look is a small token system on Tailwind CSS: ten colours with one job each, three self-hosted typefaces, and motion written in plain CSS that switches off for visitors who prefer reduced motion. Project cards read languages, last push and live links from a daily GitHub sync that opens a review pull request. The contact form posts to a Vercel Function (Node 20) that validates with Zod, applies a per-IP rate limit and a honeypot check, then sends through Resend. GitHub Actions runs ESLint, a TypeScript check of the app and the API, Vitest unit tests (including tests that keep this project copy matched to the repositories), a production build, and a Playwright smoke test on every pull request.",
     tech: [
       "React 18",
       "TypeScript 5",
       "Vite",
       "Tailwind CSS",
-      "Framer Motion",
       "shadcn/ui",
       "Radix UI",
       "React Hook Form",
@@ -260,11 +259,11 @@ export const projects: Project[] = [
       "Playwright",
     ],
     features: [
-      "Scroll-linked Framer Motion parallax and 3D card reveals",
-      "Glass UI aesthetic with custom design tokens",
+      "Woodcut design system: ten colour tokens and three self-hosted typefaces",
+      "CSS-only motion that respects reduced-motion settings",
+      "Project facts synced from GitHub through a review pull request",
       "Contact form with per-IP rate limiting and a honeypot field",
       "Zod validation on the client and in the Vercel Function",
-      "Unit tests that check project copy against the repositories",
       "CI: ESLint, type-check, Vitest, build and Playwright smoke test",
     ],
     // This repository is the sync target. Leaving it unmapped avoids a loop.
