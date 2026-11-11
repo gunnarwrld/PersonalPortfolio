@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-11T11:27:39.325Z",
+  "generatedAt": "2026-11-11T17:15:28.725Z",
   "owner": "gunnarwrld",
   "now": {
     "fullName": "gunnarwrld/fair-football-fee",
@@ -69,7 +69,7 @@
       ],
       "homepage": null,
       "defaultBranch": "main",
-      "pushedAt": "2026-11-06T17:14:04Z",
+      "pushedAt": "2026-11-11T13:25:06Z",
       "archived": false,
       "stars": 0,
       "fork": false,
@@ -106,15 +106,35 @@
       "languages": [
         {
           "name": "Python",
-          "percentage": 99.2
+          "percentage": 84.2
+        },
+        {
+          "name": "TypeScript",
+          "percentage": 12.5
+        },
+        {
+          "name": "JavaScript",
+          "percentage": 1.4
         },
         {
           "name": "Makefile",
-          "percentage": 0.6
+          "percentage": 0.7
+        },
+        {
+          "name": "Shell",
+          "percentage": 0.5
+        },
+        {
+          "name": "CSS",
+          "percentage": 0.4
+        },
+        {
+          "name": "Dockerfile",
+          "percentage": 0.2
         },
         {
           "name": "Mako",
-          "percentage": 0.2
+          "percentage": 0.1
         }
       ],
       "homepage": null,
@@ -148,7 +168,7 @@
       ],
       "homepage": null,
       "defaultBranch": "main",
-      "pushedAt": "2026-11-11T10:42:49Z",
+      "pushedAt": "2026-11-11T15:17:31Z",
       "archived": false,
       "stars": 0,
       "fork": false,
