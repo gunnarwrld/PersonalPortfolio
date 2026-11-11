@@ -11,33 +11,33 @@ const forge: NowBuilding = {
   primaryLanguage: "Kotlin",
   pushedAt: "2026-11-10T11:09:16Z",
 };
+const today = new Date("2026-11-12T08:00:00Z");
 
 describe("<NowBuildingBubble />", () => {
-  it("names the project and links to its repository", () => {
-    render(<NowBuildingBubble now={forge} today={new Date("2026-11-12T08:00:00Z")} shownOnSite={new Set()} />);
+  it("links a project without a card to its repository", () => {
+    render(<NowBuildingBubble now={forge} today={today} cards={new Map()} />);
     const link = screen.getByRole("link", { name: /now building\s*forge wallet/i });
     expect(link).toHaveAttribute("href", forge.htmlUrl);
     expect(link).toHaveAttribute("target", "_blank");
     expect(link).toHaveAccessibleName(/repository on GitHub/);
   });
 
-  it("stays hidden once the project has a card on the page", () => {
-    const { container } = render(
-      <NowBuildingBubble
-        now={forge}
-        today={new Date("2026-11-12T08:00:00Z")}
-        shownOnSite={new Set(["gunnarwrld/forge-wallet-android"])}
-      />,
+  it("links a project that has a card to that card on the page", () => {
+    render(
+      <NowBuildingBubble now={forge} today={today} cards={new Map([["gunnarwrld/forge-wallet-android", "forge-wallet"]])} />,
     );
-    expect(container).toBeEmptyDOMElement();
+    const link = screen.getByRole("link", { name: /now building\s*forge wallet/i });
+    expect(link).toHaveAttribute("href", "#project-forge-wallet");
+    expect(link).not.toHaveAttribute("target");
+    expect(link).toHaveAccessibleName(/project card on this page/);
   });
 
   it("stays hidden when the repo has gone quiet or there is no pick", () => {
     const { container, rerender } = render(
-      <NowBuildingBubble now={forge} today={new Date("2027-01-20T00:00:00Z")} shownOnSite={new Set()} />,
+      <NowBuildingBubble now={forge} today={new Date("2027-01-20T00:00:00Z")} cards={new Map()} />,
     );
     expect(container).toBeEmptyDOMElement();
-    rerender(<NowBuildingBubble now={null} today={new Date("2026-11-12T08:00:00Z")} shownOnSite={new Set()} />);
+    rerender(<NowBuildingBubble now={null} today={today} cards={new Map()} />);
     expect(container).toBeEmptyDOMElement();
   });
 });

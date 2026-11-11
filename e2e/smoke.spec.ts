@@ -2,7 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { readFileSync } from "node:fs";
 import { test, expect } from "@playwright/test";
 import { projects } from "../src/data/projects";
-import { reposShownOnSite } from "../src/lib/githubSync";
+import { cardIdsByRepo } from "../src/lib/githubSync";
 
 /**
  * Smoke tests: fast, broad coverage of the home page.
@@ -129,14 +129,16 @@ test.describe("on a phone", () => {
   test("the mascot in the bar says what is being built, and links to it", async ({ page }) => {
     const sync = JSON.parse(readFileSync("src/data/github-sync.json", "utf8"));
     test.skip(!sync.now, "the sync found nothing being built");
-    test.skip(reposShownOnSite(projects).has(sync.now.fullName.toLowerCase()), "the pick already has a card");
     // A day after the last push, so the bubble is shown whatever today's date is.
     await page.clock.setFixedTime(new Date(Date.parse(sync.now.pushedAt) + 24 * 60 * 60 * 1000));
     await page.goto("/");
 
     const bubble = page.getByRole("link", { name: new RegExp(`now building\\s*${sync.now.label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`, "i") });
     await expect(bubble).toBeInViewport({ ratio: 1 });
-    await expect(bubble).toHaveAttribute("href", sync.now.htmlUrl);
+    // A project with a card links to that card; one without links to its repository.
+    const cardId = cardIdsByRepo(projects).get(sync.now.fullName.toLowerCase());
+    await expect(bubble).toHaveAttribute("href", cardId ? `#project-${cardId}` : sync.now.htmlUrl);
+    if (cardId) await expect(page.locator(`#project-${cardId}`)).toHaveCount(1);
     await expect(page.getByRole("button", { name: "Open menu" })).toBeInViewport({ ratio: 1 });
   });
 

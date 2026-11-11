@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { projects, type Project } from "@/data/projects";
 import { GITHUB_OWNER, NOW_BUILDING, WATCHED_REPOS, type NowBuildingConfig } from "@/data/watchedRepos";
 import {
+  cardIdsByRepo,
   isNowBuildingFresh,
   nowBuildingCandidates,
   nowBuildingNeedsUpdate,
@@ -595,6 +596,41 @@ describe("now building", () => {
 
     // With no commits counted anywhere, the latest push decides.
     expect(pickNowBuilding({ ...input(repositories), activity: new Map() })?.name).toBe("fair-football-fee");
+  });
+
+  it("falls back to the most active repo with a card when every active repo has one", () => {
+    const chosen = pickNowBuilding({
+      ...input([
+        repo("ledger-api", { pushed_at: "2026-11-11T09:00:00Z" }),
+        repo("PersonalPortfolio", { pushed_at: "2026-11-11T11:00:00Z" }),
+        repo("lab01_fullstack", { pushed_at: "2026-11-11T11:30:00Z" }),
+      ], { exclude: ["PersonalPortfolio", "lab01_fullstack"] }),
+      activity: activity({
+        "ledger-api": { commits: 9, activeDays: 3 },
+        PersonalPortfolio: { commits: 80, activeDays: 10 },
+        lab01_fullstack: { commits: 40, activeDays: 6 },
+      }),
+    });
+    expect(chosen?.name).toBe("ledger-api");
+
+    // A repo without a card still wins over a busier one that has a card.
+    const fresh = pickNowBuilding({
+      ...input([repo("ledger-api"), repo("weekend-experiment")]),
+      activity: activity({
+        "ledger-api": { commits: 30, activeDays: 8 },
+        "weekend-experiment": { commits: 2, activeDays: 1 },
+      }),
+    });
+    expect(fresh?.name).toBe("weekend-experiment");
+  });
+
+  it("maps repos to the id of the card that shows them", () => {
+    const ids = cardIdsByRepo([
+      { id: "ledger", repo: "gunnarwrld/ledger-api" },
+      { id: "portfolio", github: "https://github.com/gunnarwrld/PersonalPortfolio" },
+    ]);
+    expect(ids.get("gunnarwrld/ledger-api")).toBe("ledger");
+    expect(ids.get("gunnarwrld/personalportfolio")).toBe("portfolio");
   });
 
   it("follows a pin and labels repos readably", () => {

@@ -23,7 +23,7 @@ import { GITHUB_API, fetchGithubJson, isEmptyRepositoryError, pickGithubToken } 
 
 const DEFAULT_OUTPUT = "src/data/github-sync.json";
 /** Most candidates whose commits are counted per run (newest pushes first). */
-const MAX_ACTIVITY_LOOKUPS = 10;
+const MAX_ACTIVITY_LOOKUPS = 15;
 
 function argValue(flag: string): string | undefined {
   const index = process.argv.indexOf(flag);
@@ -148,7 +148,8 @@ async function main() {
     now,
   };
   const since = new Date(Date.parse(now) - NOW_BUILDING.activityDays * 24 * 60 * 60 * 1000).toISOString();
-  const lookups = nowBuildingCandidates(nowInput).slice(0, MAX_ACTIVITY_LOOKUPS);
+  // Repos with a card too: they are the fallback when every active repo has one.
+  const lookups = nowBuildingCandidates(nowInput, { includeShown: true }).slice(0, MAX_ACTIVITY_LOOKUPS);
   const activity = new Map(
     await Promise.all(
       lookups.map(async (repo) => [repo.full_name, await fetchActivity(repo.full_name, since, token)] as const),
