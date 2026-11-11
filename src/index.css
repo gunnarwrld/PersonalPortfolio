@@ -444,6 +444,35 @@
     }
   }
 
+  /* The mascot's bubble in the nav bar: smaller, its tail pointing at the logo. */
+  .bubble.bubble-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-width: 0;
+    max-width: 100%;
+    padding: 0.32rem 0.7rem;
+    border-radius: 0.75rem;
+    font-size: 0.85rem;
+    line-height: 1.15;
+    transform-origin: left center;
+  }
+  @media (min-width: 640px) {
+    .bubble.bubble-nav {
+      padding: 0.36rem 0.8rem;
+      font-size: 0.92rem;
+    }
+  }
+  .bubble.bubble-nav[data-tail="left"]::after {
+    top: 50%;
+    bottom: auto;
+    left: -0.5rem;
+    width: 0.6rem;
+    height: 0.7rem;
+    translate: 0 -50%;
+    clip-path: polygon(100% 0, 0 50%, 100% 100%);
+  }
+
   /* ---- Form fields (they live on the contact poster) ------------------- */
   .field {
     display: block;
