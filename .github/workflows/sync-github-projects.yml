@@ -13,8 +13,11 @@ on:
         required: false
         type: string
   schedule:
-    # 06:17 UTC. Off the hour so the backup sweep is not competing with every other cron.
+    # 06:17 UTC: the full daily refresh. Off the hour so it is not competing with every other cron.
     - cron: "17 6 * * *"
+    # Every two hours: a light check that opens or updates the pull request only
+    # when the "Now building" repo changed. Keep this string in step with NOW_CHECK below.
+    - cron: "41 */2 * * *"
 
 permissions:
   contents: write
@@ -52,7 +55,19 @@ jobs:
           # scoped only to this repository cannot read the other projects.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SYNC_REPOSITORY: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.repository || github.event_name == 'workflow_dispatch' && inputs.repository || '' }}
-        run: npm run sync:github -- --report sync-report.json
+          NOW_CHECK: ${{ github.event_name == 'schedule' && github.event.schedule == '41 */2 * * *' }}
+        run: |
+          set -euo pipefail
+          if [ "$NOW_CHECK" = "true" ]; then
+            # Read the open sync pull request's file, if there is one, so the check
+            # does not re-propose a change that is already waiting for review.
+            if git fetch --quiet --depth=1 origin "+refs/heads/github-sync:refs/remotes/origin/github-sync"; then
+              git show origin/github-sync:src/data/github-sync.json > /tmp/pending-sync.json || true
+            fi
+            npm run sync:github -- --report sync-report.json --only-if-now-changed --pending /tmp/pending-sync.json
+          else
+            npm run sync:github -- --report sync-report.json
+          fi
 
       - name: Open or update the review pull request
         if: steps.sync.outputs.changed == 'true'

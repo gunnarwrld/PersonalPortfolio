@@ -1,4 +1,5 @@
 import type { Project } from "@/data/projects";
+import type { NowBuildingConfig } from "@/data/watchedRepos";
 
 /** Rolling branch the sync workflow updates. Never the default branch. */
 export const SYNC_BRANCH = "github-sync";
@@ -8,6 +9,8 @@ export const SYNC_BASE_BRANCH = "main";
 export const SYNC_EVENT_TYPE = "project-updated";
 
 const REPO_PART = /^[A-Za-z0-9._-]+$/;
+
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 const MONTHS = [
   "Jan",
@@ -47,9 +50,30 @@ export interface GithubRepoFacts {
   onSite: boolean;
 }
 
+/** The repo the "Now building" bubble in the nav bar shows. */
+export interface NowBuilding {
+  fullName: string;
+  name: string;
+  /** What the bubble says. */
+  label: string;
+  htmlUrl: string;
+  primaryLanguage: string | null;
+  /** Last push to any branch. The bubble hides when this gets too old. */
+  pushedAt: string;
+}
+
+/** Commits on a repo's default branch inside the activity window, bots left out. */
+export interface RepoActivity {
+  commits: number;
+  /** Distinct days with at least one of those commits. */
+  activeDays: number;
+}
+
 export interface GithubSyncFile {
   generatedAt: string;
   owner: string;
+  /** The "Now building" pick; null when there is none. Files written before it existed lack the field. */
+  now?: NowBuilding | null;
   repos: Record<string, GithubRepoFacts>;
 }
 
@@ -97,6 +121,14 @@ export interface SyncReport {
   removed: RepoChange[];
   /** Public non-fork repos in this diff that have no project card. */
   notOnSite: string[];
+  /** The "Now building" pick before and after this run. */
+  nowBuilding: {
+    previous: NowBuilding | null;
+    next: NowBuilding | null;
+    /** The bubble shows a different repo (or appears or disappears). */
+    changed: boolean;
+    activity: RepoActivity | null;
+  };
 }
 
 export interface SyncPlanInput {
@@ -113,6 +145,10 @@ export interface SyncPlanInput {
   requestedFullNames: readonly string[];
   fetched: readonly GithubRepoFacts[];
   now: string;
+  /** This run's "Now building" pick. Leave it out to keep the previous one. */
+  nowBuilding?: NowBuilding | null;
+  /** The activity behind that pick, for the pull request text. */
+  nowActivity?: RepoActivity | null;
 }
 
 export function compareNames(a: string, b: string): number {
@@ -243,13 +279,25 @@ function orderFacts(facts: GithubRepoFacts): GithubRepoFacts {
   };
 }
 
+function orderNow(now: NowBuilding | null | undefined): NowBuilding | null {
+  if (!now) return null;
+  return {
+    fullName: now.fullName,
+    name: now.name,
+    label: now.label,
+    htmlUrl: now.htmlUrl,
+    primaryLanguage: now.primaryLanguage,
+    pushedAt: now.pushedAt,
+  };
+}
+
 export function stableSnapshot(file: GithubSyncFile): string {
   const repos = Object.fromEntries(
     Object.keys(file.repos)
       .sort(compareNames)
       .map((key) => [key, orderFacts(file.repos[key])]),
   );
-  return JSON.stringify({ owner: file.owner, repos });
+  return JSON.stringify({ owner: file.owner, now: orderNow(file.now), repos });
 }
 
 export function serializeSyncFile(file: GithubSyncFile): string {
@@ -258,7 +306,7 @@ export function serializeSyncFile(file: GithubSyncFile): string {
       .sort(compareNames)
       .map((key) => [key, orderFacts(file.repos[key])]),
   );
-  return `${JSON.stringify({ generatedAt: file.generatedAt, owner: file.owner, repos }, null, 2)}\n`;
+  return `${JSON.stringify({ generatedAt: file.generatedAt, owner: file.owner, now: orderNow(file.now), repos }, null, 2)}\n`;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -299,6 +347,30 @@ function readFacts(value: unknown, key: string): GithubRepoFacts {
   });
 }
 
+function readNow(value: unknown): NowBuilding | null {
+  if (!isRecord(value)) return null;
+  const { fullName, name, label, htmlUrl, primaryLanguage, pushedAt } = value;
+  if (
+    typeof fullName !== "string" ||
+    typeof name !== "string" ||
+    typeof label !== "string" ||
+    typeof htmlUrl !== "string" ||
+    typeof pushedAt !== "string" ||
+    // The bubble is a link: only ever to a repository page on GitHub.
+    !htmlUrl.startsWith("https://github.com/")
+  ) {
+    return null;
+  }
+  return orderNow({
+    fullName,
+    name,
+    label,
+    htmlUrl,
+    primaryLanguage: typeof primaryLanguage === "string" ? primaryLanguage : null,
+    pushedAt,
+  });
+}
+
 export function parseSyncFile(value: unknown): GithubSyncFile {
   if (!isRecord(value) || !isRecord(value.repos) || typeof value.owner !== "string") {
     throw new Error("github-sync.json is missing owner or repos");
@@ -310,6 +382,7 @@ export function parseSyncFile(value: unknown): GithubSyncFile {
   return {
     generatedAt: typeof value.generatedAt === "string" ? value.generatedAt : "",
     owner: value.owner,
+    now: readNow(value.now),
     repos,
   };
 }
@@ -363,9 +436,17 @@ function describeChanges(previous: GithubRepoFacts | undefined, next: GithubRepo
   return changes;
 }
 
-export function syncPullRequestTitle(updated: RepoChange[], removed: RepoChange[]): string {
+export function syncPullRequestTitle(
+  updated: RepoChange[],
+  removed: RepoChange[],
+  /** Set when the bubble shows a different repo: the new pick, or null when it disappears. */
+  nowChangedTo?: NowBuilding | null,
+): string {
   const changes = [...updated, ...removed];
-  if (changes.length === 1) return `chore(data): refresh ${changes[0].fullName}`;
+  if (changes.length === 0 && nowChangedTo !== undefined) {
+    return nowChangedTo ? `chore(data): now building ${nowChangedTo.label}` : "chore(data): hide the Now building bubble";
+  }
+  if (changes.length === 1 && nowChangedTo === undefined) return `chore(data): refresh ${changes[0].fullName}`;
   return "chore(data): refresh GitHub project facts";
 }
 
@@ -395,9 +476,14 @@ export function planSync(input: SyncPlanInput): { next: GithubSyncFile; report: 
     repos[facts.fullName] = withOnSite(facts, siteRepos);
   }
 
+  const previousNow = orderNow(input.previous?.now);
+  const nextNow = input.nowBuilding === undefined ? previousNow : orderNow(input.nowBuilding);
+  const nowChanged = nowBuildingKey(previousNow) !== nowBuildingKey(nextNow);
+
   const next: GithubSyncFile = {
     generatedAt: input.now,
     owner: input.owner,
+    now: nextNow,
     repos,
   };
   const previousRepos = input.previous?.repos ?? {};
@@ -437,10 +523,16 @@ export function planSync(input: SyncPlanInput): { next: GithubSyncFile; report: 
     report: {
       changed,
       generatedAt: input.now,
-      title: syncPullRequestTitle(updated, removed),
+      title: syncPullRequestTitle(updated, removed, nowChanged ? nextNow : undefined),
       updated,
       removed,
       notOnSite,
+      nowBuilding: {
+        previous: previousNow,
+        next: nextNow,
+        changed: nowChanged,
+        activity: input.nowActivity ?? null,
+      },
     },
   };
 }
@@ -469,6 +561,30 @@ export function renderSyncReport(report: SyncReport): string {
     for (const change of report.removed) writeChange(change);
     lines.push("");
   }
+
+  const { nowBuilding } = report;
+  lines.push("### Now building", "");
+  if (nowBuilding.next) {
+    const verb = nowBuilding.changed ? "will now say" : "still says";
+    const activity = nowBuilding.activity
+      ? `, ${nowBuilding.activity.commits} commits on ${nowBuilding.activity.activeDays} days in the last two weeks`
+      : "";
+    lines.push(
+      `The bubble in the nav bar ${verb} **Now building: ${nowBuilding.next.label}** (\`${nowBuilding.next.fullName}\`${activity}).`,
+    );
+    if (nowBuilding.changed && nowBuilding.previous) {
+      lines.push(`It said ${nowBuilding.previous.label} before.`);
+    }
+  } else {
+    lines.push(
+      "The bubble will be hidden: no public repo without a project card had a push recently enough.",
+    );
+  }
+  lines.push(
+    "",
+    "Wrong pick? Set `pin` or add the repo to `exclude` in `NOW_BUILDING` (`src/data/watchedRepos.ts`).",
+    "",
+  );
 
   if (report.notOnSite.length > 0) {
     lines.push(
@@ -549,4 +665,152 @@ export function resolveProjects(
   sync: GithubSyncFile | null | undefined,
 ): ResolvedProject[] {
   return projects.map((project) => resolveProject(project, sync));
+}
+
+// ------------------------------------------------------------ now building
+
+const ACRONYMS = new Set([
+  "ai", "api", "ml", "ui", "ux", "cli", "sdk", "sql", "db", "pwa", "cv", "io", "ios", "js", "ts", "llm", "ci",
+]);
+
+/** A readable label from a repo name: "ledger-sentinel-ai" reads "Ledger Sentinel AI". */
+export function prettyRepoName(name: string): string {
+  return name
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .split(/[\s._-]+/)
+    .filter(Boolean)
+    .map((word) =>
+      ACRONYMS.has(word.toLowerCase()) ? word.toUpperCase() : word.charAt(0).toUpperCase() + word.slice(1),
+    )
+    .join(" ");
+}
+
+const GITHUB_REPO_URL = /^https:\/\/github\.com\/([A-Za-z0-9._-]+)\/([A-Za-z0-9._-]+?)(?:\.git)?\/?(?:[#?].*)?$/;
+
+/**
+ * Lower-cased full names of every repo that already has a card: through `repo`,
+ * or through the card's GitHub link (the portfolio card links its own repo
+ * without mapping it).
+ */
+export function reposShownOnSite(projects: readonly Pick<Project, "repo" | "github">[]): Set<string> {
+  const names = new Set<string>();
+  for (const project of projects) {
+    if (project.repo) names.add(project.repo.toLowerCase());
+    const match = project.github?.match(GITHUB_REPO_URL);
+    if (match) names.add(`${match[1]}/${match[2]}`.toLowerCase());
+  }
+  return names;
+}
+
+/** Shape of an entry in GET /repos/{owner}/{repo}/commits, as far as activity needs it. */
+export interface GithubCommitApi {
+  author?: { login?: string | null; type?: string | null } | null;
+  commit: {
+    author?: { date?: string | null } | null;
+    committer?: { date?: string | null } | null;
+  };
+}
+
+/** Commits and active days in a list of commits, leaving out bots. */
+export function summarizeCommits(commits: readonly GithubCommitApi[]): RepoActivity {
+  const human = commits.filter(
+    (entry) => entry.author?.type !== "Bot" && !(entry.author?.login ?? "").endsWith("[bot]"),
+  );
+  const days = new Set(
+    human
+      .map((entry) => (entry.commit.committer?.date ?? entry.commit.author?.date ?? "").slice(0, 10))
+      .filter(Boolean),
+  );
+  return { commits: human.length, activeDays: days.size };
+}
+
+export interface NowBuildingInput {
+  owner: string;
+  /** The owner's public repos, from GET /users/{owner}/repos. */
+  repositories: readonly GithubRepositoryApi[];
+  /** From reposShownOnSite: these already have a card, so the bubble skips them. */
+  shownOnSite: ReadonlySet<string>;
+  config: NowBuildingConfig;
+  /** Time of the run (ISO). */
+  now: string;
+}
+
+/** Repos the bubble may show, newest push first. Activity decides between them. */
+export function nowBuildingCandidates(input: NowBuildingInput): GithubRepositoryApi[] {
+  const cutoff = Date.parse(input.now) - input.config.freshDays * DAY_MS;
+  const owner = input.owner.toLowerCase();
+  const excluded = new Set(input.config.exclude.map((name) => name.toLowerCase()));
+  const pin = input.config.pin?.trim().toLowerCase() || null;
+
+  return input.repositories
+    .filter((repo) => {
+      const name = repo.name.toLowerCase();
+      const pushed = Date.parse(repo.pushed_at);
+      if (repo.private || repo.fork || repo.archived) return false;
+      if (repo.full_name.split("/")[0]?.toLowerCase() !== owner) return false;
+      if (!Number.isFinite(pushed) || pushed < cutoff) return false;
+      if (pin) return name === pin;
+      if (name === owner) return false; // the profile README repo
+      if (excluded.has(name)) return false;
+      return !input.shownOnSite.has(repo.full_name.toLowerCase());
+    })
+    .sort((a, b) => Date.parse(b.pushed_at) - Date.parse(a.pushed_at) || compareNames(a.full_name, b.full_name));
+}
+
+/**
+ * The repo being worked on most: most active days in the window, then most
+ * commits, then the latest push. Null when no candidate is left.
+ */
+export function pickNowBuilding(
+  input: NowBuildingInput & { activity: ReadonlyMap<string, RepoActivity> },
+): NowBuilding | null {
+  const score = (repo: GithubRepositoryApi) => input.activity.get(repo.full_name) ?? { commits: 0, activeDays: 0 };
+  const [best] = nowBuildingCandidates(input).sort(
+    (a, b) =>
+      score(b).activeDays - score(a).activeDays ||
+      score(b).commits - score(a).commits ||
+      Date.parse(b.pushed_at) - Date.parse(a.pushed_at) ||
+      compareNames(a.full_name, b.full_name),
+  );
+  if (!best) return null;
+  return {
+    fullName: best.full_name,
+    name: best.name,
+    label: input.config.labels[best.name] ?? prettyRepoName(best.name),
+    htmlUrl: best.html_url,
+    primaryLanguage: blankToNull(best.language),
+    pushedAt: best.pushed_at,
+  };
+}
+
+function nowBuildingKey(now: NowBuilding | null | undefined): string | null {
+  return now ? now.fullName.toLowerCase() : null;
+}
+
+/**
+ * For the frequent check: open or update the sync pull request only when the
+ * bubble would show a different repo than main does, and the open pull request
+ * (`pending`, when there is one) does not already propose it.
+ */
+export function nowBuildingNeedsUpdate(
+  next: NowBuilding | null,
+  onMain: NowBuilding | null | undefined,
+  pending: NowBuilding | null | undefined,
+): boolean {
+  const key = nowBuildingKey(next);
+  if (key === nowBuildingKey(onMain)) return false;
+  if (pending !== undefined && key === nowBuildingKey(pending)) return false;
+  return true;
+}
+
+/** True while the repo has had a push within `freshDays` of `today`. */
+export function isNowBuildingFresh(
+  now: NowBuilding | null | undefined,
+  today: Date,
+  freshDays: number,
+): now is NowBuilding {
+  if (!now) return false;
+  const pushed = Date.parse(now.pushedAt);
+  if (!Number.isFinite(pushed)) return false;
+  return today.getTime() - pushed <= freshDays * DAY_MS;
 }

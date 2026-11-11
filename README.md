@@ -182,7 +182,7 @@ To deploy your own fork:
 
 ## Syncing project facts from GitHub
 
-Pushes to the default branch of a project repo open a pull request here that refreshes GitHub-derived facts. Nothing in this flow pushes to `main`. You merge the PR when the diff looks right.
+A scheduled workflow reads your public repos and opens a pull request here when GitHub-derived facts change: once a day for everything, and every two hours for the **Now building** bubble. Nothing in this flow pushes to `main`. You merge the PR when the diff looks right, and Vercel publishes it.
 
 The sync reads each watched repo from the public API and writes `src/data/github-sync.json`:
 
@@ -195,11 +195,34 @@ Watched repos live in [`src/data/watchedRepos.ts`](src/data/watchedRepos.ts). Th
 
 `repository_dispatch` only starts workflows that are already on the default branch. Merge this setup before you expect notifiers to do anything.
 
+### Now building
+
+The mascot in the nav bar says what you are building right now, and links to that repository on GitHub. The sync picks it on every run:
+
+1. **Candidates:** your public repos with a push in the last 30 days that have no project card yet. Forks, archived repos, the profile README repo, and any repo in `NOW_BUILDING.exclude` are left out. A card counts whether it maps the repo through `repo` or only links to it.
+2. **Ranking:** the most days with commits in the last two weeks, then the most commits, then the latest push. Steady work wins over a one-off fix, so updating a README somewhere does not change the bubble.
+3. **Label:** `NOW_BUILDING.labels` when the repo has an entry there, otherwise the repo name made readable (`ledger-sentinel-ai` reads "Ledger Sentinel AI").
+
+New repos need no setup: the sync reads your whole repo list, not only `WATCHED_REPOS`. The bubble hides itself in the browser once the repo has gone 30 days without a push, even if nobody merges a sync PR.
+
+The two-hour check only opens or updates the pull request when the bubble would show a different repo than `main` does and the open sync PR does not already propose it. Fact changes on their own wait for the daily run, so the PR is not rebuilt every two hours.
+
+Change the behaviour in [`src/data/watchedRepos.ts`](src/data/watchedRepos.ts):
+
+| Setting | What it does |
+|---|---|
+| `pin` | Set to a repo name to always show it. `null` lets the ranking decide. |
+| `exclude` | Repo names the bubble never shows. |
+| `labels` | Display names, for example `"forge-wallet-android": "Forge Wallet"`. |
+| `activityDays`, `freshDays` | The ranking window (14 days) and how long the bubble stays without a push (30 days). |
+
+When you give a project its own card, it leaves the bubble on the next run and the next repo you are working on takes its place.
+
 ### Workflows
 
 | File | When it runs |
 |---|---|
-| [`.github/workflows/sync-github-projects.yml`](.github/workflows/sync-github-projects.yml) | `repository_dispatch` type `project-updated`, **Actions → Sync GitHub project facts → Run workflow**, and a daily sweep at 06:17 UTC. |
+| [`.github/workflows/sync-github-projects.yml`](.github/workflows/sync-github-projects.yml) | A daily sweep at 06:17 UTC, the Now building check every two hours (at minute 41), **Actions → Sync GitHub project facts → Run workflow**, and `repository_dispatch` type `project-updated`. |
 | [`.github/workflows/portfolio-dispatch.yml`](.github/workflows/portfolio-dispatch.yml) | Called by other repos. Posts the dispatch event. |
 | [`templates/notify-portfolio.yml`](templates/notify-portfolio.yml) | The file you copy into a project repo. |
 
@@ -239,7 +262,9 @@ Leave it off unless you are using the fallback. Pull requests opened with `GITHU
 
 Do not grant Actions write access to `main`. This workflow never pushes the default branch.
 
-### Notifier for a project repo
+### Notifier for a project repo (optional)
+
+The schedule already covers every repo, including new ones. A notifier only makes the facts refresh run right after a push instead of at the next scheduled run. No project repo has one installed yet.
 
 Actions has to be enabled on that repo (the default). Copy [`templates/notify-portfolio.yml`](templates/notify-portfolio.yml) to `.github/workflows/notify-portfolio.yml`:
 
@@ -263,7 +288,7 @@ The `if` limits the job to the repo's default branch, including repos whose defa
 
 Then add `PORTFOLIO_DISPATCH_TOKEN` on that repo. To show the project on the site, add a card in `src/data/projects.ts` with `repo` set to `gunnarwrld/<name>`, and add the name to `WATCHED_REPOS` if it is not already there. The sync will not create the card for you.
 
-Run the refresh locally with `npm run sync:github`. `npm run sync:github -- --repo ledger-api` refreshes one repo. Unauthenticated requests are enough for public repos; the script uses `GITHUB_TOKEN` only when it is already set.
+Run the refresh locally with `npm run sync:github`. `npm run sync:github -- --repo ledger-api` refreshes one repo. Unauthenticated requests work for public repos, but GitHub allows 60 an hour and one run makes about 30. To run it more often, set `GITHUB_TOKEN`; with the GitHub CLI installed, `GITHUB_TOKEN="$(gh auth token)" npm run sync:github` does it.
 
 ## Roadmap
 

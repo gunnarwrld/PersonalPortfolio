@@ -1,8 +1,18 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { projects, type Project } from "@/data/projects";
-import { GITHUB_OWNER, WATCHED_REPOS } from "@/data/watchedRepos";
+import { GITHUB_OWNER, NOW_BUILDING, WATCHED_REPOS, type NowBuildingConfig } from "@/data/watchedRepos";
 import {
+  isNowBuildingFresh,
+  nowBuildingCandidates,
+  nowBuildingNeedsUpdate,
+  pickNowBuilding,
+  prettyRepoName,
+  reposShownOnSite,
+  summarizeCommits,
+  syncPullRequestTitle,
+  type NowBuilding,
+  type RepoActivity,
   languageBreakdown,
   parseRepository,
   parseSyncFile,
@@ -402,6 +412,13 @@ describe("sync workflow safety", () => {
     }
   });
 
+  it("checks every two hours, and only publishes when the Now building repo changed", () => {
+    expect(workflow).toContain('cron: "41 */2 * * *"');
+    expect(workflow).toContain("github.event.schedule == '41 */2 * * *'");
+    expect(workflow).toContain("--only-if-now-changed");
+    expect(workflow).toContain('cron: "17 6 * * *"');
+  });
+
   it("notifies PersonalPortfolio with the dispatch secret and the default branch", () => {
     expect(reusable).toContain("workflow_call");
     expect(reusable).toContain("PORTFOLIO_DISPATCH_TOKEN");
@@ -436,5 +453,196 @@ describe("committed github-sync.json", () => {
         expect(total).toBeCloseTo(100, 5);
       }
     }
+  });
+
+  it("points the Now building bubble at a public repo that has no card yet", () => {
+    if (!sync.now) return;
+    expect(sync.now.htmlUrl).toBe(`https://github.com/${sync.now.fullName}`);
+    expect(reposShownOnSite(projects).has(sync.now.fullName.toLowerCase())).toBe(false);
+    expect(NOW_BUILDING.exclude.map((name) => name.toLowerCase())).not.toContain(sync.now.name.toLowerCase());
+  });
+});
+
+describe("now building", () => {
+  const RUN = "2026-11-11T12:00:00Z";
+  const config: NowBuildingConfig = {
+    activityDays: 14,
+    freshDays: 30,
+    pin: null,
+    exclude: ["lab01_fullstack"],
+    labels: { "forge-wallet-android": "Forge Wallet" },
+  };
+  const repo = (name: string, overrides: Partial<GithubRepositoryApi> = {}) =>
+    api({
+      name,
+      full_name: `gunnarwrld/${name}`,
+      html_url: `https://github.com/gunnarwrld/${name}`,
+      pushed_at: "2026-11-10T10:00:00Z",
+      ...overrides,
+    });
+  const shownOnSite = reposShownOnSite(projects);
+  const input = (repositories: GithubRepositoryApi[], overrides: Partial<NowBuildingConfig> = {}) => ({
+    owner: GITHUB_OWNER,
+    repositories,
+    shownOnSite,
+    config: { ...config, ...overrides },
+    now: RUN,
+  });
+  const activity = (entries: Record<string, RepoActivity>) =>
+    new Map(Object.entries(entries).map(([name, value]) => [`gunnarwrld/${name}`, value]));
+  const pick = (overrides: Partial<NowBuilding> = {}): NowBuilding => ({
+    fullName: "gunnarwrld/forge-wallet-android",
+    name: "forge-wallet-android",
+    label: "Forge Wallet",
+    htmlUrl: "https://github.com/gunnarwrld/forge-wallet-android",
+    primaryLanguage: "Kotlin",
+    pushedAt: "2026-11-10T11:09:16Z",
+    ...overrides,
+  });
+
+  it("counts the portfolio's own repo as shown, through the card's GitHub link", () => {
+    expect(shownOnSite.has("gunnarwrld/personalportfolio")).toBe(true);
+    expect(shownOnSite.has("gunnarwrld/ledger-api")).toBe(true);
+    expect(shownOnSite.has("jasminerezai/hkif-web")).toBe(true);
+    expect(shownOnSite.has("gunnarwrld/forge-wallet-android")).toBe(false);
+  });
+
+  it("only offers repos that have no card yet and are not forks, archived, excluded or the profile README", () => {
+    const names = nowBuildingCandidates(
+      input([
+        repo("forge-wallet-android"),
+        repo("ledger-api"),
+        repo("PersonalPortfolio"),
+        repo("gunnarwrld"),
+        repo("lab01_fullstack"),
+        repo("old-fork", { fork: true }),
+        repo("old-archive", { archived: true }),
+        repo("secret", { private: true }),
+        repo("someone-else", { full_name: "octocat/someone-else" }),
+        repo("long-quiet", { pushed_at: "2026-09-01T00:00:00Z" }),
+      ]),
+    ).map((candidate) => candidate.name);
+    expect(names).toEqual(["forge-wallet-android"]);
+  });
+
+  it("picks the repo with the most active days, then commits, then the latest push", () => {
+    const repositories = [
+      repo("fair-football-fee", { pushed_at: "2026-11-11T09:00:00Z" }),
+      repo("forge-wallet-android", { pushed_at: "2026-11-10T11:09:16Z" }),
+      repo("matchday-hub", { pushed_at: "2026-11-10T11:03:04Z" }),
+    ];
+    const chosen = pickNowBuilding({
+      ...input(repositories),
+      activity: activity({
+        "fair-football-fee": { commits: 11, activeDays: 3 },
+        "forge-wallet-android": { commits: 29, activeDays: 4 },
+        "matchday-hub": { commits: 40, activeDays: 2 },
+      }),
+    });
+    expect(chosen).toEqual(pick({ pushedAt: "2026-11-10T11:09:16Z" }));
+
+    // A one-off push does not take over from steady work.
+    const typoFix = pickNowBuilding({
+      ...input([...repositories, repo("ledger-sentinel-ai", { pushed_at: "2026-11-11T11:59:00Z" })]),
+      activity: activity({
+        "forge-wallet-android": { commits: 29, activeDays: 4 },
+        "ledger-sentinel-ai": { commits: 1, activeDays: 1 },
+      }),
+    });
+    expect(typoFix?.name).toBe("forge-wallet-android");
+
+    // With no commits counted anywhere, the latest push decides.
+    expect(pickNowBuilding({ ...input(repositories), activity: new Map() })?.name).toBe("fair-football-fee");
+  });
+
+  it("follows a pin and labels repos readably", () => {
+    const chosen = pickNowBuilding({
+      ...input([repo("forge-wallet-android"), repo("ledger-sentinel-ai")], { pin: "ledger-sentinel-ai" }),
+      activity: activity({ "forge-wallet-android": { commits: 29, activeDays: 4 } }),
+    });
+    expect(chosen?.label).toBe("Ledger Sentinel AI");
+    expect(prettyRepoName("PostHub-DynamicWebsite")).toBe("Post Hub Dynamic Website");
+    expect(prettyRepoName("matchday-hub")).toBe("Matchday Hub");
+    expect(pickNowBuilding({ ...input([]), activity: new Map() })).toBeNull();
+  });
+
+  it("counts commits and active days without bots", () => {
+    const commit = (date: string, login = "gunnarwrld", type = "User") => ({
+      author: { login, type },
+      commit: { committer: { date } },
+    });
+    expect(
+      summarizeCommits([
+        commit("2026-11-10T11:00:00Z"),
+        commit("2026-11-10T09:00:00Z"),
+        commit("2026-11-08T09:00:00Z"),
+        commit("2026-11-09T09:00:00Z", "dependabot[bot]", "Bot"),
+      ]),
+    ).toEqual({ commits: 3, activeDays: 2 });
+  });
+
+  it("stores the pick in the sync file and treats a new pick as a change", () => {
+    const previous = file({ "gunnarwrld/ledger-api": facts() });
+    const plan = planSync({
+      previous,
+      owner: GITHUB_OWNER,
+      watchList: ["ledger-api"],
+      siteRepos: ["gunnarwrld/ledger-api"],
+      requestedFullNames: [],
+      fetched: [facts()],
+      now: RUN,
+      nowBuilding: pick(),
+      nowActivity: { commits: 29, activeDays: 4 },
+    });
+    expect(plan.report.changed).toBe(true);
+    expect(plan.report.nowBuilding.changed).toBe(true);
+    expect(plan.report.title).toBe("chore(data): now building Forge Wallet");
+    expect(renderSyncReport(plan.report)).toContain("**Now building: Forge Wallet**");
+
+    const roundTrip = parseSyncFile(JSON.parse(serializeSyncFile(plan.next)));
+    expect(roundTrip.now).toEqual(pick());
+
+    // Leaving the pick out keeps the previous one.
+    const kept = planSync({
+      previous: roundTrip,
+      owner: GITHUB_OWNER,
+      watchList: ["ledger-api"],
+      siteRepos: ["gunnarwrld/ledger-api"],
+      requestedFullNames: [],
+      fetched: [facts()],
+      now: RUN,
+    });
+    expect(kept.report.changed).toBe(false);
+    expect(kept.next.now).toEqual(pick());
+  });
+
+  it("refuses a pick that does not link to a GitHub repository", () => {
+    const parsed = parseSyncFile({
+      owner: GITHUB_OWNER,
+      repos: {},
+      now: pick({ htmlUrl: "https://example.com/phish" }),
+    });
+    expect(parsed.now).toBeNull();
+  });
+
+  it("titles a pull request that only hides the bubble", () => {
+    expect(syncPullRequestTitle([], [], null)).toBe("chore(data): hide the Now building bubble");
+  });
+
+  it("lets the two-hour check publish only when the bubble would show another repo", () => {
+    const forge = pick();
+    const hub = pick({ fullName: "gunnarwrld/matchday-hub", name: "matchday-hub", label: "Matchday Hub" });
+    expect(nowBuildingNeedsUpdate(forge, forge, undefined)).toBe(false);
+    expect(nowBuildingNeedsUpdate(forge, null, forge)).toBe(false);
+    expect(nowBuildingNeedsUpdate(forge, null, undefined)).toBe(true);
+    expect(nowBuildingNeedsUpdate(forge, hub, hub)).toBe(true);
+    expect(nowBuildingNeedsUpdate(null, forge, undefined)).toBe(true);
+  });
+
+  it("hides the bubble once the repo has gone a month without a push", () => {
+    const forge = pick({ pushedAt: "2026-11-10T11:09:16Z" });
+    expect(isNowBuildingFresh(forge, new Date("2026-11-20T00:00:00Z"), 30)).toBe(true);
+    expect(isNowBuildingFresh(forge, new Date("2026-12-11T00:00:00Z"), 30)).toBe(false);
+    expect(isNowBuildingFresh(null, new Date(RUN), 30)).toBe(false);
   });
 });
