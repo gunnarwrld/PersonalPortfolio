@@ -54,6 +54,19 @@ test.describe("home page smoke", () => {
   });
 });
 
+test.describe("contact", () => {
+  test("the CV downloads as a PDF with a clear file name", async ({ page, request }) => {
+    await page.goto("/#contact");
+    const link = page.getByRole("link", { name: /download cv/i });
+    await expect(link).toHaveAttribute("download", "Gunnar-Arias-CV.pdf");
+
+    const href = await link.getAttribute("href");
+    const response = await request.get(href ?? "");
+    expect(response.ok()).toBeTruthy();
+    expect(response.headers()["content-type"]).toContain("application/pdf");
+  });
+});
+
 test.describe("projects", () => {
   test("a card opens its details and gives focus back when they close", async ({ page }) => {
     await page.goto("/#projects");
