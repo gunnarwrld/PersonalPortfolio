@@ -1,15 +1,21 @@
 import type { CSSProperties } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { githubSync } from "@/data/githubSyncData";
+import { projects } from "@/data/projects";
 import { NOW_BUILDING } from "@/data/watchedRepos";
-import { isNowBuildingFresh, type NowBuilding } from "@/lib/githubSync";
+import { isNowBuildingFresh, reposShownOnSite, type NowBuilding } from "@/lib/githubSync";
 import { cn } from "@/lib/utils";
+
+/** Repos that already have a project card on the page. */
+const SHOWN_ON_SITE = reposShownOnSite(projects);
 
 interface NowBuildingBubbleProps {
   /** The pick from the GitHub sync. Defaults to the committed sync file. */
   now?: NowBuilding | null;
   /** The visitor's date, for the freshness check. Tests pass a fixed one. */
   today?: Date;
+  /** Repos with a project card (lower-cased full names). Defaults to the cards on this page. */
+  shownOnSite?: ReadonlySet<string>;
   className?: string;
   style?: CSSProperties;
 }
@@ -17,10 +23,19 @@ interface NowBuildingBubbleProps {
 /**
  * The mascot in the nav bar says what Gunnar is building right now: the public
  * repo with no project card yet that the sync found the most work on. It links
- * to the repository, and hides itself once that repo has gone quiet.
+ * to the repository, and hides itself once that repo has gone quiet or gets a card.
  */
-export function NowBuildingBubble({ now = githubSync.now, today = new Date(), className, style }: NowBuildingBubbleProps) {
+export function NowBuildingBubble({
+  now = githubSync.now,
+  today = new Date(),
+  shownOnSite = SHOWN_ON_SITE,
+  className,
+  style,
+}: NowBuildingBubbleProps) {
   if (!isNowBuildingFresh(now, today, NOW_BUILDING.freshDays)) return null;
+  // The bubble is for work that is not on the page yet. A card added since the last
+  // sync hides it right away, instead of showing the same project twice.
+  if (shownOnSite.has(now.fullName.toLowerCase())) return null;
 
   return (
     <a

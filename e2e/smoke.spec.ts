@@ -1,6 +1,8 @@
 import AxeBuilder from "@axe-core/playwright";
 import { readFileSync } from "node:fs";
 import { test, expect } from "@playwright/test";
+import { projects } from "../src/data/projects";
+import { reposShownOnSite } from "../src/lib/githubSync";
 
 /**
  * Smoke tests: fast, broad coverage of the home page.
@@ -127,6 +129,7 @@ test.describe("on a phone", () => {
   test("the mascot in the bar says what is being built, and links to it", async ({ page }) => {
     const sync = JSON.parse(readFileSync("src/data/github-sync.json", "utf8"));
     test.skip(!sync.now, "the sync found nothing being built");
+    test.skip(reposShownOnSite(projects).has(sync.now.fullName.toLowerCase()), "the pick already has a card");
     // A day after the last push, so the bubble is shown whatever today's date is.
     await page.clock.setFixedTime(new Date(Date.parse(sync.now.pushedAt) + 24 * 60 * 60 * 1000));
     await page.goto("/");
