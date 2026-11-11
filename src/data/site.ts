@@ -25,7 +25,7 @@ export interface CvFile {
  * This repository is public, so every version of the PDF stays in its history:
  * publish an edition without a phone number, street address or date of birth.
  */
-export const cv: CvFile | null = null;
+export const cv: CvFile | null = { href: "/Gunnar-Arias-CV.pdf", fileName: "Gunnar-Arias-CV.pdf" };
 
 export interface SocialLink {
   label: string;
