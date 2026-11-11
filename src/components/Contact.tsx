@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Send } from "lucide-react";
+import { FileDown, Send } from "lucide-react";
 import { contactSchema, type ContactFormValues } from "@/lib/contactSchema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,7 @@ import { Confetti, Mascot, MascotRig, type MascotMove } from "@/components/Masco
 import { Reveal } from "@/components/Reveal";
 import { SectionHeading } from "@/components/SectionHeading";
 import { useToast } from "@/hooks/use-toast";
-import { site, socials } from "@/data/site";
+import { cv, site, socials } from "@/data/site";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -74,6 +74,17 @@ const Contact = () => {
             </p>
 
             <ul className="mt-8 flex flex-wrap gap-5">
+              {cv && (
+                <li>
+                  <Button variant="ink" asChild>
+                    <a href={cv.href} download={cv.fileName}>
+                      <FileDown aria-hidden="true" />
+                      Download CV
+                      <span className="sr-only">(PDF)</span>
+                    </a>
+                  </Button>
+                </li>
+              )}
               {socials.map((social) => (
                 <li key={social.label}>
                   <Button variant="ink" asChild>
