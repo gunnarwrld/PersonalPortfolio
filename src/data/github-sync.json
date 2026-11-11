@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-06T21:21:00.363Z",
+  "generatedAt": "2026-11-11T06:31:44.258Z",
   "owner": "gunnarwrld",
   "repos": {
     "gunnarwrld/PostHub-DynamicWebsite": {
@@ -98,16 +98,20 @@
       "languages": [
         {
           "name": "Python",
-          "percentage": 99.7
+          "percentage": 99.2
+        },
+        {
+          "name": "Makefile",
+          "percentage": 0.6
         },
         {
           "name": "Mako",
-          "percentage": 0.3
+          "percentage": 0.2
         }
       ],
       "homepage": null,
       "defaultBranch": "main",
-      "pushedAt": "2026-11-06T19:30:01Z",
+      "pushedAt": "2026-11-10T11:07:33Z",
       "archived": false,
       "stars": 0,
       "fork": false,
@@ -123,12 +127,20 @@
       "languages": [
         {
           "name": "Kotlin",
-          "percentage": 100
+          "percentage": 92.5
+        },
+        {
+          "name": "Python",
+          "percentage": 4.7
+        },
+        {
+          "name": "Shell",
+          "percentage": 2.8
         }
       ],
       "homepage": null,
       "defaultBranch": "main",
-      "pushedAt": "2026-11-06T17:17:45Z",
+      "pushedAt": "2026-11-10T11:09:16Z",
       "archived": false,
       "stars": 0,
       "fork": false,
@@ -144,16 +156,24 @@
       "languages": [
         {
           "name": "TypeScript",
-          "percentage": 95.5
+          "percentage": 96.2
         },
         {
           "name": "JavaScript",
-          "percentage": 4.5
+          "percentage": 3.1
+        },
+        {
+          "name": "Dockerfile",
+          "percentage": 0.6
+        },
+        {
+          "name": "Shell",
+          "percentage": 0.1
         }
       ],
       "homepage": "https://futboldataaggregatorapi-production.up.railway.app/",
       "defaultBranch": "main",
-      "pushedAt": "2026-10-28T17:19:50Z",
+      "pushedAt": "2026-11-10T21:51:23Z",
       "archived": false,
       "stars": 0,
       "fork": false,
@@ -215,7 +235,7 @@
       ],
       "homepage": null,
       "defaultBranch": "master",
-      "pushedAt": "2026-11-06T19:30:17Z",
+      "pushedAt": "2026-11-10T20:59:34Z",
       "archived": false,
       "stars": 0,
       "fork": false,
@@ -252,11 +272,20 @@
       "fullName": "gunnarwrld/matchday-hub",
       "description": "ASP.NET Core 10 team-sport match data service on Azure: live events via Service Bus and SignalR, companion to the Fútbol Data Aggregator",
       "topics": [],
-      "primaryLanguage": null,
-      "languages": [],
+      "primaryLanguage": "C#",
+      "languages": [
+        {
+          "name": "C#",
+          "percentage": 99.4
+        },
+        {
+          "name": "Dockerfile",
+          "percentage": 0.6
+        }
+      ],
       "homepage": null,
       "defaultBranch": "main",
-      "pushedAt": "2026-10-30T19:45:23Z",
+      "pushedAt": "2026-11-10T11:03:04Z",
       "archived": false,
       "stars": 0,
       "fork": false,
@@ -314,7 +343,7 @@
       ],
       "homepage": null,
       "defaultBranch": "main",
-      "pushedAt": "2026-11-06T19:31:31Z",
+      "pushedAt": "2026-11-10T19:57:07Z",
       "archived": false,
       "stars": 0,
       "fork": false,
