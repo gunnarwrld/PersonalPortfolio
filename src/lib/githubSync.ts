@@ -788,9 +788,12 @@ function nowBuildingKey(now: NowBuilding | null | undefined): string | null {
 }
 
 /**
- * For the frequent check: open or update the sync pull request only when the
- * bubble would show a different repo than main does, and the open pull request
- * (`pending`, when there is one) does not already propose it.
+ * For the two-hour check: whether to publish this run's pick.
+ *
+ * - A sync pull request is open (`pending` is its pick): publish when the pick
+ *   differs from what that pull request proposes, so it never goes stale. That
+ *   includes a pick that went back to what main already shows.
+ * - None is open (`pending` undefined): publish when the pick differs from main.
  */
 export function nowBuildingNeedsUpdate(
   next: NowBuilding | null,
@@ -798,9 +801,8 @@ export function nowBuildingNeedsUpdate(
   pending: NowBuilding | null | undefined,
 ): boolean {
   const key = nowBuildingKey(next);
-  if (key === nowBuildingKey(onMain)) return false;
-  if (pending !== undefined && key === nowBuildingKey(pending)) return false;
-  return true;
+  if (pending !== undefined) return key !== nowBuildingKey(pending);
+  return key !== nowBuildingKey(onMain);
 }
 
 /** True while the repo has had a push within `freshDays` of `today`. */

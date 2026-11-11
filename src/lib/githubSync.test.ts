@@ -419,6 +419,16 @@ describe("sync workflow safety", () => {
     expect(workflow).toContain('cron: "17 6 * * *"');
   });
 
+  it("reads the open pull request's pick only while one is open, and closes it once it is out of date", () => {
+    const nowCheck = workflow.slice(workflow.indexOf('if [ "$NOW_CHECK" = "true" ]'), workflow.indexOf("--only-if-now-changed"));
+    expect(nowCheck).toContain("--state open");
+    expect(nowCheck).toContain('[ "$open_prs" != "0" ]');
+    expect(workflow).toContain("steps.sync.outputs.main_up_to_date == 'true'");
+    const emptyDiff = workflow.slice(workflow.indexOf("if git diff --cached --quiet"), workflow.indexOf('git commit -m "$TITLE"'));
+    expect(emptyDiff).toContain("gh pr close");
+    expect(emptyDiff).toContain("exit 0");
+  });
+
   it("merges only a green sync pull request from this repo that changes nothing but the data file", () => {
     const autoMerge = readFileSync(".github/workflows/sync-auto-merge.yml", "utf8");
     // The trigger names the CI workflow, so that name must not drift.
@@ -650,11 +660,22 @@ describe("now building", () => {
   it("lets the two-hour check publish only when the bubble would show another repo", () => {
     const forge = pick();
     const hub = pick({ fullName: "gunnarwrld/matchday-hub", name: "matchday-hub", label: "Matchday Hub" });
+    // No sync pull request open: compare with main.
     expect(nowBuildingNeedsUpdate(forge, forge, undefined)).toBe(false);
-    expect(nowBuildingNeedsUpdate(forge, null, forge)).toBe(false);
     expect(nowBuildingNeedsUpdate(forge, null, undefined)).toBe(true);
-    expect(nowBuildingNeedsUpdate(forge, hub, hub)).toBe(true);
     expect(nowBuildingNeedsUpdate(null, forge, undefined)).toBe(true);
+    // A sync pull request is open: compare with what it proposes.
+    expect(nowBuildingNeedsUpdate(forge, null, forge)).toBe(false);
+    expect(nowBuildingNeedsUpdate(forge, hub, hub)).toBe(true);
+    expect(nowBuildingNeedsUpdate(hub, forge, hub)).toBe(false);
+  });
+
+  it("refreshes an open pull request whose pick went stale, even when main already matches", () => {
+    // The pick moved to Matchday Hub, a pull request proposed it, then the pick went back
+    // to Forge Wallet, which main shows. The open pull request must not stay on Matchday Hub.
+    const forge = pick();
+    const hub = pick({ fullName: "gunnarwrld/matchday-hub", name: "matchday-hub", label: "Matchday Hub" });
+    expect(nowBuildingNeedsUpdate(forge, forge, hub)).toBe(true);
   });
 
   it("hides the bubble once the repo has gone a month without a push", () => {

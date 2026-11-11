@@ -22,6 +22,22 @@ export interface GithubFetchOptions {
 
 const RETRYABLE = new Set([429, 502, 503, 504]);
 
+/** A non-OK answer from the GitHub API, with its status code. */
+export class GithubApiError extends Error {
+  readonly status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "GithubApiError";
+    this.status = status;
+  }
+}
+
+/** GitHub answers 409 to the commit list of a repository that has no commits yet. */
+export function isEmptyRepositoryError(error: unknown): boolean {
+  return error instanceof GithubApiError && error.status === 409;
+}
+
 function isRateLimited(response: Response): boolean {
   return response.status === 403 && response.headers.get("x-ratelimit-remaining") === "0";
 }
@@ -50,11 +66,22 @@ export async function fetchGithubJson(url: string, options: GithubFetchOptions =
   let lastError: Error | undefined;
   for (let attempt = 0; attempt < 3; attempt += 1) {
     const headers = token ? { ...baseHeaders, Authorization: `Bearer ${token}` } : baseHeaders;
-    const response = await fetchImpl(url, { headers });
+    let response: Response;
+    try {
+      response = await fetchImpl(url, { headers });
+    } catch (error) {
+      // A dropped connection or a DNS hiccup: retry it like a 5xx, then give up.
+      lastError = error instanceof Error ? error : new Error(String(error));
+      if (attempt < 2) {
+        await sleep(1000 * (attempt + 1));
+        continue;
+      }
+      throw lastError;
+    }
     if (response.ok) return response.json() as Promise<unknown>;
 
     const body = (await response.text()).slice(0, 200);
-    lastError = new Error(`GitHub API ${response.status} for ${url}: ${body}`);
+    lastError = new GithubApiError(`GitHub API ${response.status} for ${url}: ${body}`, response.status);
 
     if (token && tokenWasRefused(response)) {
       // The token cannot see this repository. Try once as an anonymous public read.

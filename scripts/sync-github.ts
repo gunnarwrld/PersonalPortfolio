@@ -19,7 +19,7 @@ import {
   type GithubSyncFile,
   type RepoActivity,
 } from "../src/lib/githubSync.ts";
-import { GITHUB_API, fetchGithubJson, pickGithubToken } from "../src/lib/githubFetch.ts";
+import { GITHUB_API, fetchGithubJson, isEmptyRepositoryError, pickGithubToken } from "../src/lib/githubFetch.ts";
 
 const DEFAULT_OUTPUT = "src/data/github-sync.json";
 /** Most candidates whose commits are counted per run (newest pushes first). */
@@ -83,9 +83,11 @@ async function fetchActivity(fullName: string, since: string, token: string | un
   try {
     return summarizeCommits(asList<GithubCommitApi>(await fetchGithubJson(url, { token }), "commit list"));
   } catch (error) {
-    // An empty repository answers 409. Count it as no activity rather than failing the sync.
-    process.stderr.write(`activity for ${fullName} skipped: ${error instanceof Error ? error.message : String(error)}\n`);
-    return { commits: 0, activeDays: 0 };
+    // A repository with no commits yet answers 409: that really is no activity.
+    // Anything else (rate limit, outage, timeout) stops the run, so a ranking
+    // built on a failed lookup is never published.
+    if (isEmptyRepositoryError(error)) return { commits: 0, activeDays: 0 };
+    throw error;
   }
 }
 
@@ -94,11 +96,12 @@ function readPrevious(path: string): GithubSyncFile | null {
   return parseSyncFile(JSON.parse(readFileSync(path, "utf8")) as unknown);
 }
 
-function writeGithubOutput(changed: boolean, title: string) {
+function writeGithubOutput(changed: boolean, title: string, mainUpToDate: boolean) {
   const output = process.env.GITHUB_OUTPUT;
   if (!output) return;
   const marker = `SYNC_${Date.now()}`;
   appendFileSync(output, `changed=${changed ? "true" : "false"}\n`);
+  appendFileSync(output, `main_up_to_date=${mainUpToDate ? "true" : "false"}\n`);
   appendFileSync(output, `title<<${marker}\n${title}\n${marker}\n`);
 }
 
@@ -166,13 +169,18 @@ async function main() {
     nowActivity: nowBuilding ? (activity.get(nowBuilding.fullName) ?? null) : null,
   });
 
-  if (onlyIfNowChanged && plan.report.changed) {
+  const changedVsMain = plan.report.changed;
+  if (onlyIfNowChanged && changedVsMain) {
+    // `pending` is the open sync pull request's file; the workflow only passes it when one is open.
     const pending = readOptional(pendingPath);
-    if (!nowBuildingNeedsUpdate(plan.next.now ?? null, previous?.now, pending ? (pending.now ?? null) : undefined)) {
-      // Facts changed but the bubble did not: leave those to the daily refresh.
-      plan.report.changed = false;
-    }
+    plan.report.changed = nowBuildingNeedsUpdate(
+      plan.next.now ?? null,
+      previous?.now,
+      pending ? (pending.now ?? null) : undefined,
+    );
   }
+  // A full sweep that found nothing main lacks: an open sync pull request is out of date.
+  const mainUpToDate = requested.length === 0 && !changedVsMain;
 
   if (plan.report.changed) {
     writeFileSync(outputPath, serializeSyncFile(plan.next));
@@ -185,7 +193,7 @@ async function main() {
     writeFileSync(markdownPath, markdown);
   }
 
-  writeGithubOutput(plan.report.changed, plan.report.title);
+  writeGithubOutput(plan.report.changed, plan.report.title, mainUpToDate);
   process.stdout.write(`${plan.report.changed ? "changed" : "unchanged"} ${plan.report.title}\n`);
   if (plan.report.notOnSite.length > 0) {
     process.stdout.write(`not on the site yet: ${plan.report.notOnSite.join(", ")}\n`);
