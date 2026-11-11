@@ -95,14 +95,18 @@ test.describe("on a phone", () => {
     await expect(hero.getByRole("link", { name: /github/i })).toBeInViewport({ ratio: 1 });
   });
 
-  test("the bar shows every section without a menu, and each one fits", async ({ page }) => {
+  test("the menu lists every section and closes after a choice", async ({ page }) => {
     await page.goto("/");
-    const nav = page.getByRole("navigation", { name: "Main" });
+    await page.getByRole("button", { name: "Open menu" }).click();
+
+    const menu = page.getByRole("dialog", { name: "Menu" });
+    await expect(menu).toBeVisible();
     for (const section of ["About", "Skills", "Projects", "Contact"]) {
-      await expect(nav.getByRole("link", { name: section })).toBeInViewport({ ratio: 1 });
+      await expect(menu.getByRole("link", { name: section })).toBeVisible();
     }
 
-    await nav.getByRole("link", { name: "Projects" }).click();
+    await menu.getByRole("link", { name: "Projects" }).click();
+    await expect(menu).toBeHidden();
     await expect(page.locator("#projects")).toBeInViewport();
   });
 
