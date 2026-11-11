@@ -110,6 +110,16 @@ test.describe("on a phone", () => {
     await expect(page.locator("#projects")).toBeInViewport();
   });
 
+  test("the middle of the bar names the section on screen", async ({ page }) => {
+    await page.goto("/");
+    const runningHead = page.locator("[data-running-head]");
+    await expect(runningHead).toHaveText(/portfolio/i);
+
+    await page.getByRole("button", { name: "Open menu" }).click();
+    await page.getByRole("dialog", { name: "Menu" }).getByRole("link", { name: "Skills" }).click();
+    await expect(runningHead).toHaveText(/skills/i);
+  });
+
   test("the page never scrolls sideways", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator("#contact form")).toBeVisible();

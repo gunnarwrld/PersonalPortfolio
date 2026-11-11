@@ -5,6 +5,8 @@ interface ScrollSpy {
   scrolled: boolean;
   /** Id of the section currently under the reading line, if any. */
   active: string | null;
+  /** The last section the reading line was in. Unlike `active`, it stays set in the gaps between sections. */
+  last: string | null;
 }
 
 /**
@@ -13,10 +15,11 @@ interface ScrollSpy {
  * `sectionIds` must be a stable array (a module constant).
  */
 export function useScrollSpy(sectionIds: readonly string[]): ScrollSpy {
-  const [state, setState] = useState<ScrollSpy>({ scrolled: false, active: null });
+  const [state, setState] = useState<ScrollSpy>({ scrolled: false, active: null, last: null });
 
   useEffect(() => {
     let frame = 0;
+    let last: string | null = null;
 
     const read = () => {
       frame = 0;
@@ -29,8 +32,11 @@ export function useScrollSpy(sectionIds: readonly string[]): ScrollSpy {
           break;
         }
       }
+      if (active) last = active;
       const scrolled = window.scrollY > 24;
-      setState((prev) => (prev.scrolled === scrolled && prev.active === active ? prev : { scrolled, active }));
+      setState((prev) =>
+        prev.scrolled === scrolled && prev.active === active && prev.last === last ? prev : { scrolled, active, last },
+      );
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(read);

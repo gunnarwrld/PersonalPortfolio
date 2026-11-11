@@ -1,16 +1,25 @@
 import { useState } from "react";
 import { Menu } from "lucide-react";
 import { MascotBadge } from "@/components/Mascot";
+import { StarGlyph } from "@/components/StarGlyph";
 import { Sheet, SheetCloseButton, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { navLinks } from "@/data/site";
 import { useScrollSpy } from "@/hooks/use-scroll-spy";
 import { cn } from "@/lib/utils";
 
 const SECTION_IDS = navLinks.map((link) => link.href.slice(1));
+const SPY_IDS = ["top", ...SECTION_IDS];
+
+/** What the running head says in each part of the page. */
+const RUNNING_HEADS: Record<string, string> = {
+  top: "Portfolio",
+  ...Object.fromEntries(navLinks.map((link) => [link.href.slice(1), link.label])),
+};
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
-  const { scrolled, active } = useScrollSpy(SECTION_IDS);
+  const { scrolled, active, last } = useScrollSpy(SPY_IDS);
+  const runningHead = RUNNING_HEADS[last ?? "top"];
 
   return (
     <header className="fixed inset-x-0 top-0 z-40 px-3 pt-3 sm:px-4 sm:pt-4">
@@ -33,6 +42,24 @@ const Navbar = () => {
           <MascotBadge size={40} eager />
           <span className="sr-only">Gunnar Arias, back to top</span>
         </a>
+
+        {/*
+          The running head, as at the top of a printed page: on phones, where the
+          section links are folded into the menu, it names the section on screen.
+          Re-keyed on every change so it stamps in fresh. Hidden from screen
+          readers, which get the page headings instead.
+        */}
+        <p
+          aria-hidden="true"
+          data-running-head
+          className="pointer-events-none absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 whitespace-nowrap md:hidden"
+        >
+          <span key={runningHead} className="running-head flex items-center gap-2">
+            <StarGlyph className="text-parchment" />
+            <span className="font-display text-[clamp(0.95rem,4.6vw,1.2rem)] uppercase leading-none">{runningHead}</span>
+            <StarGlyph className="text-parchment" />
+          </span>
+        </p>
 
         <ul className="hidden items-center gap-1 md:flex">
           {navLinks.map((link) => {
