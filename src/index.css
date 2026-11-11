@@ -552,10 +552,21 @@
   }
   .ribbon-track {
     display: flex;
+    width: max-content;
+    will-change: transform;
+    animation: ribbon-run 48s linear infinite;
+  }
+  .ribbon[data-offscreen] .ribbon-track,
+  .ribbon:hover .ribbon-track {
+    animation-play-state: paused;
+  }
+  /* Two identical groups; the trailing padding equals the gap, so sliding the
+     track by one group (-50%) lands exactly where it started. */
+  .ribbon-group {
+    display: flex;
     align-items: center;
     gap: 1.75rem;
-    width: max-content;
-    padding: 0.7rem 1.75rem;
+    padding: 0.7rem 1.75rem 0.7rem 0;
     font-family: theme("fontFamily.display");
     font-size: clamp(1.15rem, 2.4vw, 1.6rem);
     line-height: 1;
@@ -857,23 +868,11 @@
   }
 }
 
-/* The ribbon slides as the page scrolls past it (where the browser supports
-   scroll-driven animation); it never moves by itself. */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .ribbon-track {
-      animation: ribbon-slide linear both;
-      animation-timeline: view();
-      animation-range: entry 0% exit 100%;
-    }
-  }
-}
-@keyframes ribbon-slide {
-  from {
-    translate: 0 0;
-  }
+/* The ribbon runs right to left, one group per loop. Transform only, so it
+   stays on the compositor. */
+@keyframes ribbon-run {
   to {
-    translate: -22% 0;
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
@@ -905,6 +904,9 @@
   }
   .confetti-bit {
     display: none;
+  }
+  .ribbon-track {
+    animation: none !important;
   }
 }
 
