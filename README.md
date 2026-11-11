@@ -182,7 +182,9 @@ To deploy your own fork:
 
 ## Syncing project facts from GitHub
 
-A scheduled workflow reads your public repos and opens a pull request here when GitHub-derived facts change: once a day for everything, and every two hours for the **Now building** bubble. Nothing in this flow pushes to `main`. You merge the PR when the diff looks right, and Vercel publishes it.
+A scheduled workflow reads your public repos and opens a pull request here when GitHub-derived facts change: once a day for everything, and every two hours for the **Now building** bubble. The pull request then merges itself as soon as CI passes on it, and Vercel publishes the result. No workflow pushes to `main` directly.
+
+The auto-merge only takes the open pull request from this repo's `github-sync` branch, only the exact commit CI tested, and only when it changes nothing but `src/data/github-sync.json`. Anything else waits for you. To review sync pull requests by hand again, add a repository variable `SYNC_AUTO_MERGE` with the value `off` (**Settings → Secrets and variables → Actions → Variables**).
 
 The sync reads each watched repo from the public API and writes `src/data/github-sync.json`:
 
@@ -223,10 +225,11 @@ When you give a project its own card, it leaves the bubble on the next run and t
 | File | When it runs |
 |---|---|
 | [`.github/workflows/sync-github-projects.yml`](.github/workflows/sync-github-projects.yml) | A daily sweep at 06:17 UTC, the Now building check every two hours (at minute 41), **Actions → Sync GitHub project facts → Run workflow**, and `repository_dispatch` type `project-updated`. |
+| [`.github/workflows/sync-auto-merge.yml`](.github/workflows/sync-auto-merge.yml) | After each CI run. Merges the sync pull request when CI passed on it and it only changes the data file. |
 | [`.github/workflows/portfolio-dispatch.yml`](.github/workflows/portfolio-dispatch.yml) | Called by other repos. Posts the dispatch event. |
 | [`templates/notify-portfolio.yml`](templates/notify-portfolio.yml) | The file you copy into a project repo. |
 
-If the generated file matches `main`, the sync workflow stops and does not open a pull request. When something changed, it force-pushes the rolling branch `github-sync` (rebuilt from `main` each run) and opens or updates one PR.
+If the generated file matches `main`, the sync workflow stops and does not open a pull request. When something changed, it force-pushes the rolling branch `github-sync` (rebuilt from `main` each run) and opens or updates one PR, which merges itself once CI passes.
 
 ### Token
 
@@ -236,7 +239,7 @@ Create one fine-grained personal access token:
 2. Resource owner: **gunnarwrld**. Repository access: **Only select repositories → PersonalPortfolio**.
 3. Permissions:
    - **Contents: Read and write.** This is the minimum `repository_dispatch` needs. GitHub lists `POST /repos/{owner}/{repo}/dispatches` under Contents write, with no extra permission beside it. **Metadata: Read-only** is selected automatically.
-   - **Pull requests: Read and write.** The dispatch call does not need this. Add it so the same token, stored on PersonalPortfolio, can open the review PR. A pull request opened that way runs lint, tests, Playwright, and the Vercel preview. The default `GITHUB_TOKEN` does not start those workflows.
+   - **Pull requests: Read and write.** The dispatch call does not need this. Add it so the same token, stored on PersonalPortfolio, can open the sync PR and merge it after CI passes. A pull request opened that way runs lint, tests, Playwright, and the Vercel preview. The default `GITHUB_TOKEN` does not start those workflows.
 4. Copy the token once. It is a secret. Do not commit it and do not paste it into a workflow file.
 
 Classic tokens can dispatch to a public repository with the **`public_repo`** scope. Prefer the fine-grained token above.
@@ -260,7 +263,7 @@ If that secret is missing, the workflow falls back to `GITHUB_TOKEN`. That path 
 
 Leave it off unless you are using the fallback. Pull requests opened with `GITHUB_TOKEN` do not start the workflows in this repo (lint, Vitest, Playwright). Vercel can still build a preview, because that check comes from the Vercel GitHub App.
 
-Do not grant Actions write access to `main`. This workflow never pushes the default branch.
+Do not grant Actions write access to `main`. The sync never pushes the default branch; the auto-merge workflow merges its pull request through the GitHub API with `PORTFOLIO_DISPATCH_TOKEN`, so CI runs on `main` after the merge like after any other.
 
 ### Notifier for a project repo (optional)
 

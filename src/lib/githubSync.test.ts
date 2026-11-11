@@ -419,6 +419,24 @@ describe("sync workflow safety", () => {
     expect(workflow).toContain('cron: "17 6 * * *"');
   });
 
+  it("merges only a green sync pull request from this repo that changes nothing but the data file", () => {
+    const autoMerge = readFileSync(".github/workflows/sync-auto-merge.yml", "utf8");
+    // The trigger names the CI workflow, so that name must not drift.
+    expect(readFileSync(".github/workflows/ci.yml", "utf8")).toMatch(/^name: CI$/m);
+    expect(autoMerge).toContain("workflow_run:");
+    expect(autoMerge).toContain("workflows: [CI]");
+    expect(autoMerge).toContain("github.event.workflow_run.conclusion == 'success'");
+    expect(autoMerge).toContain("github.event.workflow_run.event == 'pull_request'");
+    expect(autoMerge).toContain("github.event.workflow_run.head_branch == 'github-sync'");
+    expect(autoMerge).toContain("github.event.workflow_run.head_repository.full_name == github.repository");
+    expect(autoMerge).toContain("vars.SYNC_AUTO_MERGE != 'off'");
+    expect(autoMerge).toContain("--match-head-commit");
+    expect(autoMerge).toContain("DATA_FILE: src/data/github-sync.json");
+    expect(autoMerge).toContain("permissions: {}");
+    // It never checks out or runs code from the pull request, and never pushes.
+    expect(autoMerge).not.toMatch(/actions\/checkout|npm |\bgit\s+push\b/);
+  });
+
   it("notifies PersonalPortfolio with the dispatch secret and the default branch", () => {
     expect(reusable).toContain("workflow_call");
     expect(reusable).toContain("PORTFOLIO_DISPATCH_TOKEN");

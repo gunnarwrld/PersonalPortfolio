@@ -600,7 +600,7 @@ export function renderSyncReport(report: SyncReport): string {
   }
 
   lines.push(
-    "Review the diff, then merge to publish. Nothing in this workflow pushes to `main`.",
+    "This pull request merges itself once CI passes, because it changes nothing but `src/data/github-sync.json`. To review sync pull requests by hand, set the repository variable `SYNC_AUTO_MERGE` to `off`.",
     "",
   );
   return lines.join("\n");
