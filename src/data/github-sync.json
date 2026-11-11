@@ -1,6 +1,14 @@
 {
-  "generatedAt": "2026-11-11T06:31:44.258Z",
+  "generatedAt": "2026-11-11T11:11:06.827Z",
   "owner": "gunnarwrld",
+  "now": {
+    "fullName": "gunnarwrld/fair-football-fee",
+    "name": "fair-football-fee",
+    "label": "Fair Football Fee",
+    "htmlUrl": "https://github.com/gunnarwrld/fair-football-fee",
+    "primaryLanguage": "Python",
+    "pushedAt": "2026-11-11T10:53:45Z"
+  },
   "repos": {
     "gunnarwrld/PostHub-DynamicWebsite": {
       "name": "PostHub-DynamicWebsite",
@@ -111,7 +119,7 @@
       ],
       "homepage": null,
       "defaultBranch": "main",
-      "pushedAt": "2026-11-10T11:07:33Z",
+      "pushedAt": "2026-11-11T10:53:45Z",
       "archived": false,
       "stars": 0,
       "fork": false,
@@ -140,7 +148,7 @@
       ],
       "homepage": null,
       "defaultBranch": "main",
-      "pushedAt": "2026-11-10T11:09:16Z",
+      "pushedAt": "2026-11-11T10:42:49Z",
       "archived": false,
       "stars": 0,
       "fork": false,
@@ -270,7 +278,7 @@
     "gunnarwrld/matchday-hub": {
       "name": "matchday-hub",
       "fullName": "gunnarwrld/matchday-hub",
-      "description": "ASP.NET Core 10 team-sport match data service on Azure: live events via Service Bus and SignalR, companion to the Fútbol Data Aggregator",
+      "description": "ASP.NET Core 10 team-sport match data service that runs locally, with Azure deployment planned: live events via Service Bus and SignalR, companion to the Fútbol Data Aggregator",
       "topics": [],
       "primaryLanguage": "C#",
       "languages": [

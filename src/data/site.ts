@@ -11,6 +11,22 @@ export const site = {
   location: "Kristianstad, Sweden",
 } as const;
 
+export interface CvFile {
+  /** Path under public/, so the CV is served from this domain. */
+  href: string;
+  /** Name the file gets when a visitor saves it. */
+  fileName: string;
+}
+
+/**
+ * The downloadable CV. The Contact section shows a "Download CV" button only
+ * when this is set, and a unit test checks that the file is really in public/.
+ *
+ * This repository is public, so every version of the PDF stays in its history:
+ * publish an edition without a phone number, street address or date of birth.
+ */
+export const cv: CvFile | null = { href: "/Gunnar-Arias-CV.pdf", fileName: "Gunnar-Arias-CV.pdf" };
+
 export interface SocialLink {
   label: string;
   href: string;

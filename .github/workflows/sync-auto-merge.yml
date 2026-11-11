@@ -1,0 +1,81 @@
+name: Merge the sync pull request
+
+# Merges the GitHub sync pull request as soon as CI has passed on it, so project
+# facts and the "Now building" bubble go live without a manual merge.
+#
+# It merges only:
+#   - the open pull request from this repository's rolling `github-sync` branch,
+#   - the exact commit CI tested (a newer push waits for its own CI run),
+#   - when that pull request changes nothing but src/data/github-sync.json.
+# It never checks out or runs code from the pull request, and never pushes main:
+# the merge goes through the GitHub API, so CI runs on main like any other merge.
+#
+# To review sync pull requests by hand again, add a repository variable
+# SYNC_AUTO_MERGE with the value off
+# (Settings > Secrets and variables > Actions > Variables).
+#
+# workflow_run only starts workflows that are already on the default branch.
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+# The job calls the API with PORTFOLIO_DISPATCH_TOKEN, the token that opens the
+# sync pull request. The default token gets no access.
+permissions: {}
+
+concurrency:
+  group: sync-auto-merge
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    name: Merge a green sync pull request
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.head_branch == 'github-sync' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      vars.SYNC_AUTO_MERGE != 'off'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the pull request and merge it
+        env:
+          GH_TOKEN: ${{ secrets.PORTFOLIO_DISPATCH_TOKEN }}
+          TESTED_SHA: ${{ github.event.workflow_run.head_sha }}
+          DATA_FILE: src/data/github-sync.json
+        run: |
+          set -euo pipefail
+          if [ -z "${GH_TOKEN}" ]; then
+            echo "::notice title=Sync pull request not merged::PORTFOLIO_DISPATCH_TOKEN is not set, so the pull request waits for a manual merge."
+            exit 0
+          fi
+
+          pr="$(gh pr list --repo "$GITHUB_REPOSITORY" --head github-sync --base main --state open \
+            --json number,headRefOid,isDraft,isCrossRepository \
+            --jq 'map(select(.isCrossRepository | not)) | first // empty')"
+          if [ -z "$pr" ]; then
+            echo "No open sync pull request. Nothing to merge."
+            exit 0
+          fi
+          number="$(jq -r '.number' <<<"$pr")"
+          head="$(jq -r '.headRefOid' <<<"$pr")"
+
+          if [ "$(jq -r '.isDraft' <<<"$pr")" = "true" ]; then
+            echo "Pull request #${number} is a draft. Not merging."
+            exit 0
+          fi
+          if [ "$head" != "$TESTED_SHA" ]; then
+            echo "Pull request #${number} moved on to ${head} after CI tested ${TESTED_SHA}. The newer commit's CI run decides."
+            exit 0
+          fi
+
+          files="$(gh pr view "$number" --repo "$GITHUB_REPOSITORY" --json files --jq '[.files[].path] | unique | join(" ")')"
+          if [ "$files" != "$DATA_FILE" ]; then
+            echo "::error title=Sync pull request not merged::#${number} changes more than ${DATA_FILE} (${files}). Review and merge it by hand."
+            exit 1
+          fi
+
+          gh pr merge "$number" --repo "$GITHUB_REPOSITORY" --merge --match-head-commit "$TESTED_SHA"
+          echo "Merged #${number} at ${TESTED_SHA}."

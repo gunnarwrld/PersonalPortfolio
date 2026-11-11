@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { Menu } from "lucide-react";
 import { MascotBadge } from "@/components/Mascot";
+import { NowBuildingBubble } from "@/components/NowBuilding";
 import { Sheet, SheetCloseButton, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { navLinks } from "@/data/site";
 import { useScrollSpy } from "@/hooks/use-scroll-spy";
@@ -29,10 +30,14 @@ const Navbar = () => {
           scrolled && "shadow-[5px_5px_0_0_rgb(var(--cocoa))]",
         )}
       >
-        <a href="#top" className="flex items-center rounded-full">
-          <MascotBadge size={40} eager />
-          <span className="sr-only">Gunnar Arias, back to top</span>
-        </a>
+        {/* The logo, and the mascot saying what is being built right now. */}
+        <div className="flex min-w-0 items-center gap-3.5">
+          <a href="#top" className="flex shrink-0 items-center rounded-full">
+            <MascotBadge size={40} eager />
+            <span className="sr-only">Gunnar Arias, back to top</span>
+          </a>
+          <NowBuildingBubble className="hero-pop" style={{ "--at": "1.1s" } as CSSProperties} />
+        </div>
 
         <ul className="hidden items-center gap-1 md:flex">
           {navLinks.map((link) => {

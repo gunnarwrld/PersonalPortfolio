@@ -13,8 +13,11 @@ on:
         required: false
         type: string
   schedule:
-    # 06:17 UTC. Off the hour so the backup sweep is not competing with every other cron.
+    # 06:17 UTC: the full daily refresh. Off the hour so it is not competing with every other cron.
     - cron: "17 6 * * *"
+    # Every two hours: a light check that opens or updates the pull request only
+    # when the "Now building" repo changed. Keep this string in step with NOW_CHECK below.
+    - cron: "41 */2 * * *"
 
 permissions:
   contents: write
@@ -52,10 +55,24 @@ jobs:
           # scoped only to this repository cannot read the other projects.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SYNC_REPOSITORY: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.repository || github.event_name == 'workflow_dispatch' && inputs.repository || '' }}
-        run: npm run sync:github -- --report sync-report.json
+          NOW_CHECK: ${{ github.event_name == 'schedule' && github.event.schedule == '41 */2 * * *' }}
+        run: |
+          set -euo pipefail
+          if [ "$NOW_CHECK" = "true" ]; then
+            # The open sync pull request's file, so the check keeps that pull request
+            # current. Only when one is open: the branch itself outlives every merge.
+            open_prs="$(gh pr list --repo "$GITHUB_REPOSITORY" --head github-sync --base main --state open --json number --jq 'length')"
+            if [ "$open_prs" != "0" ] && git fetch --quiet --depth=1 origin "+refs/heads/github-sync:refs/remotes/origin/github-sync"; then
+              git show origin/github-sync:src/data/github-sync.json > /tmp/pending-sync.json || true
+            fi
+            npm run sync:github -- --report sync-report.json --only-if-now-changed --pending /tmp/pending-sync.json
+          else
+            npm run sync:github -- --report sync-report.json
+          fi
 
-      - name: Open or update the review pull request
-        if: steps.sync.outputs.changed == 'true'
+      - name: Open, update or close the sync pull request
+        # main_up_to_date: a full sweep found nothing main lacks, so an open sync pull request is out of date.
+        if: steps.sync.outputs.changed == 'true' || steps.sync.outputs.main_up_to_date == 'true'
         env:
           DISPATCH_TOKEN: ${{ secrets.PORTFOLIO_DISPATCH_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -69,18 +86,6 @@ jobs:
             exit 1
           fi
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          cp src/data/github-sync.json /tmp/github-sync.json
-          git checkout -f -B "$BRANCH" "origin/${BASE}"
-          cp /tmp/github-sync.json src/data/github-sync.json
-          git add src/data/github-sync.json
-          if git diff --cached --quiet; then
-            echo "Sync file matches ${BASE}. Not opening a pull request."
-            exit 0
-          fi
-          git commit -m "$TITLE"
-
           if [ -n "${DISPATCH_TOKEN}" ]; then
             TOKEN="$DISPATCH_TOKEN"
           else
@@ -88,6 +93,25 @@ jobs:
             echo "::notice title=Sync pull request uses GITHUB_TOKEN::PORTFOLIO_DISPATCH_TOKEN is not set on PersonalPortfolio. Opening the pull request requires the repository setting Allow GitHub Actions to create and approve pull requests. Workflows in this repo will not run on that pull request. Add the PAT so lint, tests, and the Vercel preview run."
           fi
           export GH_TOKEN="$TOKEN"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cp src/data/github-sync.json /tmp/github-sync.json
+          git checkout -f -B "$BRANCH" "origin/${BASE}"
+          cp /tmp/github-sync.json src/data/github-sync.json
+          git add src/data/github-sync.json
+          if git diff --cached --quiet; then
+            # main already has everything: an open sync pull request would only publish older data.
+            stale="$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$BRANCH" --base "$BASE" --state open --json number --jq '.[0].number // empty')"
+            if [ -n "$stale" ]; then
+              gh pr close "$stale" --repo "$GITHUB_REPOSITORY" --comment "Closed by the sync: \`${BASE}\` already has the latest GitHub facts, so this pull request is out of date."
+              echo "Closed out-of-date sync pull request #${stale}."
+            else
+              echo "Sync file matches ${BASE}. Not opening a pull request."
+            fi
+            exit 0
+          fi
+          git commit -m "$TITLE"
 
                     # git over HTTPS needs Basic auth with the x-access-token user, not Bearer.
           BASIC="$(printf 'x-access-token:%s' "$TOKEN" | base64 | tr -d '\n')"

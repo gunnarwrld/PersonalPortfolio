@@ -182,7 +182,9 @@ To deploy your own fork:
 
 ## Syncing project facts from GitHub
 
-Pushes to the default branch of a project repo open a pull request here that refreshes GitHub-derived facts. Nothing in this flow pushes to `main`. You merge the PR when the diff looks right.
+A scheduled workflow reads your public repos and opens a pull request here when GitHub-derived facts change: once a day for everything, and every two hours for the **Now building** bubble. The pull request then merges itself as soon as CI passes on it, and Vercel publishes the result. No workflow pushes to `main` directly.
+
+The auto-merge only takes the open pull request from this repo's `github-sync` branch, only the exact commit CI tested, and only when it changes nothing but `src/data/github-sync.json`. Anything else waits for you. To review sync pull requests by hand again, add a repository variable `SYNC_AUTO_MERGE` with the value `off` (**Settings → Secrets and variables → Actions → Variables**).
 
 The sync reads each watched repo from the public API and writes `src/data/github-sync.json`:
 
@@ -195,15 +197,39 @@ Watched repos live in [`src/data/watchedRepos.ts`](src/data/watchedRepos.ts). Th
 
 `repository_dispatch` only starts workflows that are already on the default branch. Merge this setup before you expect notifiers to do anything.
 
+### Now building
+
+The mascot in the nav bar says what you are building right now, and links to that repository on GitHub. The sync picks it on every run:
+
+1. **Candidates:** your public repos with a push in the last 30 days that have no project card yet. Forks, archived repos, the profile README repo, and any repo in `NOW_BUILDING.exclude` are left out. A card counts whether it maps the repo through `repo` or only links to it.
+2. **Ranking:** the most days with commits in the last two weeks, then the most commits, then the latest push. Steady work wins over a one-off fix, so updating a README somewhere does not change the bubble.
+3. **Label:** `NOW_BUILDING.labels` when the repo has an entry there, otherwise the repo name made readable (`ledger-sentinel-ai` reads "Ledger Sentinel AI").
+
+New repos need no setup: the sync reads your whole repo list, not only `WATCHED_REPOS`. The bubble hides itself in the browser once the repo has gone 30 days without a push, even if nobody merges a sync PR.
+
+The two-hour check only opens or updates the pull request when the bubble would show a different repo than `main` does and the open sync PR does not already propose it. Fact changes on their own wait for the daily run, so the PR is not rebuilt every two hours.
+
+Change the behaviour in [`src/data/watchedRepos.ts`](src/data/watchedRepos.ts):
+
+| Setting | What it does |
+|---|---|
+| `pin` | Set to a repo name to always show it. `null` lets the ranking decide. |
+| `exclude` | Repo names the bubble never shows. |
+| `labels` | Display names, for example `"forge-wallet-android": "Forge Wallet"`. |
+| `activityDays`, `freshDays` | The ranking window (14 days) and how long the bubble stays without a push (30 days). |
+
+When you give a project its own card, it leaves the bubble on the next run and the next repo you are working on takes its place.
+
 ### Workflows
 
 | File | When it runs |
 |---|---|
-| [`.github/workflows/sync-github-projects.yml`](.github/workflows/sync-github-projects.yml) | `repository_dispatch` type `project-updated`, **Actions → Sync GitHub project facts → Run workflow**, and a daily sweep at 06:17 UTC. |
+| [`.github/workflows/sync-github-projects.yml`](.github/workflows/sync-github-projects.yml) | A daily sweep at 06:17 UTC, the Now building check every two hours (at minute 41), **Actions → Sync GitHub project facts → Run workflow**, and `repository_dispatch` type `project-updated`. |
+| [`.github/workflows/sync-auto-merge.yml`](.github/workflows/sync-auto-merge.yml) | After each CI run. Merges the sync pull request when CI passed on it and it only changes the data file. |
 | [`.github/workflows/portfolio-dispatch.yml`](.github/workflows/portfolio-dispatch.yml) | Called by other repos. Posts the dispatch event. |
 | [`templates/notify-portfolio.yml`](templates/notify-portfolio.yml) | The file you copy into a project repo. |
 
-If the generated file matches `main`, the sync workflow stops and does not open a pull request. When something changed, it force-pushes the rolling branch `github-sync` (rebuilt from `main` each run) and opens or updates one PR.
+If the generated file matches `main`, the sync workflow stops and does not open a pull request. When something changed, it force-pushes the rolling branch `github-sync` (rebuilt from `main` each run) and opens or updates one PR, which merges itself once CI passes.
 
 ### Token
 
@@ -213,7 +239,7 @@ Create one fine-grained personal access token:
 2. Resource owner: **gunnarwrld**. Repository access: **Only select repositories → PersonalPortfolio**.
 3. Permissions:
    - **Contents: Read and write.** This is the minimum `repository_dispatch` needs. GitHub lists `POST /repos/{owner}/{repo}/dispatches` under Contents write, with no extra permission beside it. **Metadata: Read-only** is selected automatically.
-   - **Pull requests: Read and write.** The dispatch call does not need this. Add it so the same token, stored on PersonalPortfolio, can open the review PR. A pull request opened that way runs lint, tests, Playwright, and the Vercel preview. The default `GITHUB_TOKEN` does not start those workflows.
+   - **Pull requests: Read and write.** The dispatch call does not need this. Add it so the same token, stored on PersonalPortfolio, can open the sync PR and merge it after CI passes. A pull request opened that way runs lint, tests, Playwright, and the Vercel preview. The default `GITHUB_TOKEN` does not start those workflows.
 4. Copy the token once. It is a secret. Do not commit it and do not paste it into a workflow file.
 
 Classic tokens can dispatch to a public repository with the **`public_repo`** scope. Prefer the fine-grained token above.
@@ -237,9 +263,11 @@ If that secret is missing, the workflow falls back to `GITHUB_TOKEN`. That path 
 
 Leave it off unless you are using the fallback. Pull requests opened with `GITHUB_TOKEN` do not start the workflows in this repo (lint, Vitest, Playwright). Vercel can still build a preview, because that check comes from the Vercel GitHub App.
 
-Do not grant Actions write access to `main`. This workflow never pushes the default branch.
+Do not grant Actions write access to `main`. The sync never pushes the default branch; the auto-merge workflow merges its pull request through the GitHub API with `PORTFOLIO_DISPATCH_TOKEN`, so CI runs on `main` after the merge like after any other.
 
-### Notifier for a project repo
+### Notifier for a project repo (optional)
+
+The schedule already covers every repo, including new ones. A notifier only makes the facts refresh run right after a push instead of at the next scheduled run. No project repo has one installed yet.
 
 Actions has to be enabled on that repo (the default). Copy [`templates/notify-portfolio.yml`](templates/notify-portfolio.yml) to `.github/workflows/notify-portfolio.yml`:
 
@@ -263,7 +291,7 @@ The `if` limits the job to the repo's default branch, including repos whose defa
 
 Then add `PORTFOLIO_DISPATCH_TOKEN` on that repo. To show the project on the site, add a card in `src/data/projects.ts` with `repo` set to `gunnarwrld/<name>`, and add the name to `WATCHED_REPOS` if it is not already there. The sync will not create the card for you.
 
-Run the refresh locally with `npm run sync:github`. `npm run sync:github -- --repo ledger-api` refreshes one repo. Unauthenticated requests are enough for public repos; the script uses `GITHUB_TOKEN` only when it is already set.
+Run the refresh locally with `npm run sync:github`. `npm run sync:github -- --repo ledger-api` refreshes one repo. Unauthenticated requests work for public repos, but GitHub allows 60 an hour and one run makes about 30. To run it more often, set `GITHUB_TOKEN`; with the GitHub CLI installed, `GITHUB_TOKEN="$(gh auth token)" npm run sync:github` does it.
 
 ## Roadmap
 

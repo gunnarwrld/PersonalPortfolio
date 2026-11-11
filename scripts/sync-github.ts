@@ -1,20 +1,29 @@
 import { appendFileSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { projects } from "../src/data/projects.ts";
-import { GITHUB_OWNER, WATCHED_REPOS } from "../src/data/watchedRepos.ts";
+import { GITHUB_OWNER, NOW_BUILDING, WATCHED_REPOS } from "../src/data/watchedRepos.ts";
 import {
+  nowBuildingCandidates,
+  nowBuildingNeedsUpdate,
   parseRepository,
   parseSyncFile,
+  pickNowBuilding,
   planSync,
   renderSyncReport,
   repoNamesOnSite,
+  reposShownOnSite,
   serializeSyncFile,
+  summarizeCommits,
   toRepoFacts,
+  type GithubCommitApi,
   type GithubRepositoryApi,
   type GithubSyncFile,
+  type RepoActivity,
 } from "../src/lib/githubSync.ts";
-import { GITHUB_API, fetchGithubJson, pickGithubToken } from "../src/lib/githubFetch.ts";
+import { GITHUB_API, fetchGithubJson, isEmptyRepositoryError, pickGithubToken } from "../src/lib/githubFetch.ts";
 
 const DEFAULT_OUTPUT = "src/data/github-sync.json";
+/** Most candidates whose commits are counted per run (newest pushes first). */
+const MAX_ACTIVITY_LOOKUPS = 10;
 
 function argValue(flag: string): string | undefined {
   const index = process.argv.indexOf(flag);
@@ -57,17 +66,52 @@ async function fetchFacts(fullName: string, onSite: boolean, token: string | und
   return toRepoFacts(asRepository(repository, fullName), asLanguages(languages, fullName), onSite);
 }
 
+function asList<T>(value: unknown, what: string): T[] {
+  if (!Array.isArray(value)) throw new Error(`GitHub ${what} payload was not a list`);
+  return value as T[];
+}
+
+/** The owner's public repos, newest push first. One page is enough: only the newest matter here. */
+async function fetchOwnerRepos(token: string | undefined): Promise<GithubRepositoryApi[]> {
+  const url = `${GITHUB_API}/users/${encodeURIComponent(GITHUB_OWNER)}/repos?type=owner&sort=pushed&direction=desc&per_page=100`;
+  return asList<GithubRepositoryApi>(await fetchGithubJson(url, { token }), "repository list");
+}
+
+async function fetchActivity(fullName: string, since: string, token: string | undefined): Promise<RepoActivity> {
+  const { owner, name } = parseRepository(fullName, GITHUB_OWNER);
+  const url = `${GITHUB_API}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(name)}/commits?since=${encodeURIComponent(since)}&per_page=100`;
+  try {
+    return summarizeCommits(asList<GithubCommitApi>(await fetchGithubJson(url, { token }), "commit list"));
+  } catch (error) {
+    // A repository with no commits yet answers 409: that really is no activity.
+    // Anything else (rate limit, outage, timeout) stops the run, so a ranking
+    // built on a failed lookup is never published.
+    if (isEmptyRepositoryError(error)) return { commits: 0, activeDays: 0 };
+    throw error;
+  }
+}
+
 function readPrevious(path: string): GithubSyncFile | null {
   if (!existsSync(path)) return null;
   return parseSyncFile(JSON.parse(readFileSync(path, "utf8")) as unknown);
 }
 
-function writeGithubOutput(changed: boolean, title: string) {
+function writeGithubOutput(changed: boolean, title: string, mainUpToDate: boolean) {
   const output = process.env.GITHUB_OUTPUT;
   if (!output) return;
   const marker = `SYNC_${Date.now()}`;
   appendFileSync(output, `changed=${changed ? "true" : "false"}\n`);
+  appendFileSync(output, `main_up_to_date=${mainUpToDate ? "true" : "false"}\n`);
   appendFileSync(output, `title<<${marker}\n${title}\n${marker}\n`);
+}
+
+function readOptional(path: string | undefined): GithubSyncFile | undefined {
+  if (!path || !existsSync(path)) return undefined;
+  try {
+    return parseSyncFile(JSON.parse(readFileSync(path, "utf8")) as unknown);
+  } catch {
+    return undefined;
+  }
 }
 
 async function main() {
@@ -79,6 +123,9 @@ async function main() {
   const requestedInput = argValue("--repo") || process.env.SYNC_REPOSITORY || "";
   const reportPath = argValue("--report");
   const outputPath = argValue("--output") || DEFAULT_OUTPUT;
+  // The frequent check: publish only when the "Now building" repo changed (see the workflow).
+  const onlyIfNowChanged = process.argv.includes("--only-if-now-changed");
+  const pendingPath = argValue("--pending");
   const siteRepos = repoNamesOnSite(projects);
   const site = new Set(siteRepos);
   const requested = requestedInput.trim()
@@ -90,15 +137,50 @@ async function main() {
   const fetched = await Promise.all(
     targets.map((fullName) => fetchFacts(fullName, site.has(fullName), token)),
   );
+
+  // "Now building": the repo without a card that is being worked on most.
+  const now = new Date().toISOString();
+  const nowInput = {
+    owner: GITHUB_OWNER,
+    repositories: await fetchOwnerRepos(token),
+    shownOnSite: reposShownOnSite(projects),
+    config: NOW_BUILDING,
+    now,
+  };
+  const since = new Date(Date.parse(now) - NOW_BUILDING.activityDays * 24 * 60 * 60 * 1000).toISOString();
+  const lookups = nowBuildingCandidates(nowInput).slice(0, MAX_ACTIVITY_LOOKUPS);
+  const activity = new Map(
+    await Promise.all(
+      lookups.map(async (repo) => [repo.full_name, await fetchActivity(repo.full_name, since, token)] as const),
+    ),
+  );
+  const nowBuilding = pickNowBuilding({ ...nowInput, activity });
+
+  const previous = readPrevious(outputPath);
   const plan = planSync({
-    previous: readPrevious(outputPath),
+    previous,
     owner: GITHUB_OWNER,
     watchList: WATCHED_REPOS,
     siteRepos,
     requestedFullNames: requested,
     fetched,
-    now: new Date().toISOString(),
+    now,
+    nowBuilding,
+    nowActivity: nowBuilding ? (activity.get(nowBuilding.fullName) ?? null) : null,
   });
+
+  const changedVsMain = plan.report.changed;
+  if (onlyIfNowChanged && changedVsMain) {
+    // `pending` is the open sync pull request's file; the workflow only passes it when one is open.
+    const pending = readOptional(pendingPath);
+    plan.report.changed = nowBuildingNeedsUpdate(
+      plan.next.now ?? null,
+      previous?.now,
+      pending ? (pending.now ?? null) : undefined,
+    );
+  }
+  // A full sweep that found nothing main lacks: an open sync pull request is out of date.
+  const mainUpToDate = requested.length === 0 && !changedVsMain;
 
   if (plan.report.changed) {
     writeFileSync(outputPath, serializeSyncFile(plan.next));
@@ -111,10 +193,17 @@ async function main() {
     writeFileSync(markdownPath, markdown);
   }
 
-  writeGithubOutput(plan.report.changed, plan.report.title);
+  writeGithubOutput(plan.report.changed, plan.report.title, mainUpToDate);
   process.stdout.write(`${plan.report.changed ? "changed" : "unchanged"} ${plan.report.title}\n`);
   if (plan.report.notOnSite.length > 0) {
     process.stdout.write(`not on the site yet: ${plan.report.notOnSite.join(", ")}\n`);
+  }
+  const pick = plan.report.nowBuilding.next;
+  process.stdout.write(
+    `now building: ${pick ? `${pick.label} (${pick.fullName})` : "none"}${plan.report.nowBuilding.changed ? " [changed]" : ""}\n`,
+  );
+  for (const [fullName, entry] of activity) {
+    process.stdout.write(`  ${fullName}: ${entry.commits} commits on ${entry.activeDays} days\n`);
   }
 }
 

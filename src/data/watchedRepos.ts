@@ -22,3 +22,33 @@ export const WATCHED_REPOS = [
 ] as const;
 
 export type WatchedRepo = (typeof WATCHED_REPOS)[number];
+
+export interface NowBuildingConfig {
+  /** Days of commits counted when ranking repos by how much they are being worked on. */
+  activityDays: number;
+  /** A repo stops being a candidate, and the bubble hides, after this many days without a push. */
+  freshDays: number;
+  /** Set to a repo name to always show it, whatever the ranking says. */
+  pin: string | null;
+  /** Repos the bubble never shows. Forks, archived repos and the profile README are always left out. */
+  exclude: readonly string[];
+  /** Display names for repos whose GitHub name reads badly in the bubble. */
+  labels: Readonly<Record<string, string>>;
+}
+
+/**
+ * The "Now building" bubble in the nav bar. The sync picks the public repo with
+ * no project card yet that had commits on the most days in the last two weeks
+ * (then the most commits, then the latest push), so it follows what is really
+ * being worked on, not a one-off push.
+ */
+export const NOW_BUILDING: NowBuildingConfig = {
+  activityDays: 14,
+  freshDays: 30,
+  pin: null,
+  // Course labs and early exercises: real work, but not what the bubble should advertise.
+  exclude: ["CalculatorProyect1", "lab01_fullstack"],
+  labels: {
+    "forge-wallet-android": "Forge Wallet",
+  },
+};
