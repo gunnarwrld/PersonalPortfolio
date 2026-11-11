@@ -687,6 +687,17 @@ export function prettyRepoName(name: string): string {
 
 const GITHUB_REPO_URL = /^https:\/\/github\.com\/([A-Za-z0-9._-]+)\/([A-Za-z0-9._-]+?)(?:\.git)?\/?(?:[#?].*)?$/;
 
+/** Lower-cased repo full name -> id of the project card that shows it. */
+export function cardIdsByRepo(projects: readonly Pick<Project, "id" | "repo" | "github">[]): Map<string, string> {
+  const ids = new Map<string, string>();
+  for (const project of projects) {
+    for (const name of reposShownOnSite([project])) {
+      if (!ids.has(name)) ids.set(name, project.id);
+    }
+  }
+  return ids;
+}
+
 /**
  * Lower-cased full names of every repo that already has a card: through `repo`,
  * or through the card's GitHub link (the portfolio card links its own repo
@@ -735,8 +746,14 @@ export interface NowBuildingInput {
   now: string;
 }
 
-/** Repos the bubble may show, newest push first. Activity decides between them. */
-export function nowBuildingCandidates(input: NowBuildingInput): GithubRepositoryApi[] {
+/**
+ * Repos the bubble may show, newest push first. Activity decides between them.
+ * `includeShown` also offers repos that already have a card (the fallback).
+ */
+export function nowBuildingCandidates(
+  input: NowBuildingInput,
+  { includeShown = false }: { includeShown?: boolean } = {},
+): GithubRepositoryApi[] {
   const cutoff = Date.parse(input.now) - input.config.freshDays * DAY_MS;
   const owner = input.owner.toLowerCase();
   const excluded = new Set(input.config.exclude.map((name) => name.toLowerCase()));
@@ -752,20 +769,24 @@ export function nowBuildingCandidates(input: NowBuildingInput): GithubRepository
       if (pin) return name === pin;
       if (name === owner) return false; // the profile README repo
       if (excluded.has(name)) return false;
-      return !input.shownOnSite.has(repo.full_name.toLowerCase());
+      return includeShown || !input.shownOnSite.has(repo.full_name.toLowerCase());
     })
     .sort((a, b) => Date.parse(b.pushed_at) - Date.parse(a.pushed_at) || compareNames(a.full_name, b.full_name));
 }
 
 /**
  * The repo being worked on most: most active days in the window, then most
- * commits, then the latest push. Null when no candidate is left.
+ * commits, then the latest push. A repo without a card wins; when every active
+ * repo already has one, the most active of those is picked instead (the bubble
+ * then links to its card). Null when no candidate is left at all.
  */
 export function pickNowBuilding(
   input: NowBuildingInput & { activity: ReadonlyMap<string, RepoActivity> },
 ): NowBuilding | null {
   const score = (repo: GithubRepositoryApi) => input.activity.get(repo.full_name) ?? { commits: 0, activeDays: 0 };
-  const [best] = nowBuildingCandidates(input).sort(
+  const withoutCard = nowBuildingCandidates(input);
+  const pool = withoutCard.length > 0 ? withoutCard : nowBuildingCandidates(input, { includeShown: true });
+  const [best] = pool.sort(
     (a, b) =>
       score(b).activeDays - score(a).activeDays ||
       score(b).commits - score(a).commits ||

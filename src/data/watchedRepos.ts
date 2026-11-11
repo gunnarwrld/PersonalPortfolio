@@ -40,14 +40,16 @@ export interface NowBuildingConfig {
  * The "Now building" bubble in the nav bar. The sync picks the public repo with
  * no project card yet that had commits on the most days in the last two weeks
  * (then the most commits, then the latest push), so it follows what is really
- * being worked on, not a one-off push.
+ * being worked on, not a one-off push. When every active repo already has a
+ * card, it picks the most active one of those and the bubble links to its card.
  */
 export const NOW_BUILDING: NowBuildingConfig = {
   activityDays: 14,
   freshDays: 30,
   pin: null,
-  // Course labs and early exercises: real work, but not what the bubble should advertise.
-  exclude: ["CalculatorProyect1", "lab01_fullstack"],
+  // The site itself (the sync commits to it every day), plus course labs and early
+  // exercises: real work, but not what the bubble should advertise.
+  exclude: ["PersonalPortfolio", "CalculatorProyect1", "lab01_fullstack"],
   labels: {
     "forge-wallet-android": "Forge Wallet",
   },

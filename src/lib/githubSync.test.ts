@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { projects, type Project } from "@/data/projects";
 import { GITHUB_OWNER, NOW_BUILDING, WATCHED_REPOS, type NowBuildingConfig } from "@/data/watchedRepos";
 import {
+  cardIdsByRepo,
   isNowBuildingFresh,
   nowBuildingCandidates,
   nowBuildingNeedsUpdate,
@@ -487,10 +488,11 @@ describe("committed github-sync.json", () => {
     }
   });
 
-  it("points the Now building bubble at a public repo that has no card yet", () => {
+  it("points the Now building bubble at a GitHub repository that is not excluded", () => {
+    // Whether the pick has a card is checked when the page renders (NowBuildingBubble),
+    // because a card can be added before the next sync refreshes this file.
     if (!sync.now) return;
     expect(sync.now.htmlUrl).toBe(`https://github.com/${sync.now.fullName}`);
-    expect(reposShownOnSite(projects).has(sync.now.fullName.toLowerCase())).toBe(false);
     expect(NOW_BUILDING.exclude.map((name) => name.toLowerCase())).not.toContain(sync.now.name.toLowerCase());
   });
 });
@@ -512,7 +514,9 @@ describe("now building", () => {
       pushed_at: "2026-11-10T10:00:00Z",
       ...overrides,
     });
-  const shownOnSite = reposShownOnSite(projects);
+  // The pick logic is tested against a fixed card list, not the live projects.ts:
+  // cards get added all the time, and that must not change these tests.
+  const shownOnSite = new Set(["gunnarwrld/ledger-api", "gunnarwrld/personalportfolio"]);
   const input = (repositories: GithubRepositoryApi[], overrides: Partial<NowBuildingConfig> = {}) => ({
     owner: GITHUB_OWNER,
     repositories,
@@ -533,10 +537,17 @@ describe("now building", () => {
   });
 
   it("counts the portfolio's own repo as shown, through the card's GitHub link", () => {
-    expect(shownOnSite.has("gunnarwrld/personalportfolio")).toBe(true);
-    expect(shownOnSite.has("gunnarwrld/ledger-api")).toBe(true);
-    expect(shownOnSite.has("jasminerezai/hkif-web")).toBe(true);
-    expect(shownOnSite.has("gunnarwrld/forge-wallet-android")).toBe(false);
+    const live = reposShownOnSite(projects);
+    expect(live.has("gunnarwrld/personalportfolio")).toBe(true);
+    expect(live.has("gunnarwrld/ledger-api")).toBe(true);
+    expect(live.has("jasminerezai/hkif-web")).toBe(true);
+
+    const cards = reposShownOnSite([
+      { repo: "gunnarwrld/mapped-repo" },
+      { github: "https://github.com/gunnarwrld/Linked-Only/" },
+      { github: "https://example.com/not-github" },
+    ]);
+    expect([...cards].sort()).toEqual(["gunnarwrld/linked-only", "gunnarwrld/mapped-repo"]);
   });
 
   it("only offers repos that have no card yet and are not forks, archived, excluded or the profile README", () => {
@@ -585,6 +596,41 @@ describe("now building", () => {
 
     // With no commits counted anywhere, the latest push decides.
     expect(pickNowBuilding({ ...input(repositories), activity: new Map() })?.name).toBe("fair-football-fee");
+  });
+
+  it("falls back to the most active repo with a card when every active repo has one", () => {
+    const chosen = pickNowBuilding({
+      ...input([
+        repo("ledger-api", { pushed_at: "2026-11-11T09:00:00Z" }),
+        repo("PersonalPortfolio", { pushed_at: "2026-11-11T11:00:00Z" }),
+        repo("lab01_fullstack", { pushed_at: "2026-11-11T11:30:00Z" }),
+      ], { exclude: ["PersonalPortfolio", "lab01_fullstack"] }),
+      activity: activity({
+        "ledger-api": { commits: 9, activeDays: 3 },
+        PersonalPortfolio: { commits: 80, activeDays: 10 },
+        lab01_fullstack: { commits: 40, activeDays: 6 },
+      }),
+    });
+    expect(chosen?.name).toBe("ledger-api");
+
+    // A repo without a card still wins over a busier one that has a card.
+    const fresh = pickNowBuilding({
+      ...input([repo("ledger-api"), repo("weekend-experiment")]),
+      activity: activity({
+        "ledger-api": { commits: 30, activeDays: 8 },
+        "weekend-experiment": { commits: 2, activeDays: 1 },
+      }),
+    });
+    expect(fresh?.name).toBe("weekend-experiment");
+  });
+
+  it("maps repos to the id of the card that shows them", () => {
+    const ids = cardIdsByRepo([
+      { id: "ledger", repo: "gunnarwrld/ledger-api" },
+      { id: "portfolio", github: "https://github.com/gunnarwrld/PersonalPortfolio" },
+    ]);
+    expect(ids.get("gunnarwrld/ledger-api")).toBe("ledger");
+    expect(ids.get("gunnarwrld/personalportfolio")).toBe("portfolio");
   });
 
   it("follows a pin and labels repos readably", () => {

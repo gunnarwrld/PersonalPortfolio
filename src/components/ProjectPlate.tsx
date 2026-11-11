@@ -113,6 +113,7 @@ export function ProjectPlate({ project, index, lead = false, onOpen, className, 
   return (
     <Reveal
       as="article"
+      id={`project-${project.id}`}
       aria-labelledby={titleId}
       delay={delay}
       className={cn("paper plate p-6 sm:p-7", lead ? "md:grid md:grid-cols-[1.15fr_1fr] md:gap-10 lg:p-9" : "flex flex-col", className)}
