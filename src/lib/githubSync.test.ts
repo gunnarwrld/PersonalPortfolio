@@ -487,10 +487,11 @@ describe("committed github-sync.json", () => {
     }
   });
 
-  it("points the Now building bubble at a public repo that has no card yet", () => {
+  it("points the Now building bubble at a GitHub repository that is not excluded", () => {
+    // Whether the pick has a card is checked when the page renders (NowBuildingBubble),
+    // because a card can be added before the next sync refreshes this file.
     if (!sync.now) return;
     expect(sync.now.htmlUrl).toBe(`https://github.com/${sync.now.fullName}`);
-    expect(reposShownOnSite(projects).has(sync.now.fullName.toLowerCase())).toBe(false);
     expect(NOW_BUILDING.exclude.map((name) => name.toLowerCase())).not.toContain(sync.now.name.toLowerCase());
   });
 });
@@ -512,7 +513,9 @@ describe("now building", () => {
       pushed_at: "2026-11-10T10:00:00Z",
       ...overrides,
     });
-  const shownOnSite = reposShownOnSite(projects);
+  // The pick logic is tested against a fixed card list, not the live projects.ts:
+  // cards get added all the time, and that must not change these tests.
+  const shownOnSite = new Set(["gunnarwrld/ledger-api", "gunnarwrld/personalportfolio"]);
   const input = (repositories: GithubRepositoryApi[], overrides: Partial<NowBuildingConfig> = {}) => ({
     owner: GITHUB_OWNER,
     repositories,
@@ -533,10 +536,17 @@ describe("now building", () => {
   });
 
   it("counts the portfolio's own repo as shown, through the card's GitHub link", () => {
-    expect(shownOnSite.has("gunnarwrld/personalportfolio")).toBe(true);
-    expect(shownOnSite.has("gunnarwrld/ledger-api")).toBe(true);
-    expect(shownOnSite.has("jasminerezai/hkif-web")).toBe(true);
-    expect(shownOnSite.has("gunnarwrld/forge-wallet-android")).toBe(false);
+    const live = reposShownOnSite(projects);
+    expect(live.has("gunnarwrld/personalportfolio")).toBe(true);
+    expect(live.has("gunnarwrld/ledger-api")).toBe(true);
+    expect(live.has("jasminerezai/hkif-web")).toBe(true);
+
+    const cards = reposShownOnSite([
+      { repo: "gunnarwrld/mapped-repo" },
+      { github: "https://github.com/gunnarwrld/Linked-Only/" },
+      { github: "https://example.com/not-github" },
+    ]);
+    expect([...cards].sort()).toEqual(["gunnarwrld/linked-only", "gunnarwrld/mapped-repo"]);
   });
 
   it("only offers repos that have no card yet and are not forks, archived, excluded or the profile README", () => {
