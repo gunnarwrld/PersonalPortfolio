@@ -116,7 +116,7 @@
       "stars": 0,
       "fork": false,
       "htmlUrl": "https://github.com/gunnarwrld/fair-football-fee",
-      "onSite": false
+      "onSite": true
     },
     "gunnarwrld/forge-wallet-android": {
       "name": "forge-wallet-android",
@@ -145,7 +145,7 @@
       "stars": 0,
       "fork": false,
       "htmlUrl": "https://github.com/gunnarwrld/forge-wallet-android",
-      "onSite": false
+      "onSite": true
     },
     "gunnarwrld/futbol_data_aggregator_api": {
       "name": "futbol_data_aggregator_api",
@@ -265,7 +265,7 @@
       "stars": 0,
       "fork": false,
       "htmlUrl": "https://github.com/gunnarwrld/ledger-sentinel-ai",
-      "onSite": false
+      "onSite": true
     },
     "gunnarwrld/matchday-hub": {
       "name": "matchday-hub",
@@ -290,7 +290,7 @@
       "stars": 0,
       "fork": false,
       "htmlUrl": "https://github.com/gunnarwrld/matchday-hub",
-      "onSite": false
+      "onSite": true
     },
     "gunnarwrld/personal-finance-web-app": {
       "name": "personal-finance-web-app",

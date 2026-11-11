@@ -343,8 +343,12 @@ describe("portfolio mapping", () => {
       "gunnarwrld/PostHub-DynamicWebsite",
       "gunnarwrld/cf_ai_study_assistant",
       "gunnarwrld/clicky-recurring-runs",
+      "gunnarwrld/fair-football-fee",
+      "gunnarwrld/forge-wallet-android",
       "gunnarwrld/futbol_data_aggregator_api",
       "gunnarwrld/ledger-api",
+      "gunnarwrld/ledger-sentinel-ai",
+      "gunnarwrld/matchday-hub",
       "gunnarwrld/personal-finance-web-app",
       "gunnarwrld/smart-home-gitops",
     ]);
@@ -356,10 +360,6 @@ describe("portfolio mapping", () => {
 
     const onSite = new Set(repoNamesOnSite(projects));
     expect(watched.filter((fullName) => !onSite.has(fullName))).toEqual([
-      "gunnarwrld/matchday-hub",
-      "gunnarwrld/forge-wallet-android",
-      "gunnarwrld/ledger-sentinel-ai",
-      "gunnarwrld/fair-football-fee",
       "gunnarwrld/lab01_fullstack",
     ]);
 
@@ -375,6 +375,10 @@ describe("portfolio mapping", () => {
       "portfolio",
       "smart-home-gitops",
       "posthub",
+      "matchday-hub",
+      "forge-wallet",
+      "ledger-sentinel",
+      "fair-football-fee",
     ]);
   });
 });
