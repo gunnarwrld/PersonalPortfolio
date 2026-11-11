@@ -353,6 +353,23 @@
     padding: 0.8rem 1.6rem;
     font-size: 1.125rem;
   }
+  /* Section buttons in the nav bar: they shrink with the screen so all four fit on a phone. */
+  .btn-nav {
+    --btn-drop: 3px;
+    min-height: 2.5rem;
+    padding: 0.35rem clamp(0.3rem, 1.9vw, 0.95rem);
+    font-size: clamp(0.6rem, 2.9vw, 0.9rem);
+    letter-spacing: 0.02em;
+  }
+  /* The section on screen is shown pressed in: ivory face, sitting on its shadow. */
+  .btn-nav[aria-current="location"] {
+    --btn-face: rgb(var(--ivory));
+    --btn-ink: rgb(var(--espresso));
+    translate: var(--btn-drop) var(--btn-drop);
+  }
+  .btn-nav[aria-current="location"]::after {
+    translate: 0 0;
+  }
   .btn-icon {
     --btn-drop: 4px;
     min-height: 2.75rem;
