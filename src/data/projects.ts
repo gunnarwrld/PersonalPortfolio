@@ -75,7 +75,7 @@ export const projects: Project[] = [
     description:
       "TypeScript API that ingests API-Football into PostgreSQL with Prisma 7 and serves leagues, teams, matches, and players from Express 5, with Redis caching, BullMQ sync jobs, and Socket.io live updates.",
     longDescription:
-      "Layered Node.js service: routes, controllers, services, and Prisma repositories, plus an API-Football client. package.json pins Express 5 and Prisma 7 (prisma.config.ts and SQL migrations). BullMQ workers on Redis schedule league and team sync daily, fixture sync every 6 hours, and live-match sync every 60 seconds, so a repeated job runs once even if several servers are up. When a live sync sees a score or event change it emits Socket.io match:update and match:event on /api/v1/realtime. Anonymous traffic is capped at 50 requests an hour per IP by a Redis sliding window; API keys carry their own limit.",
+      "Layered Node.js service: routes, controllers, services, and Prisma repositories, plus an API-Football client. package.json pins Express 5 and Prisma 7 (prisma.config.ts and SQL migrations). BullMQ workers on Redis schedule league and team sync daily, fixture sync every 6 hours, and live-match sync every 60 seconds, so a repeated job runs once even if several servers are up. When a live sync sees a score or event change it emits Socket.io match:update and match:event on /api/v1/realtime. Anonymous reads are capped at 50 requests an hour per IP by a Redis sliding window. Writes require an API key, and each key carries its own limit. Vitest unit tests and Supertest integration tests run against PostgreSQL and Redis. GitHub Actions runs lint, typecheck, those tests with coverage, and a Docker image build. docker compose starts PostgreSQL 16, Redis 7, and the API.",
     tech: [
       "TypeScript",
       "Node.js",
@@ -87,6 +87,9 @@ export const projects: Project[] = [
       "Socket.io",
       "Zod",
       "Vitest",
+      "Supertest",
+      "Docker Compose",
+      "GitHub Actions",
       "Railway",
     ],
     features: [
@@ -95,7 +98,7 @@ export const projects: Project[] = [
       "BullMQ workers for daily, 6-hour, and 60-second syncs",
       "Socket.io rooms for live scores and match events",
       "Redis sliding-window rate limits and API keys",
-      "Vitest unit tests for AppError and the response envelope",
+      "Vitest unit tests and Supertest integration tests for routes, services, and sync jobs",
     ],
     repo: "gunnarwrld/futbol_data_aggregator_api",
     github: "https://github.com/gunnarwrld/futbol_data_aggregator_api",
@@ -104,7 +107,7 @@ export const projects: Project[] = [
     timeline: "2026",
     status: "Live",
     limits:
-      "Tests cover the error and response helpers so far; broader tests, Docker and CI are in an open pull request.",
+      "The app does not set trust proxy, so behind Railway the anonymous 50-per-hour budget is shared by every client on that proxy.",
   },
   {
     id: "ledger-api",
@@ -209,7 +212,7 @@ export const projects: Project[] = [
     description:
       "Study chat in plain JavaScript on Cloudflare Workers: a Durable Object stores each session in SQLite and calls Llama 3.3 through Workers AI over REST and WebSocket.",
     longDescription:
-      "worker/index.js routes /health, /api/chat, /api/history, and /api/search. StudyAgent is a Durable Object (worker/study-agent.js) that keeps conversation history in SQLite and calls Workers AI model @cf/meta/llama-3.3-70b-instruct-fp8-fast. The same session can talk over WebSocket; the README documents the chat, getHistory, and search message types. The frontend is frontend/index.html, styles.css, and app.js: vanilla JavaScript on Cloudflare Pages. Deploy is wrangler deploy for the Worker and wrangler pages deploy for the UI.",
+      "worker/index.js routes /health, /api/chat, /api/history, and /api/search. StudyAgent is a Durable Object (worker/study-agent.js) that keeps conversation history in SQLite and calls Workers AI model @cf/meta/llama-3.3-70b-instruct-fp8-fast. The same session can talk over WebSocket; the README documents the chat, getHistory, and search message types. The frontend is frontend/index.html, styles.css, and app.js: vanilla JavaScript. Deploy is wrangler deploy for the Worker and wrangler pages deploy for the UI.",
     tech: [
       "JavaScript",
       "Cloudflare Workers",
@@ -225,16 +228,16 @@ export const projects: Project[] = [
       "REST for chat, history, search, and clear",
       "WebSocket chat with the message types from the README",
       "Llama 3.3 70B instruct via Workers AI",
-      "Vanilla JavaScript UI hosted on Cloudflare Pages",
+      "Vanilla JavaScript UI in frontend/, with a wrangler pages deploy script",
       "Wrangler deploy scripts for the Worker and the UI",
     ],
     repo: "gunnarwrld/cf_ai_study_assistant",
     github: "https://github.com/gunnarwrld/cf_ai_study_assistant",
-    live: "https://cf-ai-study-assistant.pages.dev/",
     role: "Solo Developer",
     timeline: "2025",
     status: "Learning project",
-    limits: "No automated test suite and no CI workflow; testing is a manual checklist.",
+    limits:
+      "No automated test suite and no CI workflow; testing is a manual checklist. The Pages URL in the README returns 404, and the Worker does not serve the UI.",
   },
   {
     id: "portfolio",
@@ -329,5 +332,152 @@ export const projects: Project[] = [
     timeline: "2025",
     status: "Learning project",
     limits: "The contact form is UI-only: it shows a confirmation but sends nothing.",
+  },
+  {
+    id: "matchday-hub",
+    title: "Matchday Hub",
+    subtitle: "Team-sport match API",
+    description:
+      "ASP.NET Core 10 API that stores fixtures and live match events in PostgreSQL, streams them with SignalR, and serves team form and player load. It runs locally, with a fake aggregator by default.",
+    longDescription:
+      "A .NET 10 companion to the Fútbol Data Aggregator. MatchPoller enqueues events on a bounded in-process channel (IEventQueue). IngestionProcessor upserts them in one transaction, treats a repeat as a no-op with a ProcessedMessage row and a unique index on UpstreamEventId, then broadcasts matchEvent and scoreUpdate to a SignalR group for that match. Minimal APIs under /v1 return RFC 9457 problem details, limit traffic to 100 requests a minute per IP, and cache team form for 30 seconds. When a Redis connection string is set, that cache and the SignalR backplane use Redis. EF Core 10 and Npgsql store the matches. The checked-in config sets Aggregator:UseFake, so docker compose plus the API seeds a season and one live match without the Node service. xUnit covers team-form maths, player-load aggregation, and ingestion idempotency. Integration tests boot the API with WebApplicationFactory against Testcontainers PostgreSQL. GitHub Actions runs dotnet format, the build, and the tests.",
+    tech: [
+      "C#",
+      ".NET 10",
+      "ASP.NET Core",
+      "EF Core",
+      "PostgreSQL",
+      "Redis",
+      "SignalR",
+      "Docker Compose",
+      "xUnit",
+      "Testcontainers",
+      "GitHub Actions",
+    ],
+    features: [
+      "Versioned /v1 routes for matches, events, team form, and player load",
+      "Idempotent ingestion with a processed-message ledger and a unique upstream event id",
+      "SignalR groups that push match events and score updates",
+      "Redis output cache on team form when Redis is configured",
+      "Fake aggregator so the local demo runs without the Node API",
+      "xUnit and Testcontainers tests in GitHub Actions",
+    ],
+    repo: "gunnarwrld/matchday-hub",
+    github: "https://github.com/gunnarwrld/matchday-hub",
+    role: "Solo Developer",
+    timeline: "2026",
+    status: "Local demo",
+    limits:
+      "It runs on your machine. Azure deploy is still on the roadmap, and the queue is an in-process channel. Player-load figures are seeded demo data: the aggregator has no player-stats model.",
+  },
+  {
+    id: "forge-wallet",
+    title: "Forge Wallet",
+    subtitle: "Offline-first Android wallet",
+    description:
+      "Android client for Ledger Forge. A send is written to a Room outbox and posted later with the same Idempotency-Key, including after airplane mode and process death.",
+    longDescription:
+      "Kotlin wallet on Ledger Forge. SendMoney checks funds and inserts the outbox row in one transaction, and the available balance drops at once. WorkManager posts that row to POST /transfers with its Idempotency-Key once a network is back, including after the process is killed. Ledger Forge applies the key at most once, so a lost response does not move the money twice. feature:home and feature:send are Jetpack Compose screens over a pure domain module, Room, and Retrofit. Amounts are Long minor units. ExactlyOnceChaosTest runs 200 faulted sends on the JVM. GitHub Actions runs ktlint, detekt, Android Lint, JVM and Robolectric unit tests, and assembles a debug APK. scripts/verify_exactly_once.sh checks three emulator scenarios against a local Ledger Forge database, including a response dropped after the ledger commits.",
+    tech: [
+      "Kotlin",
+      "Jetpack Compose",
+      "Material 3",
+      "Navigation 3",
+      "Hilt",
+      "Room",
+      "WorkManager",
+      "Retrofit",
+      "OkHttp",
+      "GitHub Actions",
+    ],
+    features: [
+      "Room outbox so a send survives airplane mode and process death",
+      "Idempotency-Key replay against Ledger Forge",
+      "WorkManager sync when the network returns",
+      "Money as Long minor units with ISO 4217 exponents",
+      "JVM, Robolectric, and MockWebServer tests",
+      "CI with ktlint, detekt, and Android Lint",
+    ],
+    repo: "gunnarwrld/forge-wallet-android",
+    github: "https://github.com/gunnarwrld/forge-wallet-android",
+    role: "Solo Developer",
+    timeline: "2026",
+    status: "Local demo",
+    limits:
+      "Synthetic money against a local Ledger Forge. The payment path works with a minimal UI. The fuller send flow, biometric step-up, and design system are still ahead. The recorded checks ran on an emulator, not a physical device.",
+  },
+  {
+    id: "ledger-sentinel",
+    title: "Ledger Sentinel",
+    subtitle: "Double-entry payments lab",
+    description:
+      "Java 21 ledger for synthetic account transfers: balanced journals, idempotent POSTs, and row locks, with Spock tests against PostgreSQL. No machine-learning code is in this repository yet.",
+    longDescription:
+      "Spark Java HTTP API. The code and docs use the name payments-lab. jOOQ talks to PostgreSQL, and those classes are generated from the Flyway migrations on a real database. HikariCP pools connections. Every /v1 route needs an API key, and the server stores a SHA-256 hash. POST requires an Idempotency-Key, and a declined transfer is stored so the same key replays the decline. A transfer writes a balancing entry and an outbox row in one transaction. An operator can reverse a posted transfer. A second reversal, or a reversal of a declined transfer, returns 409. Integration tests use Testcontainers for PostgreSQL 18 and Redis 8 and a real Jetty server. LedgerModelSpec checks 50 seeds of 200 random operations against an in-memory model. Redis is pinged on readiness and a down Redis does not fail that check. docker compose starts PostgreSQL 18 and Redis 8 for a local run.",
+    tech: [
+      "Java 21",
+      "Spark Java",
+      "jOOQ",
+      "Flyway",
+      "PostgreSQL",
+      "HikariCP",
+      "Redis",
+      "Lettuce",
+      "Testcontainers",
+      "Spock",
+      "Docker Compose",
+    ],
+    features: [
+      "Double-entry journals and operator reversals",
+      "Idempotency-Key on POST, including a stored decline",
+      "API keys stored as SHA-256 hashes, with customer and operator roles",
+      "Outbox rows written in the transfer transaction",
+      "Spock integration tests on PostgreSQL 18 via Testcontainers",
+      "Model-based runs checked against an in-memory ledger",
+    ],
+    repo: "gunnarwrld/ledger-sentinel-ai",
+    github: "https://github.com/gunnarwrld/ledger-sentinel-ai",
+    role: "Solo Developer",
+    timeline: "2026",
+    status: "Local demo",
+    limits:
+      "Phases 1 and 2 of 6 are in the tree. The outbox relay and fraud rules are still planned, and the repository has no machine-learning code. Synthetic data only. Run it with Docker Compose. It is not deployed.",
+  },
+  {
+    id: "fair-football-fee",
+    title: "Fair Football Fee",
+    subtitle: "Player valuation model",
+    description:
+      "Python pipeline that builds point-in-time features for Premier League players and trains an XGBoost model of Transfermarkt valuations. The target is a crowd-sourced valuation, not a negotiated transfer fee.",
+    longDescription:
+      "On main: a dataset audit, Parquet ingestion, cleaning, and point-in-time features in DuckDB and Pandas, a PostgreSQL serving schema through SQLAlchemy 2 and Alembic, and the phase-3 trainer. The target is a Transfermarkt crowd-sourced valuation, not a negotiated transfer fee. The modeling population is Premier League players with at least 450 tracked minutes in the prior 12 months, and a valuation club corroborated by match data. src/ml/train.py fits a position-and-age median, Ridge, LightGBM, and XGBoost, tunes XGBoost with Optuna on expanding windows inside the training seasons, and writes artifacts/v1.0.0. pytest covers the schema, ingestion, the population rule, and the metric helpers, and test_leakage.py rejects features that read data from after the valuation date. Raw datasets are downloaded at runtime and are not committed.",
+    tech: [
+      "Python",
+      "DuckDB",
+      "Pandas",
+      "PostgreSQL",
+      "SQLAlchemy",
+      "Alembic",
+      "scikit-learn",
+      "XGBoost",
+      "LightGBM",
+      "Optuna",
+      "pytest",
+    ],
+    features: [
+      "Point-in-time features with tests that reject data from after the valuation date",
+      "Premier League population with a 450-minute minimum",
+      "Median, Ridge, LightGBM, and Optuna-tuned XGBoost in one training entrypoint",
+      "Held-out season written to artifacts/v1.0.0",
+      "PostgreSQL schema and Alembic migrations",
+      "pytest for the schema, ingestion, features, population, and model layer",
+    ],
+    repo: "gunnarwrld/fair-football-fee",
+    github: "https://github.com/gunnarwrld/fair-football-fee",
+    role: "Solo Developer",
+    timeline: "2026",
+    status: "Local demo",
+    limits:
+      "The training pipeline and its tests are on main. The HTTP service, explanations, and web UI are open pull requests. This checkout has no Dockerfile and no CI workflow. docker compose starts PostgreSQL and Redis; its app and frontend profiles refer to files that are not in the tree. The pipeline does not read Redis.",
   },
 ];

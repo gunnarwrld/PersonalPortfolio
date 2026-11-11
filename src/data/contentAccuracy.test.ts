@@ -35,12 +35,56 @@ describe("portfolio copy stays tied to the repos", () => {
     );
   });
 
-  it("describes the study assistant as JavaScript on Workers, without a CI claim", () => {
+  it("describes the study assistant as JavaScript on Workers, without a CI claim or a dead live link", () => {
     const study = projects.find((project) => project.id === "ai-study-assistant");
     expect(study?.tech).toContain("JavaScript");
     expect(study?.tech).not.toContain("TypeScript");
     expect(study?.tech).not.toContain("React");
     expect(study?.limits).toMatch(/No automated test suite and no CI workflow/);
+    expect(study?.live).toBeUndefined();
+    expect(JSON.stringify(study)).not.toMatch(/pages\.dev/);
+  });
+
+  it("describes the football API tests, Docker, and CI as present", () => {
+    const futbol = projects.find((project) => project.id === "futbol-data-aggregator");
+    const text = JSON.stringify(futbol);
+    expect(text).not.toMatch(/open pull request/i);
+    expect(text).not.toMatch(/AppError and the response envelope/);
+    expect(futbol?.tech).toEqual(expect.arrayContaining(["Docker Compose", "GitHub Actions", "Supertest"]));
+    expect(futbol?.longDescription).toMatch(/GitHub Actions/);
+    expect(futbol?.features.join(" ")).toMatch(/Supertest integration tests/);
+  });
+
+  it("maps the four pinned repos without a live demo or an Azure deploy claim", () => {
+    const cards = ["matchday-hub", "forge-wallet", "ledger-sentinel", "fair-football-fee"].map((id) => {
+      const project = projects.find((item) => item.id === id);
+      expect(project?.repo).toMatch(/^gunnarwrld\//);
+      expect(project?.live).toBeUndefined();
+      expect(project?.status).not.toBe("Live");
+      return project;
+    });
+
+    const matchday = JSON.stringify(cards[0]);
+    expect(matchday).toMatch(/in-process channel/);
+    expect(matchday).not.toMatch(/deployed on Azure|Azure Service Bus/i);
+
+    const forge = cards[1];
+    expect(forge?.repo).toBe("gunnarwrld/forge-wallet-android");
+    expect(JSON.stringify(forge)).toMatch(/emulator/);
+
+    const sentinel = JSON.stringify(cards[2]);
+    expect(sentinel).toMatch(/no machine-learning code/i);
+    expect(sentinel).not.toMatch(/fraud screen is live|model is trained/i);
+
+    const fee = cards[3];
+    expect(fee?.tech).not.toContain("Next.js");
+    expect(fee?.tech).not.toContain("FastAPI");
+    expect(fee?.description).toMatch(/Transfermarkt/);
+    expect(fee?.longDescription).toMatch(/Transfermarkt/);
+    expect(fee?.longDescription).toMatch(/point-in-time/);
+    expect(fee?.longDescription).toMatch(/450/);
+    expect(fee?.limits).toMatch(/open pull requests/);
+    expect(fee?.limits).toMatch(/no Dockerfile/);
   });
 
   it("does not credit FinanceTracker with Stripe edge functions or a load-time percentage", () => {
@@ -107,9 +151,10 @@ describe("portfolio copy stays tied to the repos", () => {
 describe("skills match code that exists in the repos", () => {
   const skills = skillGroups.flatMap((group) => group.skills);
 
-  it("lists each skill once and keeps Next.js and MongoDB", () => {
+  it("lists each skill once and leaves out Next.js and MongoDB", () => {
     expect(skills.filter((skill) => skill === "TypeScript")).toHaveLength(1);
-    expect(skills).toEqual(expect.arrayContaining(["Next.js", "MongoDB"]));
+    expect(skills).not.toContain("Next.js");
+    expect(skills).not.toContain("MongoDB");
     expect(new Set(skills).size).toBe(skills.length);
   });
 
