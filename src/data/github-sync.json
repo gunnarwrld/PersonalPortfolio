@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-12T06:32:26.531Z",
+  "generatedAt": "2026-11-13T06:31:31.191Z",
   "owner": "gunnarwrld",
   "now": {
     "fullName": "gunnarwrld/finvigil",
@@ -13,7 +13,7 @@
     "gunnarwrld/PostHub-DynamicWebsite": {
       "name": "PostHub-DynamicWebsite",
       "fullName": "gunnarwrld/PostHub-DynamicWebsite",
-      "description": null,
+      "description": "Vanilla JavaScript single-page blog, a finished learning project: paginated posts, comments and user profiles from the DummyJSON API with hash routing.",
       "topics": [],
       "primaryLanguage": "JavaScript",
       "languages": [
@@ -32,7 +32,7 @@
       ],
       "homepage": "https://post-hub-dynamic-website.vercel.app",
       "defaultBranch": "main",
-      "pushedAt": "2026-11-06T19:34:20Z",
+      "pushedAt": "2026-11-12T15:56:55Z",
       "archived": false,
       "stars": 1,
       "fork": false,
@@ -42,7 +42,7 @@
     "gunnarwrld/cf_ai_study_assistant": {
       "name": "cf_ai_study_assistant",
       "fullName": "gunnarwrld/cf_ai_study_assistant",
-      "description": null,
+      "description": "AI study assistant on Cloudflare Workers: Llama 3.3 chat through Workers AI, chat history in Durable Objects and real-time WebSocket messaging.",
       "topics": [],
       "primaryLanguage": "JavaScript",
       "languages": [
@@ -69,7 +69,7 @@
       ],
       "homepage": null,
       "defaultBranch": "main",
-      "pushedAt": "2026-11-11T13:25:06Z",
+      "pushedAt": "2026-11-12T14:47:42Z",
       "archived": false,
       "stars": 0,
       "fork": false,
@@ -79,7 +79,7 @@
     "gunnarwrld/clicky-recurring-runs": {
       "name": "clicky-recurring-runs",
       "fullName": "gunnarwrld/clicky-recurring-runs",
-      "description": null,
+      "description": "FastAPI demo of recurring agent runs: schedules in SQLite, every due occurrence queued, and no duplicate rows when scheduler ticks overlap.",
       "topics": [],
       "primaryLanguage": "Python",
       "languages": [
@@ -90,7 +90,7 @@
       ],
       "homepage": null,
       "defaultBranch": "main",
-      "pushedAt": "2026-11-06T17:16:41Z",
+      "pushedAt": "2026-11-12T14:44:52Z",
       "archived": false,
       "stars": 0,
       "fork": false,
@@ -100,7 +100,7 @@
     "gunnarwrld/fair-football-fee": {
       "name": "fair-football-fee",
       "fullName": "gunnarwrld/fair-football-fee",
-      "description": null,
+      "description": "Premier League crowd-sourced market value predictor: point-in-time XGBoost, conformal intervals, TreeSHAP drivers and what-if scenarios on FastAPI.",
       "topics": [],
       "primaryLanguage": "Python",
       "languages": [
@@ -139,7 +139,7 @@
       ],
       "homepage": null,
       "defaultBranch": "main",
-      "pushedAt": "2026-11-11T11:15:50Z",
+      "pushedAt": "2026-11-12T14:48:19Z",
       "archived": false,
       "stars": 0,
       "fork": false,
@@ -168,7 +168,7 @@
       ],
       "homepage": null,
       "defaultBranch": "main",
-      "pushedAt": "2026-11-11T15:17:31Z",
+      "pushedAt": "2026-11-12T14:47:54Z",
       "archived": false,
       "stars": 0,
       "fork": false,
@@ -184,11 +184,11 @@
       "languages": [
         {
           "name": "TypeScript",
-          "percentage": 96.2
+          "percentage": 96.3
         },
         {
           "name": "JavaScript",
-          "percentage": 3.1
+          "percentage": 3
         },
         {
           "name": "Dockerfile",
@@ -201,7 +201,7 @@
       ],
       "homepage": "https://futboldataaggregatorapi-production.up.railway.app/",
       "defaultBranch": "main",
-      "pushedAt": "2026-11-10T21:51:23Z",
+      "pushedAt": "2026-11-13T00:11:02Z",
       "archived": false,
       "stars": 0,
       "fork": false,
@@ -211,7 +211,7 @@
     "gunnarwrld/lab01_fullstack": {
       "name": "lab01_fullstack",
       "fullName": "gunnarwrld/lab01_fullstack",
-      "description": null,
+      "description": "DA219B fullstack coursework on React, Express and MongoDB: a multi-currency tracker that rolls accounts from several countries into one USD net worth.",
       "topics": [],
       "primaryLanguage": "JavaScript",
       "languages": [
@@ -230,7 +230,7 @@
       ],
       "homepage": null,
       "defaultBranch": "master",
-      "pushedAt": "2026-11-06T17:13:27Z",
+      "pushedAt": "2026-11-12T14:47:01Z",
       "archived": false,
       "stars": 0,
       "fork": false,
@@ -240,7 +240,7 @@
     "gunnarwrld/ledger-api": {
       "name": "ledger-api",
       "fullName": "gunnarwrld/ledger-api",
-      "description": null,
+      "description": "Kotlin and Spring Boot wallet ledger API: integer minor units, balanced double-entry journals in PostgreSQL, idempotent transfers and ordered row locks.",
       "topics": [],
       "primaryLanguage": "Kotlin",
       "languages": [
@@ -263,7 +263,7 @@
       ],
       "homepage": null,
       "defaultBranch": "master",
-      "pushedAt": "2026-11-10T20:59:34Z",
+      "pushedAt": "2026-11-12T14:47:14Z",
       "archived": false,
       "stars": 0,
       "fork": false,
@@ -288,7 +288,7 @@
       ],
       "homepage": null,
       "defaultBranch": "main",
-      "pushedAt": "2026-11-06T21:13:39Z",
+      "pushedAt": "2026-11-12T14:47:27Z",
       "archived": false,
       "stars": 0,
       "fork": false,
@@ -323,7 +323,7 @@
     "gunnarwrld/personal-finance-web-app": {
       "name": "personal-finance-web-app",
       "fullName": "gunnarwrld/personal-finance-web-app",
-      "description": null,
+      "description": "Free React and Supabase personal finance tracker: accounts, transactions, budgets and bills in 8 currencies, with on-demand AI insights.",
       "topics": [],
       "primaryLanguage": "TypeScript",
       "languages": [
@@ -350,7 +350,7 @@
       ],
       "homepage": "https://personal-finance-web-app-psi.vercel.app",
       "defaultBranch": "main",
-      "pushedAt": "2026-11-12T02:38:51Z",
+      "pushedAt": "2026-11-12T14:48:55Z",
       "archived": false,
       "stars": 0,
       "fork": false,
@@ -360,7 +360,7 @@
     "gunnarwrld/smart-home-gitops": {
       "name": "smart-home-gitops",
       "fullName": "gunnarwrld/smart-home-gitops",
-      "description": null,
+      "description": "Coursework Android prototype: polls a GitHub repo's pull-request comments, scores them with a weighted regex heuristic and lets an operator act.",
       "topics": [],
       "primaryLanguage": "Kotlin",
       "languages": [
