@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-13T06:31:31.191Z",
+  "generatedAt": "2026-11-14T06:29:03.488Z",
   "owner": "gunnarwrld",
   "now": {
     "fullName": "gunnarwrld/finvigil",
@@ -168,7 +168,7 @@
       ],
       "homepage": null,
       "defaultBranch": "main",
-      "pushedAt": "2026-11-12T14:47:54Z",
+      "pushedAt": "2026-11-14T00:15:55Z",
       "archived": false,
       "stars": 0,
       "fork": false,
@@ -329,18 +329,18 @@
       "languages": [
         {
           "name": "TypeScript",
-          "percentage": 82.9
+          "percentage": 81
         },
         {
           "name": "PLpgSQL",
-          "percentage": 15.5
-        },
-        {
-          "name": "JavaScript",
-          "percentage": 0.8
+          "percentage": 17.5
         },
         {
           "name": "CSS",
+          "percentage": 0.7
+        },
+        {
+          "name": "JavaScript",
           "percentage": 0.7
         },
         {
@@ -350,7 +350,7 @@
       ],
       "homepage": "https://personal-finance-web-app-psi.vercel.app",
       "defaultBranch": "main",
-      "pushedAt": "2026-11-12T14:48:55Z",
+      "pushedAt": "2026-11-13T13:19:08Z",
       "archived": false,
       "stars": 0,
       "fork": false,
